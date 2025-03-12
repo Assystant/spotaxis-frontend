@@ -2,7 +2,8 @@
 import { PageContainer } from "@/components/layout/PageContainer";
 import { JobsTable } from "@/components/jobs/JobsTable";
 import { Button } from "@/components/ui/button";
-import { DownloadIcon, UploadIcon } from "lucide-react";
+import { DownloadIcon, UploadIcon, Plus } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Jobs = () => {
   return (
@@ -21,6 +22,12 @@ const Jobs = () => {
             <Button variant="outline" size="sm" className="gap-2">
               <UploadIcon size={14} />
               Import
+            </Button>
+            <Button size="sm" className="gap-2" asChild>
+              <Link to="/jobs/add">
+                <Plus size={14} />
+                Add Job
+              </Link>
             </Button>
           </div>
         </div>

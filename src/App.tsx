@@ -11,6 +11,7 @@ import { Sidebar } from "./components/layout/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Jobs from "./pages/Jobs";
 import JobDetail from "./pages/JobDetail";
+import AddJob from "./pages/AddJob";
 import Applicants from "./pages/Applicants";
 import TalentPool from "./pages/TalentPool";
 import Contacts from "./pages/Contacts";
@@ -37,6 +38,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/jobs" element={<Jobs />} />
+                <Route path="/jobs/add" element={<AddJob />} />
                 <Route path="/jobs/:id" element={<JobDetail />} />
                 <Route path="/applicants" element={<Applicants />} />
                 <Route path="/talent-pool" element={<TalentPool />} />
