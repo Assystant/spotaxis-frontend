@@ -6,9 +6,6 @@ import { Avatar } from "@/components/ui/avatar";
 import { Plus, MoreHorizontal, FileText, Mail, Phone } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-// Add react-beautiful-dnd dependency
-<lov-add-dependency>react-beautiful-dnd@latest</lov-add-dependency>
-
 type ApplicantType = {
   id: string;
   name: string;
