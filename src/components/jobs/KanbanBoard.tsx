@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,18 +22,19 @@ type StageType = {
   name: string;
   color: string;
   order: number;
+  category: string;
   applicants?: ApplicantType[];
 };
 
 // Mock data for pipeline stages
 const defaultStages: StageType[] = [
-  { id: "stage-1", name: "Applied", color: "bg-blue-500", order: 0 },
-  { id: "stage-2", name: "Screening", color: "bg-purple-500", order: 1 },
-  { id: "stage-3", name: "Interview", color: "bg-orange-500", order: 2 },
-  { id: "stage-4", name: "Assessment", color: "bg-yellow-500", order: 3 },
-  { id: "stage-5", name: "Offer", color: "bg-green-500", order: 4 },
-  { id: "stage-6", name: "Hired", color: "bg-emerald-500", order: 5 },
-  { id: "stage-7", name: "Rejected", color: "bg-red-500", order: 6 },
+  { id: "stage-1", name: "Applied", color: "bg-blue-500", order: 0, category: "applicant" },
+  { id: "stage-2", name: "Screening", color: "bg-purple-500", order: 1, category: "applicant" },
+  { id: "stage-3", name: "Interview", color: "bg-orange-500", order: 2, category: "applicant" },
+  { id: "stage-4", name: "Assessment", color: "bg-yellow-500", order: 3, category: "applicant" },
+  { id: "stage-5", name: "Offer", color: "bg-green-500", order: 4, category: "applicant" },
+  { id: "stage-6", name: "Hired", color: "bg-emerald-500", order: 5, category: "applicant" },
+  { id: "stage-7", name: "Rejected", color: "bg-red-500", order: 6, category: "applicant" },
 ];
 
 // Mock data for applicants
@@ -115,9 +115,10 @@ const mockApplicants: ApplicantType[] = [
 
 interface KanbanBoardProps {
   jobId: string;
+  category?: string;
 }
 
-export const KanbanBoard = ({ jobId }: KanbanBoardProps) => {
+export const KanbanBoard = ({ jobId, category = "applicant" }: KanbanBoardProps) => {
   // In a real app, we would fetch these from an API
   const [stages, setStages] = useState<StageType[]>([]);
   const [applicants, setApplicants] = useState<ApplicantType[]>([]);
@@ -128,9 +129,11 @@ export const KanbanBoard = ({ jobId }: KanbanBoardProps) => {
       // In a real app, get this from an API or context
       const storedStages = localStorage.getItem('pipelineStages');
       if (storedStages) {
-        setStages(JSON.parse(storedStages));
+        const allStages = JSON.parse(storedStages);
+        // Filter stages by category
+        setStages(allStages.filter((stage: StageType) => stage.category === category));
       } else {
-        setStages(defaultStages);
+        setStages(defaultStages.filter(stage => stage.category === category));
       }
     };
     
@@ -142,7 +145,7 @@ export const KanbanBoard = ({ jobId }: KanbanBoardProps) => {
     
     fetchStages();
     fetchApplicants();
-  }, [jobId]);
+  }, [jobId, category]);
 
   const onDragEnd = (result: any) => {
     const { destination, source, draggableId } = result;

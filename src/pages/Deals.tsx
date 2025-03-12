@@ -1,21 +1,33 @@
 
+import { useState } from "react";
 import { PageContainer } from "@/components/layout/PageContainer";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DollarSign } from "lucide-react";
+import { KanbanBoard } from "@/components/jobs/KanbanBoard";
 
 const Deals = () => {
+  const [activeJobId, setActiveJobId] = useState("1"); // Default job ID
+
   return (
     <PageContainer title="Deals">
-      <div className="flex items-center justify-center h-64">
-        <Card className="p-6 text-center max-w-md">
-          <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-            <DollarSign className="text-primary" size={24} />
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold">Deals</h2>
+            <p className="text-muted-foreground">Manage your sales pipeline and track deal progress</p>
           </div>
-          <h2 className="text-xl font-semibold mb-2">Deals</h2>
-          <p className="text-muted-foreground">
-            Manage your sales pipeline, track deal progress, and monitor revenue from your recruiting activities.
-          </p>
-        </Card>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6">
+          <Card>
+            <CardHeader className="border-b">
+              <h3 className="text-lg font-medium">Sales Pipeline</h3>
+            </CardHeader>
+            <CardContent className="p-6">
+              <KanbanBoard jobId={activeJobId} category="deal" />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </PageContainer>
   );

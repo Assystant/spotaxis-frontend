@@ -6,12 +6,14 @@ import { KanbanBoard } from "@/components/jobs/KanbanBoard";
 import { ArrowLeft, Edit, Link, Share, Archive, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { mockJobs } from "@/components/jobs/JobsTable";
 
 const JobDetail = () => {
   const { id } = useParams();
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [pipelineCategory, setPipelineCategory] = useState("applicant");
 
   useEffect(() => {
     // In a real app, fetch the job from an API
@@ -125,10 +127,25 @@ const JobDetail = () => {
           </CardContent>
         </Card>
 
-        {/* Kanban Board */}
+        {/* Pipeline selection and Kanban Board */}
         <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Applicant Pipeline</h2>
-          <KanbanBoard jobId={job.id} />
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Pipeline View</h2>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Pipeline Type:</span>
+              <Select value={pipelineCategory} onValueChange={setPipelineCategory}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select pipeline" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="applicant">Applicant Pipeline</SelectItem>
+                  <SelectItem value="task">Task Status</SelectItem>
+                  <SelectItem value="deal">Deal Stages</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <KanbanBoard jobId={job.id} category={pipelineCategory} />
         </div>
       </div>
     </PageContainer>
