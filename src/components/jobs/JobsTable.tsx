@@ -8,7 +8,8 @@ import {
   Clock, 
   MapPin, 
   Briefcase, 
-  ChevronDown 
+  ChevronDown,
+  Users
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
