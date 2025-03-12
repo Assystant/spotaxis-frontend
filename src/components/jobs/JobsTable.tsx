@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
   MoreHorizontal, 
@@ -24,7 +25,7 @@ type Job = {
   postedDate: string;
 };
 
-const mockJobs: Job[] = [
+export const mockJobs: Job[] = [
   {
     id: "1",
     title: "Senior Frontend Developer",
@@ -138,7 +139,9 @@ export const JobsTable = () => {
               <tr key={job.id} className="table-row">
                 <td className="table-cell pl-6">
                   <div>
-                    <p className="font-medium">{job.title}</p>
+                    <Link to={`/jobs/${job.id}`} className="font-medium hover:text-primary transition-colors">
+                      {job.title}
+                    </Link>
                     <p className="text-muted-foreground text-xs">{job.company}</p>
                   </div>
                 </td>

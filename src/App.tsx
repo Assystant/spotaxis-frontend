@@ -10,13 +10,15 @@ import NotFound from "./pages/NotFound";
 import { Sidebar } from "./components/layout/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Jobs from "./pages/Jobs";
+import JobDetail from "./pages/JobDetail";
 import Applicants from "./pages/Applicants";
 import TalentPool from "./pages/TalentPool";
 import Contacts from "./pages/Contacts";
 import Companies from "./pages/Companies";
 import Deals from "./pages/Deals";
 import FormBuilders from "./pages/FormBuilders";
-import Settings from "./pages/Settings";
+import Settings, { SettingsDefault } from "./pages/Settings";
+import PipelineSettings from "./pages/PipelineSettings";
 import CareerSiteGenerator from "./pages/CareerSiteGenerator";
 
 const queryClient = new QueryClient();
@@ -35,13 +37,18 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/jobs" element={<Jobs />} />
+                <Route path="/jobs/:id" element={<JobDetail />} />
                 <Route path="/applicants" element={<Applicants />} />
                 <Route path="/talent-pool" element={<TalentPool />} />
                 <Route path="/contacts" element={<Contacts />} />
                 <Route path="/companies" element={<Companies />} />
                 <Route path="/deals" element={<Deals />} />
                 <Route path="/form-builders" element={<FormBuilders />} />
-                <Route path="/settings" element={<Settings />} />
+                <Route path="/settings" element={<Settings />}>
+                  <Route index element={<SettingsDefault />} />
+                  <Route path="pipeline" element={<PipelineSettings />} />
+                  {/* Add other settings routes as needed */}
+                </Route>
                 <Route path="/career-site" element={<CareerSiteGenerator />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
