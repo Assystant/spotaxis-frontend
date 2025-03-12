@@ -5,7 +5,6 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Plus, 
   Trash2, 
@@ -20,31 +19,16 @@ type PipelineStage = {
   name: string;
   color: string;
   order: number;
-  category: string;
 };
 
 const defaultStages: PipelineStage[] = [
-  { id: "stage-1", name: "Applied", color: "bg-blue-500", order: 0, category: "applicant" },
-  { id: "stage-2", name: "Screening", color: "bg-purple-500", order: 1, category: "applicant" },
-  { id: "stage-3", name: "Interview", color: "bg-orange-500", order: 2, category: "applicant" },
-  { id: "stage-4", name: "Assessment", color: "bg-yellow-500", order: 3, category: "applicant" },
-  { id: "stage-5", name: "Offer", color: "bg-green-500", order: 4, category: "applicant" },
-  { id: "stage-6", name: "Hired", color: "bg-emerald-500", order: 5, category: "applicant" },
-  { id: "stage-7", name: "Rejected", color: "bg-red-500", order: 6, category: "applicant" },
-  
-  // Default task stages
-  { id: "task-1", name: "To Do", color: "bg-blue-500", order: 0, category: "task" },
-  { id: "task-2", name: "In Progress", color: "bg-yellow-500", order: 1, category: "task" },
-  { id: "task-3", name: "Done", color: "bg-green-500", order: 2, category: "task" },
-  { id: "task-4", name: "Blocked", color: "bg-red-500", order: 3, category: "task" },
-  
-  // Default deal stages
-  { id: "deal-1", name: "Lead", color: "bg-blue-500", order: 0, category: "deal" },
-  { id: "deal-2", name: "Discovery", color: "bg-purple-500", order: 1, category: "deal" },
-  { id: "deal-3", name: "Proposal", color: "bg-yellow-500", order: 2, category: "deal" },
-  { id: "deal-4", name: "Negotiation", color: "bg-orange-500", order: 3, category: "deal" },
-  { id: "deal-5", name: "Closed Won", color: "bg-green-500", order: 4, category: "deal" },
-  { id: "deal-6", name: "Closed Lost", color: "bg-red-500", order: 5, category: "deal" },
+  { id: "stage-1", name: "Applied", color: "bg-blue-500", order: 0 },
+  { id: "stage-2", name: "Screening", color: "bg-purple-500", order: 1 },
+  { id: "stage-3", name: "Interview", color: "bg-orange-500", order: 2 },
+  { id: "stage-4", name: "Assessment", color: "bg-yellow-500", order: 3 },
+  { id: "stage-5", name: "Offer", color: "bg-green-500", order: 4 },
+  { id: "stage-6", name: "Hired", color: "bg-emerald-500", order: 5 },
+  { id: "stage-7", name: "Rejected", color: "bg-red-500", order: 6 },
 ];
 
 const colorOptions = [
@@ -60,18 +44,11 @@ const colorOptions = [
   { label: "Sky", value: "bg-sky-500" }
 ];
 
-const categoryOptions = [
-  { label: "Applicant Pipeline", value: "applicant" },
-  { label: "Task Status", value: "task" },
-  { label: "Deal Stages", value: "deal" },
-];
-
 const PipelineSettings = () => {
   const [stages, setStages] = useState<PipelineStage[]>([]);
   const [newStageName, setNewStageName] = useState("");
   const [newStageColor, setNewStageColor] = useState("bg-blue-500");
-  const [newStageCategory, setNewStageCategory] = useState("applicant");
-  const [activeTab, setActiveTab] = useState("applicant");
+  const [activeTab, setActiveTab] = useState("applicants");
 
   useEffect(() => {
     // Load stages from localStorage or use defaults
@@ -92,11 +69,10 @@ const PipelineSettings = () => {
     if (!newStageName.trim()) return;
 
     const newStage: PipelineStage = {
-      id: `${newStageCategory}-${Date.now()}`,
+      id: `stage-${Date.now()}`,
       name: newStageName,
       color: newStageColor,
-      category: newStageCategory,
-      order: stages.filter(s => s.category === newStageCategory).length,
+      order: stages.length,
     };
 
     setStages([...stages, newStage]);
@@ -120,29 +96,18 @@ const PipelineSettings = () => {
     // Drop outside of a droppable area or same position
     if (!destination || (destination.index === source.index)) return;
 
-    // Only reorder within the same category
-    const sourceCategory = stages.find(s => s.id === result.draggableId)?.category;
-    const filteredStages = stages.filter(s => s.category === sourceCategory);
-    
-    const reorderedStages = Array.from(filteredStages);
+    const reorderedStages = Array.from(stages);
     const [removed] = reorderedStages.splice(source.index, 1);
     reorderedStages.splice(destination.index, 0, removed);
 
-    // Update order property for this category
-    const updatedReorderedStages = reorderedStages.map((stage, index) => ({
+    // Update order property
+    const updatedStages = reorderedStages.map((stage, index) => ({
       ...stage,
       order: index
     }));
 
-    // Replace stages of this category with the updated ones
-    const otherStages = stages.filter(s => s.category !== sourceCategory);
-    setStages([...otherStages, ...updatedReorderedStages]);
+    setStages(updatedStages);
   };
-
-  // Filter stages by active tab/category
-  const filteredStages = stages
-    .filter(stage => stage.category === activeTab)
-    .sort((a, b) => a.order - b.order);
 
   return (
     <PageContainer title="Pipeline Settings">
@@ -156,20 +121,20 @@ const PipelineSettings = () => {
 
         <div className="flex gap-2 border-b mb-6">
           <button 
-            className={`px-4 py-2 font-medium text-sm ${activeTab === 'applicant' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`}
-            onClick={() => setActiveTab('applicant')}
+            className={`px-4 py-2 font-medium text-sm ${activeTab === 'applicants' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`}
+            onClick={() => setActiveTab('applicants')}
           >
             Applicant Pipeline
           </button>
           <button 
-            className={`px-4 py-2 font-medium text-sm ${activeTab === 'task' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`}
-            onClick={() => setActiveTab('task')}
+            className={`px-4 py-2 font-medium text-sm ${activeTab === 'tasks' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`}
+            onClick={() => setActiveTab('tasks')}
           >
             Task Status
           </button>
           <button 
-            className={`px-4 py-2 font-medium text-sm ${activeTab === 'deal' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`}
-            onClick={() => setActiveTab('deal')}
+            className={`px-4 py-2 font-medium text-sm ${activeTab === 'deals' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`}
+            onClick={() => setActiveTab('deals')}
           >
             Deal Stages
           </button>
@@ -179,11 +144,7 @@ const PipelineSettings = () => {
           <div className="lg:col-span-2">
             <Card>
               <CardHeader className="border-b">
-                <h3 className="text-lg font-medium">
-                  {activeTab === 'applicant' ? 'Applicant Pipeline Stages' : 
-                   activeTab === 'task' ? 'Task Status Options' : 
-                   'Deal Pipeline Stages'}
-                </h3>
+                <h3 className="text-lg font-medium">Pipeline Stages</h3>
               </CardHeader>
               <CardContent className="p-6">
                 <DragDropContext onDragEnd={onDragEnd}>
@@ -194,51 +155,53 @@ const PipelineSettings = () => {
                         ref={provided.innerRef}
                         className="space-y-3"
                       >
-                        {filteredStages.map((stage, index) => (
-                          <Draggable
-                            key={stage.id}
-                            draggableId={stage.id}
-                            index={index}
-                          >
-                            {(provided) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                className="flex items-center gap-3 border rounded-md p-3 bg-white"
-                              >
+                        {stages
+                          .sort((a, b) => a.order - b.order)
+                          .map((stage, index) => (
+                            <Draggable
+                              key={stage.id}
+                              draggableId={stage.id}
+                              index={index}
+                            >
+                              {(provided) => (
                                 <div
-                                  {...provided.dragHandleProps}
-                                  className="cursor-grab"
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  className="flex items-center gap-3 border rounded-md p-3 bg-white"
                                 >
-                                  <GripVertical size={16} />
+                                  <div
+                                    {...provided.dragHandleProps}
+                                    className="cursor-grab"
+                                  >
+                                    <GripVertical size={16} />
+                                  </div>
+                                  <div className={`w-4 h-4 rounded-full ${stage.color}`}></div>
+                                  <Input
+                                    value={stage.name}
+                                    onChange={(e) => handleChangeStage(stage.id, "name", e.target.value)}
+                                    className="flex-1"
+                                  />
+                                  <select
+                                    value={stage.color}
+                                    onChange={(e) => handleChangeStage(stage.id, "color", e.target.value)}
+                                    className="p-2 border rounded-md"
+                                  >
+                                    {colorOptions.map((color) => (
+                                      <option key={color.value} value={color.value}>{color.label}</option>
+                                    ))}
+                                  </select>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleRemoveStage(stage.id)}
+                                    className="text-destructive hover:text-destructive/90"
+                                  >
+                                    <Trash2 size={16} />
+                                  </Button>
                                 </div>
-                                <div className={`w-4 h-4 rounded-full ${stage.color}`}></div>
-                                <Input
-                                  value={stage.name}
-                                  onChange={(e) => handleChangeStage(stage.id, "name", e.target.value)}
-                                  className="flex-1"
-                                />
-                                <select
-                                  value={stage.color}
-                                  onChange={(e) => handleChangeStage(stage.id, "color", e.target.value)}
-                                  className="p-2 border rounded-md"
-                                >
-                                  {colorOptions.map((color) => (
-                                    <option key={color.value} value={color.value}>{color.label}</option>
-                                  ))}
-                                </select>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleRemoveStage(stage.id)}
-                                  className="text-destructive hover:text-destructive/90"
-                                >
-                                  <Trash2 size={16} />
-                                </Button>
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
+                              )}
+                            </Draggable>
+                          ))}
                         {provided.placeholder}
                       </div>
                     )}
@@ -268,19 +231,6 @@ const PipelineSettings = () => {
                       ))}
                     </select>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="new-stage-category">Category</Label>
-                    <select
-                      id="new-stage-category"
-                      value={newStageCategory}
-                      onChange={(e) => setNewStageCategory(e.target.value)}
-                      className="w-full p-2 border rounded-md h-10"
-                    >
-                      {categoryOptions.map((category) => (
-                        <option key={category.value} value={category.value}>{category.label}</option>
-                      ))}
-                    </select>
-                  </div>
                   <Button onClick={handleAddStage} className="mb-0">
                     <Plus size={16} className="mr-1" />
                     Add Stage
@@ -299,19 +249,14 @@ const PipelineSettings = () => {
                 <div className="space-y-2">
                   <h4 className="font-medium">Pipeline Management</h4>
                   <p className="text-sm text-muted-foreground">
-                    {activeTab === 'applicant' ? 'Pipelines help you track the progress of candidates through your recruitment process.' :
-                     activeTab === 'task' ? 'Task statuses help you track the progress of work items.' :
-                     'Deal pipelines help you track potential sales through various stages.'}
+                    Pipelines help you track the progress of candidates through your recruitment process.
                   </p>
                 </div>
                 
                 <div className="space-y-2">
                   <h4 className="font-medium">Customization</h4>
                   <p className="text-sm text-muted-foreground">
-                    {activeTab === 'applicant' ? 'Create stages that match your company\'s hiring workflow.' :
-                     activeTab === 'task' ? 'Customize task statuses to fit your team\'s workflow.' :
-                     'Adapt deal stages to your sales process for better tracking.'}
-                    {' '}Drag and drop to reorder stages.
+                    Create stages that match your company's hiring workflow. Drag and drop to reorder stages.
                   </p>
                 </div>
                 
