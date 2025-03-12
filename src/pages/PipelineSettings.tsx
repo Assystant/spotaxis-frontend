@@ -111,42 +111,50 @@ const PipelineSettings = () => {
 
   return (
     <PageContainer title="Pipeline Settings">
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-4 md:space-y-6">
+        <div className="flex flex-col space-y-2 sm:flex-row sm:justify-between sm:items-center">
           <div>
-            <h2 className="text-2xl font-semibold">Pipeline Settings</h2>
-            <p className="text-muted-foreground">Manage your recruitment pipeline stages and workflows</p>
+            <h2 className="text-xl md:text-2xl font-semibold">Pipeline Settings</h2>
+            <p className="text-sm md:text-base text-muted-foreground">
+              Manage your recruitment pipeline stages and workflows
+            </p>
           </div>
         </div>
 
-        <div className="flex gap-2 border-b mb-6">
+        <div className="flex gap-2 border-b overflow-x-auto pb-2 -mx-2 px-2 md:mx-0 md:px-0">
           <button 
-            className={`px-4 py-2 font-medium text-sm ${activeTab === 'applicants' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`}
+            className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${
+              activeTab === 'applicants' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'
+            }`}
             onClick={() => setActiveTab('applicants')}
           >
             Applicant Pipeline
           </button>
           <button 
-            className={`px-4 py-2 font-medium text-sm ${activeTab === 'tasks' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`}
+            className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${
+              activeTab === 'tasks' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'
+            }`}
             onClick={() => setActiveTab('tasks')}
           >
             Task Status
           </button>
           <button 
-            className={`px-4 py-2 font-medium text-sm ${activeTab === 'deals' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`}
+            className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${
+              activeTab === 'deals' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'
+            }`}
             onClick={() => setActiveTab('deals')}
           >
             Deal Stages
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           <div className="lg:col-span-2">
             <Card>
               <CardHeader className="border-b">
                 <h3 className="text-lg font-medium">Pipeline Stages</h3>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-4 md:p-6">
                 <DragDropContext onDragEnd={onDragEnd}>
                   <Droppable droppableId="stages">
                     {(provided) => (
@@ -167,7 +175,7 @@ const PipelineSettings = () => {
                                 <div
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
-                                  className="flex items-center gap-3 border rounded-md p-3 bg-white"
+                                  className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 border rounded-md p-3 bg-white"
                                 >
                                   <div
                                     {...provided.dragHandleProps}
@@ -179,15 +187,17 @@ const PipelineSettings = () => {
                                   <Input
                                     value={stage.name}
                                     onChange={(e) => handleChangeStage(stage.id, "name", e.target.value)}
-                                    className="flex-1"
+                                    className="flex-1 min-w-0"
                                   />
                                   <select
                                     value={stage.color}
                                     onChange={(e) => handleChangeStage(stage.id, "color", e.target.value)}
-                                    className="p-2 border rounded-md"
+                                    className="w-full sm:w-auto p-2 border rounded-md"
                                   >
                                     {colorOptions.map((color) => (
-                                      <option key={color.value} value={color.value}>{color.label}</option>
+                                      <option key={color.value} value={color.value}>
+                                        {color.label}
+                                      </option>
                                     ))}
                                   </select>
                                   <Button
@@ -208,8 +218,8 @@ const PipelineSettings = () => {
                   </Droppable>
                 </DragDropContext>
 
-                <div className="mt-6 flex items-end gap-3">
-                  <div className="flex-1 space-y-2">
+                <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-end gap-3">
+                  <div className="w-full sm:flex-1 space-y-2">
                     <Label htmlFor="new-stage-name">New Stage Name</Label>
                     <Input
                       id="new-stage-name"
@@ -218,7 +228,7 @@ const PipelineSettings = () => {
                       placeholder="Enter stage name"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="w-full sm:w-auto space-y-2">
                     <Label htmlFor="new-stage-color">Color</Label>
                     <select
                       id="new-stage-color"
@@ -227,11 +237,13 @@ const PipelineSettings = () => {
                       className="w-full p-2 border rounded-md h-10"
                     >
                       {colorOptions.map((color) => (
-                        <option key={color.value} value={color.value}>{color.label}</option>
+                        <option key={color.value} value={color.value}>
+                          {color.label}
+                        </option>
                       ))}
                     </select>
                   </div>
-                  <Button onClick={handleAddStage} className="mb-0">
+                  <Button onClick={handleAddStage} className="w-full sm:w-auto mt-2 sm:mt-0">
                     <Plus size={16} className="mr-1" />
                     Add Stage
                   </Button>
@@ -240,42 +252,40 @@ const PipelineSettings = () => {
             </Card>
           </div>
 
-          <div>
-            <Card>
-              <CardHeader className="border-b">
-                <h3 className="text-lg font-medium">Tips & Help</h3>
-              </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium">Pipeline Management</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Pipelines help you track the progress of candidates through your recruitment process.
-                  </p>
-                </div>
-                
-                <div className="space-y-2">
-                  <h4 className="font-medium">Customization</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Create stages that match your company's hiring workflow. Drag and drop to reorder stages.
-                  </p>
-                </div>
-                
-                <div className="space-y-2">
-                  <h4 className="font-medium">Best Practices</h4>
-                  <ul className="text-sm text-muted-foreground list-disc pl-4 space-y-1">
-                    <li>Keep your pipeline stages clear and concise</li>
-                    <li>Use colors to visually differentiate stages</li>
-                    <li>Limit the number of stages to avoid complexity</li>
-                  </ul>
-                </div>
-                
-                <Button variant="outline" className="w-full">
-                  <SettingsIcon size={14} className="mr-2" />
-                  Advanced Settings
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+          <Card className="h-fit">
+            <CardHeader className="border-b">
+              <h3 className="text-lg font-medium">Tips & Help</h3>
+            </CardHeader>
+            <CardContent className="p-4 md:p-6 space-y-4">
+              <div className="space-y-2">
+                <h4 className="font-medium">Pipeline Management</h4>
+                <p className="text-sm text-muted-foreground">
+                  Pipelines help you track the progress of candidates through your recruitment process.
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <h4 className="font-medium">Customization</h4>
+                <p className="text-sm text-muted-foreground">
+                  Create stages that match your company's hiring workflow. Drag and drop to reorder stages.
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <h4 className="font-medium">Best Practices</h4>
+                <ul className="text-sm text-muted-foreground list-disc pl-4 space-y-1">
+                  <li>Keep your pipeline stages clear and concise</li>
+                  <li>Use colors to visually differentiate stages</li>
+                  <li>Limit the number of stages to avoid complexity</li>
+                </ul>
+              </div>
+              
+              <Button variant="outline" className="w-full">
+                <SettingsIcon size={14} className="mr-2" />
+                Advanced Settings
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </PageContainer>
