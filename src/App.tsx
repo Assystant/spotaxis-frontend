@@ -18,6 +18,7 @@ import Contacts from "./pages/Contacts";
 import Companies from "./pages/Companies";
 import Deals from "./pages/Deals";
 import FormBuilders from "./pages/FormBuilders";
+import FormBuilder from "./pages/FormBuilder";
 import Settings, { SettingsDefault } from "./pages/Settings";
 import PipelineSettings from "./pages/PipelineSettings";
 import CareerSiteGenerator from "./pages/CareerSiteGenerator";
@@ -48,6 +49,7 @@ const App = () => (
                 <Route path="/companies" element={<Companies />} />
                 <Route path="/deals" element={<Deals />} />
                 <Route path="/form-builders" element={<FormBuilders />} />
+                <Route path="/form-builder" element={<FormBuilder />} />
                 <Route path="/settings" element={<Settings />}>
                   <Route index element={<SettingsDefault />} />
                   <Route path="pipeline" element={<PipelineSettings />} />
