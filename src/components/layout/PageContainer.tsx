@@ -7,16 +7,20 @@ type PageContainerProps = {
   children: React.ReactNode;
   title: string;
   className?: string;
+  actionButton?: React.ReactNode;
+  description?: string;
 };
 
 export const PageContainer = ({
   children,
   title,
   className,
+  actionButton,
+  description,
 }: PageContainerProps) => {
   return (
     <div className="ml-64 min-h-screen flex flex-col">
-      <Header title={title} />
+      <Header title={title} description={description} actionButton={actionButton} />
       <main className={cn(
         "flex-1 p-6 animate-fade-in",
         className
