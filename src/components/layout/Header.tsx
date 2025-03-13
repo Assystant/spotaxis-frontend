@@ -4,20 +4,37 @@ import { cn } from "@/lib/utils";
 
 type HeaderProps = {
   title: string;
+  description?: string;
+  actionButton?: React.ReactNode;
   sidebarCollapsed?: boolean;
 };
 
-export const Header = ({ title, sidebarCollapsed = false }: HeaderProps) => {
+export const Header = ({ 
+  title, 
+  description, 
+  actionButton, 
+  sidebarCollapsed = false 
+}: HeaderProps) => {
   return (
     <header className="h-16 px-6 border-b border-border flex items-center justify-between bg-background/80 backdrop-blur-sm sticky top-0 z-30">
-      <h1 className={cn(
-        "text-xl font-medium tracking-tight",
-        "animate-slide-in-left"
+      <div className={cn(
+        "animate-slide-in-left flex flex-col justify-center"
       )}>
-        {title}
-      </h1>
+        <h1 className="text-xl font-medium tracking-tight">
+          {title}
+        </h1>
+        {description && (
+          <p className="text-sm text-muted-foreground">{description}</p>
+        )}
+      </div>
       
       <div className="flex items-center gap-4">
+        {actionButton && (
+          <div className="mr-2">
+            {actionButton}
+          </div>
+        )}
+        
         <div className="relative">
           <button className="p-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/50 transition-colors">
             <Bell size={18} />
