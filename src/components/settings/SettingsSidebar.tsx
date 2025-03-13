@@ -10,7 +10,9 @@ import {
   Globe,
   CreditCard,
   Kanban,
-  Workflow
+  Workflow,
+  UserCog,
+  Sliders
 } from "lucide-react";
 
 const navItems = [
@@ -22,13 +24,15 @@ const navItems = [
   { icon: CreditCard, label: "Billing", path: "/settings/billing" },
   { icon: Kanban, label: "Pipeline Manager", path: "/settings/pipeline" },
   { icon: Workflow, label: "Workflow", path: "/settings/workflow" },
+  { icon: UserCog, label: "User Roles", path: "/settings/user-roles" },
+  { icon: Sliders, label: "System Settings", path: "/settings/system" },
 ];
 
 export const SettingsSidebar = () => {
   const location = useLocation();
 
   return (
-    <div className="w-64 border-r h-full">
+    <div className="w-64 border-r h-full overflow-y-auto">
       <div className="p-4">
         <h2 className="font-semibold text-xl flex items-center gap-2">
           <Settings size={20} />

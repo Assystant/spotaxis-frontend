@@ -21,6 +21,8 @@ import FormBuilders from "./pages/FormBuilders";
 import Settings, { SettingsDefault } from "./pages/Settings";
 import PipelineSettings from "./pages/PipelineSettings";
 import CareerSiteGenerator from "./pages/CareerSiteGenerator";
+import UserRoleSettings from "./pages/UserRoleSettings";
+import SystemSettings from "./pages/SystemSettings";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +51,8 @@ const App = () => (
                 <Route path="/settings" element={<Settings />}>
                   <Route index element={<SettingsDefault />} />
                   <Route path="pipeline" element={<PipelineSettings />} />
+                  <Route path="user-roles" element={<UserRoleSettings />} />
+                  <Route path="system" element={<SystemSettings />} />
                   {/* Add other settings routes as needed */}
                 </Route>
                 <Route path="/career-site" element={<CareerSiteGenerator />} />
