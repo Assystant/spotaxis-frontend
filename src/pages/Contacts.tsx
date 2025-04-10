@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
-import { Plus, Filter, Download, Upload, Search, MoreHorizontal, Mail, Phone, MapPin, Check } from "lucide-react";
+import { Plus, Filter, Download, Upload, Search, MoreHorizontal, Mail, Phone, MapPin, Check, Briefcase } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -12,18 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import { Avatar } from "@/components/ui/avatar";
 
 // Mock data for contacts
 const mockContacts = [

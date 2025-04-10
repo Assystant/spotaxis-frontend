@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Mail, Clock, Download, Reply, ReplyAll, Forward } from "lucide-react";
+import { Mail, Clock, Download, Reply, ReplyAll, Forward, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
