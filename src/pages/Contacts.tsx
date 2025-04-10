@@ -11,6 +11,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import { Avatar } from "@/components/ui/avatar";
 
 // Mock data for contacts
 const mockContacts = [
