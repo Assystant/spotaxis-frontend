@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { 
   Card, 
@@ -21,9 +20,14 @@ import {
   Edit3,
   Briefcase,
   Tag,
-  ChevronsRight
+  ChevronsRight,
+  SendHorizontal,
+  ArrowLeft,
+  Paperclip
 } from "lucide-react";
 import { mockApplicants } from "@/data/mockApplicants";
+import { EmailThread } from "@/components/email/EmailThread";
+import { ComposeEmail } from "@/components/email/ComposeEmail";
 
 interface ApplicantDetailProps {
   id: string;
@@ -32,6 +36,7 @@ interface ApplicantDetailProps {
 export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
   const [applicant, setApplicant] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isComposing, setIsComposing] = useState(false);
 
   useEffect(() => {
     // In a real app, this would be an API call
@@ -281,17 +286,31 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
           </TabsContent>
 
           <TabsContent value="emails" className="p-4">
-            <div className="border rounded-lg p-6 text-center">
-              <Mail size={48} className="mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">Email Communication</h3>
-              <p className="text-muted-foreground mb-4">
-                View and send emails to the applicant
-              </p>
-              <Button className="gap-2">
-                <Mail size={14} />
-                Compose Email
-              </Button>
-            </div>
+            {isComposing ? (
+              <ComposeEmail 
+                recipient={applicant}
+                onCancel={() => setIsComposing(false)}
+                onSend={() => {
+                  setIsComposing(false);
+                  // In a real app, this would trigger an API call to send the email
+                }}
+              />
+            ) : (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-medium">Email Communication</h3>
+                  <Button 
+                    onClick={() => setIsComposing(true)}
+                    className="gap-2"
+                  >
+                    <Mail size={14} />
+                    Compose Email
+                  </Button>
+                </div>
+                
+                <EmailThread applicantId={applicant.id} />
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </CardContent>
