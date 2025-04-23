@@ -8,15 +8,61 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { mockJobs } from "@/components/jobs/JobsTable";
 
+// Example stages for the job applicants
+const applicantStages = [
+  { id: "new", name: "New", color: "bg-blue-500", order: 0 },
+  { id: "screening", name: "Screening", color: "bg-purple-500", order: 1 },
+  { id: "interview", name: "Interview", color: "bg-amber-500", order: 2 },
+  { id: "offer", name: "Offer", color: "bg-green-500", order: 3 },
+  { id: "rejected", name: "Rejected", color: "bg-red-500", order: 4 }
+];
+
+// Mock applicants data
+const mockApplicants = [
+  {
+    id: "app1",
+    name: "John Doe",
+    email: "john@example.com",
+    phone: "123-456-7890",
+    stage: "new",
+    appliedDate: "2023-05-10",
+    jobId: "job1"
+  },
+  {
+    id: "app2",
+    name: "Jane Smith",
+    email: "jane@example.com",
+    phone: "123-456-7891",
+    stage: "screening",
+    appliedDate: "2023-05-12",
+    jobId: "job1"
+  },
+  {
+    id: "app3",
+    name: "Bob Johnson",
+    email: "bob@example.com",
+    phone: "123-456-7892",
+    stage: "interview",
+    appliedDate: "2023-05-15",
+    jobId: "job2"
+  }
+];
+
 const JobDetail = () => {
   const { id } = useParams();
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [applicants, setApplicants] = useState<any[]>([]);
 
   useEffect(() => {
     // In a real app, fetch the job from an API
     const jobData = mockJobs.find(j => j.id === id);
     setJob(jobData);
+    
+    // Filter applicants based on the job ID
+    const jobApplicants = mockApplicants.filter(a => a.jobId === id);
+    setApplicants(jobApplicants);
+    
     setLoading(false);
   }, [id]);
 
@@ -128,7 +174,11 @@ const JobDetail = () => {
         {/* Kanban Board */}
         <div className="mt-8">
           <h2 className="text-xl font-semibold mb-4">Applicant Pipeline</h2>
-          <KanbanBoard jobId={job.id} />
+          <KanbanBoard 
+            stages={applicantStages} 
+            items={applicants}
+            entityType="applicant"
+          />
         </div>
       </div>
     </PageContainer>

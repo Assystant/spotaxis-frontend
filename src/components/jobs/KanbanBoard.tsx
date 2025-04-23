@@ -1,9 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { Plus, MoreHorizontal, FileText, Mail, Phone, Building2, DollarSign, Calendar, User2 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { Badge } from "@/components/ui/badge";
 
 type ApplicantType = {
   id: string;
@@ -42,17 +44,19 @@ type StageType = {
 export type KanbanEntityType = "applicant" | "deal";
 
 interface KanbanBoardProps {
-  stages: StageType[];
-  items: ApplicantType[] | DealType[];
-  entityType: KanbanEntityType;
+  stages?: StageType[];
+  items?: ApplicantType[] | DealType[];
+  entityType?: KanbanEntityType;
   onStageChange?: (itemId: string, newStageId: string) => void;
+  jobId?: string; // Added the jobId prop
 }
 
 export const KanbanBoard = ({
-  stages,
-  items,
-  entityType,
+  stages = [],
+  items = [],
+  entityType = "applicant",
   onStageChange,
+  jobId,
 }: KanbanBoardProps) => {
   const [localItems, setLocalItems] = useState<(ApplicantType | DealType)[]>(items);
 
