@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
@@ -24,8 +23,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { KanbanBoard } from "@/components/jobs/KanbanBoard";
 
-// Mock data for deals
 const mockDeals = [
   {
     id: "1",
@@ -94,7 +93,6 @@ const mockDeals = [
   }
 ];
 
-// Deal stages for the Kanban view
 const dealStages = [
   { id: "discovery", name: "Discovery", color: "bg-blue-100 text-blue-800" },
   { id: "qualification", name: "Qualification", color: "bg-purple-100 text-purple-800" },
@@ -104,35 +102,40 @@ const dealStages = [
   { id: "closed-lost", name: "Closed Lost", color: "bg-red-100 text-red-800" }
 ];
 
+const formattedDealStages = dealStages.map((stage, idx) => ({
+  id: stage.id,
+  name: stage.name,
+  color: stage.color.replace("text-", "").replace("bg-", "bg-"),
+  order: idx,
+}));
+
 const Deals = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredDeals = mockDeals.filter(deal => 
+  const filteredDeals = mockDeals.filter((deal) =>
     deal.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     deal.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
     deal.contactName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Group deals by stage for Kanban view
   const dealsByStage = dealStages.reduce((acc, stage) => {
     acc[stage.id] = filteredDeals.filter(
-      deal => deal.stage.toLowerCase().replace(' ', '-') === stage.id
+      (deal) => deal.stage.toLowerCase().replace(' ', '-') === stage.id
     );
     return acc;
   }, {} as Record<string, typeof mockDeals>);
 
-  // Format currency
   const formatCurrency = (value: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency, 
-      maximumFractionDigits: 0 
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
   return (
-    <PageContainer 
-      title="Deals" 
+    <PageContainer
+      title="Deals"
       description="Manage your sales pipeline and revenue opportunities"
       actionButton={
         <Button size="sm" className="gap-1">
@@ -227,7 +230,7 @@ const Deals = () => {
               <TabsTrigger value="kanban">Kanban View</TabsTrigger>
             </TabsList>
           </div>
-          
+
           <TabsContent value="list" className="p-0">
             <div className="rounded-md overflow-hidden">
               <Table>
@@ -314,63 +317,16 @@ const Deals = () => {
               </Table>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="kanban" className="p-4">
-            <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 overflow-x-auto min-w-max">
-              {dealStages.map((stage) => (
-                <div key={stage.id} className="w-72">
-                  <div className={`p-3 rounded-t-md ${stage.color} font-medium text-sm`}>
-                    <div className="flex justify-between items-center">
-                      <span>{stage.name}</span>
-                      <span className="px-2 py-0.5 bg-white rounded-full text-xs">
-                        {dealsByStage[stage.id]?.length || 0}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-slate-50 rounded-b-md p-2 min-h-[300px]">
-                    <div className="space-y-2">
-                      {dealsByStage[stage.id]?.map((deal) => (
-                        <Card key={deal.id} className="bg-white p-3 shadow-sm hover:shadow-md transition-shadow cursor-grab">
-                          <div>
-                            <div className="font-medium mb-1 truncate">{deal.title}</div>
-                            <div className="text-xs text-muted-foreground mb-2">
-                              {deal.company}
-                            </div>
-                          </div>
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm font-semibold">
-                              {formatCurrency(deal.value, deal.currency)}
-                            </span>
-                            <Badge variant="outline" className="text-xs">
-                              {deal.probability}%
-                            </Badge>
-                          </div>
-                          <div className="flex justify-between items-center text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-3 w-3" />
-                              {new Date(deal.closeDate).toLocaleDateString()}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <User2 className="h-3 w-3" />
-                              {deal.contactName.split(' ')[0]}
-                            </div>
-                          </div>
-                        </Card>
-                      ))}
-                      
-                      {(!dealsByStage[stage.id] || dealsByStage[stage.id].length === 0) && (
-                        <div className="border-2 border-dashed border-muted-foreground/20 rounded-md p-4 flex items-center justify-center h-16">
-                          <span className="text-xs text-muted-foreground">
-                            No deals in this stage
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <KanbanBoard
+              stages={formattedDealStages}
+              items={filteredDeals.map((deal) => ({
+                ...deal,
+                stage: deal.stage.toLowerCase().replace(' ', '-'),
+              }))}
+              entityType="deal"
+            />
           </TabsContent>
         </Tabs>
       </Card>

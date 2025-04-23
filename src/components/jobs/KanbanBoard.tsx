@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
-import { Plus, MoreHorizontal, FileText, Mail, Phone } from "lucide-react";
+import { Plus, MoreHorizontal, FileText, Mail, Phone, Building2, DollarSign, Calendar, User2 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 type ApplicantType = {
@@ -18,6 +17,20 @@ type ApplicantType = {
   jobId: string;
 };
 
+type DealType = {
+  id: string;
+  title: string;
+  company: string;
+  contactName: string;
+  value: number;
+  currency: string;
+  stage: string;
+  progress: number;
+  probability: number;
+  closeDate: string;
+  createdDate: string;
+};
+
 type StageType = {
   id: string;
   name: string;
@@ -26,159 +39,59 @@ type StageType = {
   applicants?: ApplicantType[];
 };
 
-// Mock data for pipeline stages
-const defaultStages: StageType[] = [
-  { id: "stage-1", name: "Applied", color: "bg-blue-500", order: 0 },
-  { id: "stage-2", name: "Screening", color: "bg-purple-500", order: 1 },
-  { id: "stage-3", name: "Interview", color: "bg-orange-500", order: 2 },
-  { id: "stage-4", name: "Assessment", color: "bg-yellow-500", order: 3 },
-  { id: "stage-5", name: "Offer", color: "bg-green-500", order: 4 },
-  { id: "stage-6", name: "Hired", color: "bg-emerald-500", order: 5 },
-  { id: "stage-7", name: "Rejected", color: "bg-red-500", order: 6 },
-];
-
-// Mock data for applicants
-const mockApplicants: ApplicantType[] = [
-  {
-    id: "app-1",
-    name: "Sarah Johnson",
-    email: "sarah.j@example.com",
-    phone: "(555) 123-4567",
-    stage: "stage-1",
-    appliedDate: "2023-08-15",
-    jobId: "1",
-  },
-  {
-    id: "app-2",
-    name: "Michael Chen",
-    email: "m.chen@example.com",
-    phone: "(555) 987-6543",
-    stage: "stage-1",
-    appliedDate: "2023-08-14",
-    jobId: "1",
-  },
-  {
-    id: "app-3",
-    name: "Aisha Patel",
-    email: "aisha.p@example.com",
-    phone: "(555) 456-7890",
-    stage: "stage-2",
-    appliedDate: "2023-08-10",
-    jobId: "1",
-  },
-  {
-    id: "app-4",
-    name: "John Smith",
-    email: "john.smith@example.com",
-    phone: "(555) 111-2222",
-    stage: "stage-3",
-    appliedDate: "2023-08-05",
-    jobId: "1",
-  },
-  {
-    id: "app-5",
-    name: "Emma Wilson",
-    email: "emma.w@example.com",
-    phone: "(555) 333-4444",
-    stage: "stage-4",
-    appliedDate: "2023-08-01",
-    jobId: "1",
-  },
-  {
-    id: "app-6",
-    name: "David Rodriguez",
-    email: "david.r@example.com",
-    phone: "(555) 555-6666",
-    stage: "stage-5",
-    appliedDate: "2023-07-25",
-    jobId: "2",
-  },
-  {
-    id: "app-7",
-    name: "Lisa Thompson",
-    email: "lisa.t@example.com",
-    phone: "(555) 777-8888",
-    stage: "stage-6",
-    appliedDate: "2023-07-20",
-    jobId: "2",
-  },
-  {
-    id: "app-8",
-    name: "James Wilson",
-    email: "james.w@example.com",
-    phone: "(555) 999-0000",
-    stage: "stage-7",
-    appliedDate: "2023-07-15",
-    jobId: "2",
-  }
-];
+export type KanbanEntityType = "applicant" | "deal";
 
 interface KanbanBoardProps {
-  jobId: string;
+  stages: StageType[];
+  items: ApplicantType[] | DealType[];
+  entityType: KanbanEntityType;
+  onStageChange?: (itemId: string, newStageId: string) => void;
 }
 
-export const KanbanBoard = ({ jobId }: KanbanBoardProps) => {
-  // In a real app, we would fetch these from an API
-  const [stages, setStages] = useState<StageType[]>([]);
-  const [applicants, setApplicants] = useState<ApplicantType[]>([]);
+export const KanbanBoard = ({
+  stages,
+  items,
+  entityType,
+  onStageChange,
+}: KanbanBoardProps) => {
+  const [localItems, setLocalItems] = useState<(ApplicantType | DealType)[]>(items);
 
   useEffect(() => {
-    // Simulate fetching pipeline stages
-    const fetchStages = async () => {
-      // In a real app, get this from an API or context
-      const storedStages = localStorage.getItem('pipelineStages');
-      if (storedStages) {
-        setStages(JSON.parse(storedStages));
-      } else {
-        setStages(defaultStages);
-      }
-    };
-    
-    // Simulate fetching applicants for this job
-    const fetchApplicants = async () => {
-      const filteredApplicants = mockApplicants.filter(app => app.jobId === jobId);
-      setApplicants(filteredApplicants);
-    };
-    
-    fetchStages();
-    fetchApplicants();
-  }, [jobId]);
+    setLocalItems(items);
+  }, [items]);
 
   const onDragEnd = (result: any) => {
     const { destination, source, draggableId } = result;
-
-    // Drop outside of a droppable area
     if (!destination) return;
-
-    // Drop in the same place
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
     ) {
       return;
     }
-
-    // Update the applicant's stage
-    setApplicants(prevApplicants => 
-      prevApplicants.map(applicant => 
-        applicant.id === draggableId 
-          ? { ...applicant, stage: destination.droppableId }
-          : applicant
+    setLocalItems((prev) =>
+      prev.map((item) =>
+        item.id === draggableId
+          ? { ...item, stage: destination.droppableId }
+          : item
       )
     );
+    if (onStageChange) {
+      onStageChange(draggableId, destination.droppableId);
+    }
   };
 
-  // Group applicants by stage
-  const applicantsByStage = stages.reduce((acc, stage) => {
-    acc[stage.id] = applicants.filter(app => app.stage === stage.id);
+  // Group by stage
+  const itemsByStage = stages.reduce((acc, stage) => {
+    acc[stage.id] = localItems.filter((item) => item.stage === stage.id);
     return acc;
-  }, {} as Record<string, ApplicantType[]>);
+  }, {} as Record<string, typeof localItems>);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="overflow-x-auto pb-6">
         <div className="flex gap-4 min-w-max">
-          {stages.sort((a, b) => a.order - b.order).map(stage => (
+          {stages.sort((a, b) => a.order - b.order).map((stage) => (
             <div key={stage.id} className="w-72 flex-shrink-0">
               <Card className="h-full">
                 <CardHeader className="p-4 flex flex-row items-center justify-between">
@@ -186,7 +99,7 @@ export const KanbanBoard = ({ jobId }: KanbanBoardProps) => {
                     <div className={`w-3 h-3 rounded-full ${stage.color}`}></div>
                     <h3 className="font-medium">{stage.name}</h3>
                     <span className="text-xs bg-slate-100 px-2 py-1 rounded-full">
-                      {applicantsByStage[stage.id]?.length || 0}
+                      {itemsByStage[stage.id]?.length || 0}
                     </span>
                   </div>
                   <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -195,15 +108,15 @@ export const KanbanBoard = ({ jobId }: KanbanBoardProps) => {
                 </CardHeader>
                 <Droppable droppableId={stage.id}>
                   {(provided) => (
-                    <CardContent 
+                    <CardContent
                       className="p-2 h-[calc(100vh-300px)] overflow-y-auto"
                       {...provided.droppableProps}
                       ref={provided.innerRef}
                     >
-                      {applicantsByStage[stage.id]?.map((applicant, index) => (
-                        <Draggable 
-                          key={applicant.id} 
-                          draggableId={applicant.id} 
+                      {itemsByStage[stage.id]?.map((item, index) => (
+                        <Draggable
+                          key={item.id}
+                          draggableId={item.id}
                           index={index}
                         >
                           {(provided) => (
@@ -213,33 +126,65 @@ export const KanbanBoard = ({ jobId }: KanbanBoardProps) => {
                               {...provided.dragHandleProps}
                               className="mb-2"
                             >
-                              <Card className="p-3 hover:shadow-md transition-shadow">
-                                <div className="flex gap-3 items-start">
-                                  <Avatar className="h-10 w-10">
-                                    <div className="bg-primary text-primary-foreground flex items-center justify-center h-full w-full rounded-full text-sm">
-                                      {applicant.name.charAt(0)}
+                              {entityType === "applicant" ? (
+                                // Applicant Card
+                                <Card className="p-3 hover:shadow-md transition-shadow">
+                                  <div className="flex gap-3 items-start">
+                                    <Avatar className="h-10 w-10">
+                                      <div className="bg-primary text-primary-foreground flex items-center justify-center h-full w-full rounded-full text-sm">
+                                        {((item as ApplicantType).name || "?").charAt(0)}
+                                      </div>
+                                    </Avatar>
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="font-medium text-sm truncate">{(item as ApplicantType).name}</h4>
+                                      <p className="text-xs text-muted-foreground truncate">{(item as ApplicantType).email}</p>
+                                      <div className="flex gap-2 mt-2">
+                                        <Button variant="outline" size="sm" className="h-7 px-2">
+                                          <FileText size={14} />
+                                        </Button>
+                                        <Button variant="outline" size="sm" className="h-7 px-2">
+                                          <Mail size={14} />
+                                        </Button>
+                                        <Button variant="outline" size="sm" className="h-7 px-2">
+                                          <Phone size={14} />
+                                        </Button>
+                                      </div>
                                     </div>
-                                  </Avatar>
-                                  <div className="flex-1 min-w-0">
-                                    <h4 className="font-medium text-sm truncate">{applicant.name}</h4>
-                                    <p className="text-xs text-muted-foreground truncate">{applicant.email}</p>
-                                    <div className="flex gap-2 mt-2">
-                                      <Button variant="outline" size="sm" className="h-7 px-2">
-                                        <FileText size={14} />
-                                      </Button>
-                                      <Button variant="outline" size="sm" className="h-7 px-2">
-                                        <Mail size={14} />
-                                      </Button>
-                                      <Button variant="outline" size="sm" className="h-7 px-2">
-                                        <Phone size={14} />
-                                      </Button>
+                                    <div className="text-xs text-muted-foreground whitespace-nowrap">
+                                      {new Date((item as ApplicantType).appliedDate).toLocaleDateString()}
                                     </div>
                                   </div>
-                                  <div className="text-xs text-muted-foreground whitespace-nowrap">
-                                    {new Date(applicant.appliedDate).toLocaleDateString()}
+                                </Card>
+                              ) : (
+                                // Deal Card
+                                <Card className="bg-white p-3 shadow-sm hover:shadow-md transition-shadow cursor-grab">
+                                  <div>
+                                    <div className="font-medium mb-1 truncate">{(item as DealType).title}</div>
+                                    <div className="text-xs text-muted-foreground mb-2 flex gap-1 items-center">
+                                      <Building2 className="h-3 w-3" />
+                                      {(item as DealType).company}
+                                    </div>
                                   </div>
-                                </div>
-                              </Card>
+                                  <div className="flex justify-between items-center mb-2">
+                                    <span className="text-sm font-semibold">
+                                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: (item as DealType).currency, maximumFractionDigits: 0 }).format((item as DealType).value)}
+                                    </span>
+                                    <Badge variant="outline" className="text-xs">
+                                      {(item as DealType).probability}%
+                                    </Badge>
+                                  </div>
+                                  <div className="flex justify-between items-center text-xs text-muted-foreground">
+                                    <div className="flex items-center gap-1">
+                                      <Calendar className="h-3 w-3" />
+                                      {new Date((item as DealType).closeDate).toLocaleDateString()}
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <User2 className="h-3 w-3" />
+                                      {(item as DealType).contactName.split(' ')[0]}
+                                    </div>
+                                  </div>
+                                </Card>
+                              )}
                             </div>
                           )}
                         </Draggable>
@@ -247,7 +192,7 @@ export const KanbanBoard = ({ jobId }: KanbanBoardProps) => {
                       {provided.placeholder}
                       <Button variant="ghost" size="sm" className="w-full mt-2 text-muted-foreground">
                         <Plus size={14} className="mr-1" />
-                        Add Applicant
+                        Add {entityType === "applicant" ? "Applicant" : "Deal"}
                       </Button>
                     </CardContent>
                   )}
@@ -260,3 +205,6 @@ export const KanbanBoard = ({ jobId }: KanbanBoardProps) => {
     </DragDropContext>
   );
 };
+
+// For legacy imports
+export default KanbanBoard;
