@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -36,13 +37,14 @@
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 0%;
-    --sidebar-foreground: 0 0% 100%;
+    /* Updated sidebar to use a light theme that complements black */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 20%;
     --sidebar-primary: 0 0% 0%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 15%;
+    --sidebar-accent: 0 0% 95%;
+    --sidebar-accent-foreground: 0 0% 20%;
+    --sidebar-border: 210 20% 93%;
     --sidebar-ring: 0 0% 0%;
   }
 
@@ -75,13 +77,14 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 0 0% 0%;
 
-    --sidebar-background: 0 0% 0%;
-    --sidebar-foreground: 210 40% 98%;
+    /* Updated dark mode sidebar colors to be lighter */
+    --sidebar-background: 210 15% 95%;
+    --sidebar-foreground: 215 20% 25%;
     --sidebar-primary: 0 0% 0%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 20%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 0 0% 20%;
+    --sidebar-accent: 210 15% 90%;
+    --sidebar-accent-foreground: 215 20% 25%;
+    --sidebar-border: 210 20% 88%;
     --sidebar-ring: 0 0% 0%;
   }
 }
