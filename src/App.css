@@ -1,3 +1,4 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -5,6 +6,17 @@
   text-align: center;
 }
 
+/* Update button hover states for black primary color */
+.button-primary {
+  background-color: #000;
+  color: #fff;
+}
+
+.button-primary:hover {
+  background-color: #333;
+}
+
+/* Update logo hover effect to match black theme */
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -12,10 +24,10 @@
   transition: filter 300ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em #000000aa);
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em #000000aa);
 }
 
 @keyframes logo-spin {
@@ -38,5 +50,5 @@
 }
 
 .read-the-docs {
-  color: #888;
+  color: #555; /* Darker gray to complement black */
 }
