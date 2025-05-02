@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -22,7 +21,7 @@ import {
   CreditCard,
   Wallet,
   Receipt,
-  Task,
+  CheckSquare,
   CalendarDays
 } from "lucide-react";
 
@@ -66,7 +65,7 @@ export const Sidebar = ({ activeSidebar = "dashboard" }) => {
   
   const dashboardNavItems = [
     { icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
-    { icon: Task, label: "Tasks", path: "/tasks" },
+    { icon: CheckSquare, label: "Tasks", path: "/tasks" },
     { icon: CalendarDays, label: "Calendar", path: "/calendar" }
   ];
 
