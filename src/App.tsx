@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,16 +29,18 @@ import SystemSettings from "./pages/SystemSettings";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <div className="flex min-h-screen">
-          <MainMenu />
-          <div className="flex flex-1">
-            <Sidebar />
+const App = () => {
+  const [activeSidebar, setActiveSidebar] = useState("dashboard");
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <div className="flex min-h-screen">
+            <MainMenu setActiveSidebar={setActiveSidebar} />
+            <Sidebar activeSidebar={activeSidebar} />
             <div className="flex-1 transition-all duration-300">
               <AnimatePresence mode="wait">
                 <Routes>
@@ -58,7 +61,6 @@ const App = () => (
                     <Route path="pipeline" element={<PipelineSettings />} />
                     <Route path="user-roles" element={<UserRoleSettings />} />
                     <Route path="system" element={<SystemSettings />} />
-                    {/* Add other settings routes as needed */}
                   </Route>
                   <Route path="/career-site" element={<CareerSiteGenerator />} />
                   <Route path="*" element={<NotFound />} />
@@ -66,10 +68,10 @@ const App = () => (
               </AnimatePresence>
             </div>
           </div>
-        </div>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

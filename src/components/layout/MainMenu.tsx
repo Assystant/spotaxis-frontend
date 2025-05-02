@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -8,7 +8,8 @@ import {
   Briefcase,
   ShoppingBag,
   Wallet,
-  Settings
+  Settings,
+  ChevronRight
 } from "lucide-react";
 
 type MainMenuItemProps = {
@@ -16,14 +17,15 @@ type MainMenuItemProps = {
   label: string;
   path: string;
   active: boolean;
+  onClick: () => void;
 };
 
-const MainMenuItem = ({ icon: Icon, label, path, active }: MainMenuItemProps) => {
+const MainMenuItem = ({ icon: Icon, label, path, active, onClick }: MainMenuItemProps) => {
   return (
-    <Link
-      to={path}
+    <div
+      onClick={onClick}
       className={cn(
-        "flex flex-col items-center justify-center w-16 h-16 p-2 rounded-md transition-colors",
+        "flex flex-col items-center justify-center w-16 h-16 p-2 rounded-md transition-colors cursor-pointer",
         active ? "bg-primary text-primary-foreground" : "hover:bg-accent"
       )}
     >
@@ -31,27 +33,31 @@ const MainMenuItem = ({ icon: Icon, label, path, active }: MainMenuItemProps) =>
       <span className="text-xs text-center font-medium truncate w-full">
         {label}
       </span>
-    </Link>
+    </div>
   );
 };
 
-export const MainMenu = () => {
+export const MainMenu = ({ setActiveSidebar }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   
-  const isActive = (path: string) => {
-    // Dashboard is active on '/' or '/dashboard'
-    if (path === "/dashboard" && (currentPath === "/" || currentPath === "/dashboard")) {
-      return true;
+  const isActive = (section: string) => {
+    switch(section) {
+      case "dashboard":
+        return currentPath === "/" || currentPath === "/dashboard";
+      case "crm":
+        return currentPath.startsWith("/contacts") || currentPath.startsWith("/companies") || currentPath.startsWith("/deals");
+      case "ats":
+        return currentPath.startsWith("/jobs") || currentPath.startsWith("/applicants") || currentPath.startsWith("/talent-pool");
+      case "marketing":
+        return currentPath.startsWith("/form-builders") || currentPath.startsWith("/career-site");
+      case "finance":
+        return currentPath.startsWith("/finance");
+      case "admin":
+        return currentPath.startsWith("/settings");
+      default:
+        return false;
     }
-    
-    // For other paths, check if the currentPath starts with the path
-    if (path !== "/dashboard") {
-      const pathSegment = path.split('/')[1];
-      return currentPath.startsWith(`/${pathSegment}`);
-    }
-    
-    return false;
   };
 
   const mainMenuItems = [
@@ -110,7 +116,8 @@ export const MainMenu = () => {
             icon={item.icon}
             label={item.label}
             path={item.path}
-            active={isActive(item.path)}
+            active={isActive(item.section)}
+            onClick={() => setActiveSidebar(item.section)}
           />
         ))}
       </div>

@@ -17,7 +17,13 @@ import {
   ChevronRight,
   Search,
   User,
-  Bell
+  Bell,
+  FileText,
+  CreditCard,
+  Wallet,
+  Receipt,
+  Task,
+  CalendarDays
 } from "lucide-react";
 
 type SidebarItemProps = {
@@ -55,26 +61,73 @@ const SidebarItem = ({ icon: Icon, label, path, isCollapsed }: SidebarItemProps)
   );
 };
 
-export const Sidebar = () => {
+export const Sidebar = ({ activeSidebar = "dashboard" }) => {
   const [collapsed, setCollapsed] = useState(false);
+  
+  const dashboardNavItems = [
+    { icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
+    { icon: Task, label: "Tasks", path: "/tasks" },
+    { icon: CalendarDays, label: "Calendar", path: "/calendar" }
+  ];
 
-  const navItems = [
-    { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-    { icon: Briefcase, label: "Jobs", path: "/jobs" },
-    { icon: Users, label: "Applicants", path: "/applicants" },
-    { icon: Star, label: "Talent Pool", path: "/talent-pool" },
+  const crmNavItems = [
     { icon: Contact, label: "Contacts", path: "/contacts" },
     { icon: Building2, label: "Companies", path: "/companies" },
-    { icon: DollarSign, label: "Deals", path: "/deals" },
-    { icon: FileSpreadsheet, label: "Form Builders", path: "/form-builders" },
-    { icon: Settings, label: "Settings", path: "/settings" },
-    { icon: Globe, label: "Career Site", path: "/career-site" }
+    { icon: DollarSign, label: "Deals", path: "/deals" }
   ];
+
+  const atsNavItems = [
+    { icon: Briefcase, label: "Jobs", path: "/jobs" },
+    { icon: Users, label: "Applicants", path: "/applicants" },
+    { icon: Star, label: "Talent Pool", path: "/talent-pool" }
+  ];
+
+  const marketingNavItems = [
+    { icon: FileSpreadsheet, label: "Form Builders", path: "/form-builders" },
+    { icon: Globe, label: "Career Site", path: "/career-site" },
+    { icon: FileText, label: "Website", path: "/website" }
+  ];
+
+  const financeNavItems = [
+    { icon: Receipt, label: "Invoices", path: "/finance/invoices" },
+    { icon: Wallet, label: "Expenses", path: "/finance/expenses" },
+    { icon: CreditCard, label: "Transactions", path: "/finance/transactions" }
+  ];
+
+  const adminNavItems = [
+    { icon: Settings, label: "Settings", path: "/settings" }
+  ];
+
+  const getNavItemsForSection = () => {
+    switch(activeSidebar) {
+      case "dashboard": return dashboardNavItems;
+      case "crm": return crmNavItems;
+      case "ats": return atsNavItems;
+      case "marketing": return marketingNavItems;
+      case "finance": return financeNavItems;
+      case "admin": return adminNavItems;
+      default: return dashboardNavItems;
+    }
+  };
+
+  const getSectionTitle = () => {
+    switch(activeSidebar) {
+      case "dashboard": return "Dashboard";
+      case "crm": return "CRM";
+      case "ats": return "ATS";
+      case "marketing": return "Marketing";
+      case "finance": return "Finance";
+      case "admin": return "Admin";
+      default: return "Dashboard";
+    }
+  };
+
+  const navItems = getNavItemsForSection();
 
   return (
     <aside
       className={cn(
-        "h-screen bg-sidebar fixed top-0 left-0 z-40 border-r border-sidebar-border transition-all duration-300 ease-in-out",
+        "h-screen bg-sidebar fixed top-0 left-20 z-30 border-r border-sidebar-border transition-all duration-300 ease-in-out",
         collapsed ? "w-16" : "w-64"
       )}
     >
@@ -85,12 +138,7 @@ export const Sidebar = () => {
             "flex items-center gap-3 transition-all duration-300",
             collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
           )}>
-            <div className="bg-primary rounded-md p-1">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5 12L10 17L19 8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <h1 className="font-semibold text-lg tracking-tight">RecruiTrak</h1>
+            <h1 className="font-semibold text-lg tracking-tight">{getSectionTitle()}</h1>
           </div>
           <button
             onClick={() => setCollapsed(!collapsed)}
