@@ -8,6 +8,7 @@ import { AnimatePresence } from "framer-motion";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { Sidebar } from "./components/layout/Sidebar";
+import { MainMenu } from "./components/layout/MainMenu";
 import Dashboard from "./pages/Dashboard";
 import Jobs from "./pages/Jobs";
 import JobDetail from "./pages/JobDetail";
@@ -34,33 +35,36 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <div className="flex min-h-screen">
-          <Sidebar />
-          <div className="flex-1 transition-all duration-300">
-            <AnimatePresence mode="wait">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/jobs" element={<Jobs />} />
-                <Route path="/jobs/add" element={<AddJob />} />
-                <Route path="/jobs/:id" element={<JobDetail />} />
-                <Route path="/applicants" element={<Applicants />} />
-                <Route path="/talent-pool" element={<TalentPool />} />
-                <Route path="/contacts" element={<Contacts />} />
-                <Route path="/companies" element={<Companies />} />
-                <Route path="/deals" element={<Deals />} />
-                <Route path="/form-builders" element={<FormBuilders />} />
-                <Route path="/form-builder" element={<FormBuilder />} />
-                <Route path="/settings" element={<Settings />}>
-                  <Route index element={<SettingsDefault />} />
-                  <Route path="pipeline" element={<PipelineSettings />} />
-                  <Route path="user-roles" element={<UserRoleSettings />} />
-                  <Route path="system" element={<SystemSettings />} />
-                  {/* Add other settings routes as needed */}
-                </Route>
-                <Route path="/career-site" element={<CareerSiteGenerator />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </AnimatePresence>
+          <MainMenu />
+          <div className="flex flex-1">
+            <Sidebar />
+            <div className="flex-1 transition-all duration-300">
+              <AnimatePresence mode="wait">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/jobs" element={<Jobs />} />
+                  <Route path="/jobs/add" element={<AddJob />} />
+                  <Route path="/jobs/:id" element={<JobDetail />} />
+                  <Route path="/applicants" element={<Applicants />} />
+                  <Route path="/talent-pool" element={<TalentPool />} />
+                  <Route path="/contacts" element={<Contacts />} />
+                  <Route path="/companies" element={<Companies />} />
+                  <Route path="/deals" element={<Deals />} />
+                  <Route path="/form-builders" element={<FormBuilders />} />
+                  <Route path="/form-builder" element={<FormBuilder />} />
+                  <Route path="/settings" element={<Settings />}>
+                    <Route index element={<SettingsDefault />} />
+                    <Route path="pipeline" element={<PipelineSettings />} />
+                    <Route path="user-roles" element={<UserRoleSettings />} />
+                    <Route path="system" element={<SystemSettings />} />
+                    {/* Add other settings routes as needed */}
+                  </Route>
+                  <Route path="/career-site" element={<CareerSiteGenerator />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </BrowserRouter>

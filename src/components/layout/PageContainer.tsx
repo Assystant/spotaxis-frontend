@@ -19,7 +19,7 @@ export const PageContainer = ({
   description,
 }: PageContainerProps) => {
   return (
-    <div className="ml-64 min-h-screen flex flex-col">
+    <div className="ml-0 min-h-screen flex flex-col">
       <Header title={title} description={description} actionButton={actionButton} />
       <main className={cn(
         "flex-1 p-6 animate-fade-in",

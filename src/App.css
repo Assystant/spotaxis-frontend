@@ -52,3 +52,17 @@
 .read-the-docs {
   color: #555; /* Darker gray to complement black */
 }
+
+/* Main Menu Animation */
+.main-menu-item {
+  transition: all 0.2s ease-in-out;
+}
+
+.main-menu-item:hover {
+  transform: translateY(-2px);
+}
+
+.main-menu-item.active {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
