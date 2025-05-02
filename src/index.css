@@ -144,6 +144,64 @@
   .chip {
     @apply inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-secondary text-secondary-foreground;
   }
+  
+  /* Responsive layout rules */
+  .responsive-container {
+    @apply w-full px-4 sm:px-6 md:px-8 mx-auto;
+  }
+  
+  /* Mobile optimizations */
+  .mobile-friendly-padding {
+    @apply p-3 sm:p-4 md:p-6;
+  }
+  
+  .mobile-friendly-text {
+    @apply text-sm sm:text-base;
+  }
+  
+  @media (max-width: 768px) {
+    .hide-on-mobile {
+      @apply hidden;
+    }
+    
+    .mobile-full-width {
+      @apply w-full !important;
+    }
+    
+    .mobile-stack {
+      @apply flex-col !important;
+    }
+  }
+  
+  /* Animation for sidebar */
+  .animate-slide-in-left {
+    animation: slide-in-left 0.3s ease-out;
+  }
+  
+  @keyframes slide-in-left {
+    from {
+      transform: translateX(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Animation for page transitions */
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+  
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 }
 
 /* Custom scrollbar */
@@ -189,4 +247,15 @@ html {
 .page-transition-exit-active {
   opacity: 0;
   transition: opacity 300ms;
+}
+
+/* Mobile menu adjustments */
+@media (max-width: 768px) {
+  .sidebar-hidden {
+    transform: translateX(-100%);
+  }
+  
+  .content-full-width {
+    padding-left: 0 !important;
+  }
 }

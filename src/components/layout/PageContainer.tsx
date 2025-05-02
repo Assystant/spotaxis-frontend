@@ -19,10 +19,11 @@ export const PageContainer = ({
   description,
 }: PageContainerProps) => {
   return (
-    <div className="min-h-screen flex flex-col pl-20 lg:pl-[calc(20rem+5rem)]">
+    <div className="min-h-screen flex flex-col transition-all duration-300 
+      pl-20 lg:pl-[calc(4rem+1rem)] xl:pl-[calc(5rem+1rem)]">
       <Header title={title} description={description} actionButton={actionButton} />
       <main className={cn(
-        "flex-1 p-6 animate-fade-in",
+        "flex-1 p-4 md:p-6 animate-fade-in",
         className
       )}>
         {children}

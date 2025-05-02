@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -22,8 +23,10 @@ import {
   Wallet,
   Receipt,
   CheckSquare,
-  CalendarDays
+  CalendarDays,
+  Menu
 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type SidebarItemProps = {
   icon: React.ElementType;
@@ -62,6 +65,16 @@ const SidebarItem = ({ icon: Icon, label, path, isCollapsed }: SidebarItemProps)
 
 export const Sidebar = ({ activeSidebar = "dashboard" }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const isMobile = useIsMobile();
+  
+  // Close sidebar on mobile when changing routes
+  const location = useLocation();
+  useEffect(() => {
+    if (isMobile) {
+      setMobileOpen(false);
+    }
+  }, [location, isMobile]);
   
   const dashboardNavItems = [
     { icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
@@ -122,78 +135,109 @@ export const Sidebar = ({ activeSidebar = "dashboard" }) => {
   };
 
   const navItems = getNavItemsForSection();
+  
+  // Mobile sidebar overlay
+  const MobileSidebarOverlay = () => {
+    if (!isMobile || !mobileOpen) return null;
+    
+    return (
+      <div 
+        className="fixed inset-0 bg-black/50 z-20" 
+        onClick={() => setMobileOpen(false)}
+      />
+    );
+  };
 
   return (
-    <aside
-      className={cn(
-        "h-screen bg-sidebar fixed top-0 left-20 z-30 border-r border-sidebar-border transition-all duration-300 ease-in-out",
-        collapsed ? "w-16" : "w-64"
+    <>
+      <MobileSidebarOverlay />
+      
+      {/* Mobile menu trigger */}
+      {isMobile && (
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="fixed top-4 left-24 z-30 p-2 rounded-md bg-background/90 shadow-sm border"
+          aria-label="Toggle sidebar menu"
+        >
+          <Menu size={18} />
+        </button>
       )}
-    >
-      <div className="flex flex-col h-full">
-        {/* Sidebar Header */}
-        <div className="flex items-center h-16 px-4 border-b border-sidebar-border">
-          <div className={cn(
-            "flex items-center gap-3 transition-all duration-300",
-            collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
-          )}>
-            <h1 className="font-semibold text-lg tracking-tight">{getSectionTitle()}</h1>
-          </div>
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="ml-auto p-2 rounded-md hover:bg-sidebar-accent transition-colors"
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-          </button>
-        </div>
-        
-        {/* Sidebar Search */}
-        <div className={cn(
-          "px-4 pt-4 pb-2",
-          collapsed && "hidden"
-        )}>
-          <div className="flex items-center px-3 py-2 rounded-md bg-sidebar-accent/50 text-sidebar-foreground/60">
-            <Search size={16} />
-            <input
-              type="text"
-              placeholder="Search..."
-              className="bg-transparent border-none outline-none ml-2 w-full text-sm"
-            />
-          </div>
-        </div>
-        
-        {/* Navigation Items */}
-        <nav className="flex-1 py-4 px-2 overflow-y-auto">
-          <div className="space-y-1">
-            {navItems.map((item) => (
-              <SidebarItem
-                key={item.path}
-                icon={item.icon}
-                label={item.label}
-                path={item.path}
-                isCollapsed={collapsed}
-              />
-            ))}
-          </div>
-        </nav>
-        
-        {/* User Profile */}
-        <div className="p-4 border-t border-sidebar-border">
-          <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-              <User size={16} />
-            </div>
+      
+      <aside
+        className={cn(
+          "h-screen bg-sidebar fixed top-0 left-20 z-30 border-r border-sidebar-border transition-all duration-300 ease-in-out",
+          collapsed ? "w-16" : "w-64",
+          isMobile && (mobileOpen ? "translate-x-0" : "-translate-x-full")
+        )}
+      >
+        <div className="flex flex-col h-full">
+          {/* Sidebar Header */}
+          <div className="flex items-center h-16 px-4 border-b border-sidebar-border">
             <div className={cn(
-              "transition-all duration-300 flex-1 min-w-0",
+              "flex items-center gap-3 transition-all duration-300",
               collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
             )}>
-              <p className="text-sm font-medium truncate">John Doe</p>
-              <p className="text-xs text-sidebar-foreground/60 truncate">Admin</p>
+              <h1 className="font-semibold text-lg tracking-tight">{getSectionTitle()}</h1>
+            </div>
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className={cn(
+                "ml-auto p-2 rounded-md hover:bg-sidebar-accent transition-colors",
+                isMobile && "hidden" // Hide collapse button on mobile
+              )}
+              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+            </button>
+          </div>
+          
+          {/* Sidebar Search */}
+          <div className={cn(
+            "px-4 pt-4 pb-2",
+            collapsed && "hidden"
+          )}>
+            <div className="flex items-center px-3 py-2 rounded-md bg-sidebar-accent/50 text-sidebar-foreground/60">
+              <Search size={16} />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="bg-transparent border-none outline-none ml-2 w-full text-sm"
+              />
+            </div>
+          </div>
+          
+          {/* Navigation Items */}
+          <nav className="flex-1 py-4 px-2 overflow-y-auto">
+            <div className="space-y-1">
+              {navItems.map((item) => (
+                <SidebarItem
+                  key={item.path}
+                  icon={item.icon}
+                  label={item.label}
+                  path={item.path}
+                  isCollapsed={collapsed}
+                />
+              ))}
+            </div>
+          </nav>
+          
+          {/* User Profile */}
+          <div className="p-4 border-t border-sidebar-border">
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <User size={16} />
+              </div>
+              <div className={cn(
+                "transition-all duration-300 flex-1 min-w-0",
+                collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+              )}>
+                <p className="text-sm font-medium truncate">John Doe</p>
+                <p className="text-xs text-sidebar-foreground/60 truncate">Admin</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 };
