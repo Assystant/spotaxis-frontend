@@ -1,5 +1,5 @@
 
-import { Bell, Search, User } from "lucide-react";
+import { Bell, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type HeaderProps = {
@@ -38,10 +38,6 @@ export const Header = ({
             <Bell size={18} />
             <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
           </button>
-        </div>
-        
-        <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors cursor-pointer">
-          <User size={16} />
         </div>
       </div>
     </header>

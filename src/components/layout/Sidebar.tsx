@@ -16,7 +16,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
-  User,
   Bell,
   FileText,
   CreditCard,
@@ -64,7 +63,7 @@ const SidebarItem = ({ icon: Icon, label, path, isCollapsed }: SidebarItemProps)
 };
 
 export const Sidebar = ({ activeSidebar = "dashboard" }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const isMobile = useIsMobile();
   
@@ -165,12 +164,14 @@ export const Sidebar = ({ activeSidebar = "dashboard" }) => {
       
       <aside
         className={cn(
-          "h-screen bg-sidebar fixed top-0 left-20 z-30 border-r border-sidebar-border transition-all duration-300 ease-in-out",
-          collapsed ? "w-16" : "w-64",
-          isMobile && (mobileOpen ? "translate-x-0" : "-translate-x-full")
+          "h-screen bg-sidebar fixed top-0 left-20 z-30 transition-all duration-300 ease-in-out hidden group-hover:block",
+          collapsed ? "w-0" : "w-64",
+          isMobile && (mobileOpen ? "block translate-x-0" : "-translate-x-full")
         )}
+        onMouseEnter={() => setCollapsed(false)}
+        onMouseLeave={() => setCollapsed(true)}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full border-r border-sidebar-border">
           {/* Sidebar Header */}
           <div className="flex items-center h-16 px-4 border-b border-sidebar-border">
             <div className={cn(
@@ -220,22 +221,6 @@ export const Sidebar = ({ activeSidebar = "dashboard" }) => {
               ))}
             </div>
           </nav>
-          
-          {/* User Profile */}
-          <div className="p-4 border-t border-sidebar-border">
-            <div className="flex items-center gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                <User size={16} />
-              </div>
-              <div className={cn(
-                "transition-all duration-300 flex-1 min-w-0",
-                collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
-              )}>
-                <p className="text-sm font-medium truncate">John Doe</p>
-                <p className="text-xs text-sidebar-foreground/60 truncate">Admin</p>
-              </div>
-            </div>
-          </div>
         </div>
       </aside>
     </>
