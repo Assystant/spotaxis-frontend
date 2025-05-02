@@ -10,13 +10,19 @@ import {
   Wallet,
   Settings,
   User,
-  LogOut
+  LogOut,
+  CheckSquare,
+  CalendarDays,
+  Building2,
+  DollarSign,
+  Users,
+  Star,
+  FileSpreadsheet,
+  Globe,
+  FileText,
+  Receipt,
+  CreditCard
 } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,31 +30,86 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type MainMenuItemProps = {
   icon: React.ElementType;
   label: string;
   path: string;
   active: boolean;
-  onMouseEnter: () => void;
+  subItems?: Array<{icon: React.ElementType; label: string; path: string}>;
 };
 
-const MainMenuItem = ({ icon: Icon, label, path, active, onMouseEnter }: MainMenuItemProps) => {
+const MainMenuItem = ({ icon: Icon, label, path, active, subItems }: MainMenuItemProps) => {
+  const isMobile = useIsMobile();
+  
+  if (isMobile) {
+    return (
+      <Link
+        to={path}
+        className={cn(
+          "flex flex-col items-center justify-center p-2 rounded-md transition-colors cursor-pointer",
+          active ? "bg-primary text-primary-foreground" : "hover:bg-accent",
+          "w-16 h-16 sm:w-16 sm:h-16"
+        )}
+      >
+        <Icon className="w-5 h-5 mb-1 sm:w-6 sm:h-6" strokeWidth={active ? 2.5 : 1.8} />
+        <span className="text-xs text-center font-medium truncate w-full">
+          {label}
+        </span>
+      </Link>
+    );
+  }
+  
   return (
-    <Link
-      to={path}
-      onMouseEnter={onMouseEnter}
-      className={cn(
-        "flex flex-col items-center justify-center p-2 rounded-md transition-colors cursor-pointer",
-        active ? "bg-primary text-primary-foreground" : "hover:bg-accent",
-        "w-16 h-16 sm:w-16 sm:h-16" // Responsive sizes
+    <HoverCard openDelay={0} closeDelay={150}>
+      <HoverCardTrigger asChild>
+        <Link
+          to={path}
+          className={cn(
+            "flex flex-col items-center justify-center p-2 rounded-md transition-colors cursor-pointer",
+            active ? "bg-primary text-primary-foreground" : "hover:bg-accent",
+            "w-16 h-16 sm:w-16 sm:h-16"
+          )}
+        >
+          <Icon className="w-5 h-5 mb-1 sm:w-6 sm:h-6" strokeWidth={active ? 2.5 : 1.8} />
+          <span className="text-xs text-center font-medium truncate w-full">
+            {label}
+          </span>
+        </Link>
+      </HoverCardTrigger>
+      {subItems && subItems.length > 0 && (
+        <HoverCardContent 
+          side="right" 
+          align="start"
+          className="w-56 p-2 border border-border bg-background shadow-lg rounded-md z-50"
+        >
+          <div className="flex flex-col space-y-1">
+            <p className="text-xs font-medium mb-1 px-2 text-muted-foreground">
+              {label} Menu
+            </p>
+            {subItems.map((item, idx) => (
+              <Link
+                key={idx}
+                to={item.path}
+                className={cn(
+                  "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors",
+                  location.pathname === item.path && "bg-accent font-medium"
+                )}
+              >
+                {item.icon && <item.icon className="w-4 h-4" />}
+                <span>{item.label}</span>
+              </Link>
+            ))}
+          </div>
+        </HoverCardContent>
       )}
-    >
-      <Icon className="w-5 h-5 mb-1 sm:w-6 sm:h-6" strokeWidth={active ? 2.5 : 1.8} />
-      <span className="text-xs text-center font-medium truncate w-full">
-        {label}
-      </span>
-    </Link>
+    </HoverCard>
   );
 };
 
@@ -75,42 +136,82 @@ export const MainMenu = ({ setActiveSidebar }) => {
     }
   };
 
+  const dashboardSubItems = [
+    { icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
+    { icon: CheckSquare, label: "Tasks", path: "/tasks" },
+    { icon: CalendarDays, label: "Calendar", path: "/calendar" }
+  ];
+
+  const crmSubItems = [
+    { icon: Contact, label: "Contacts", path: "/contacts" },
+    { icon: Building2, label: "Companies", path: "/companies" },
+    { icon: DollarSign, label: "Deals", path: "/deals" }
+  ];
+
+  const atsSubItems = [
+    { icon: Briefcase, label: "Jobs", path: "/jobs" },
+    { icon: Users, label: "Applicants", path: "/applicants" },
+    { icon: Star, label: "Talent Pool", path: "/talent-pool" }
+  ];
+
+  const marketingSubItems = [
+    { icon: FileSpreadsheet, label: "Form Builders", path: "/form-builders" },
+    { icon: Globe, label: "Career Site", path: "/career-site" },
+    { icon: FileText, label: "Website", path: "/website" }
+  ];
+
+  const financeSubItems = [
+    { icon: Receipt, label: "Invoices", path: "/finance/invoices" },
+    { icon: Wallet, label: "Expenses", path: "/finance/expenses" },
+    { icon: CreditCard, label: "Transactions", path: "/finance/transactions" }
+  ];
+
+  const adminSubItems = [
+    { icon: Settings, label: "Settings", path: "/settings" }
+  ];
+
   const mainMenuItems = [
     {
       icon: LayoutDashboard,
       label: "Dashboard",
       path: "/dashboard",
-      section: "dashboard"
+      section: "dashboard",
+      subItems: dashboardSubItems
     },
     {
       icon: Contact,
       label: "CRM",
       path: "/contacts",
-      section: "crm"
+      section: "crm",
+      subItems: crmSubItems
     },
     {
       icon: Briefcase,
       label: "ATS",
       path: "/jobs",
-      section: "ats"
+      section: "ats",
+      subItems: atsSubItems
     },
     {
       icon: ShoppingBag,
       label: "Marketing",
       path: "/form-builders",
-      section: "marketing"
+      section: "marketing",
+      subItems: marketingSubItems
     },
     {
       icon: Wallet,
       label: "Finance",
       path: "/finance",
-      section: "finance"
+      section: "finance",
+      subItems: financeSubItems
     },
     {
       icon: Settings,
       label: "Admin",
       path: "/settings",
-      section: "admin"
+      section: "admin",
+      subItems: adminSubItems
     }
   ];
 
@@ -127,19 +228,15 @@ export const MainMenu = ({ setActiveSidebar }) => {
         
         <div className="flex flex-col space-y-2 md:space-y-4 overflow-y-auto px-2 w-full">
           {mainMenuItems.map((item) => (
-            <Popover key={item.section}>
-              <PopoverTrigger asChild>
-                <div>
-                  <MainMenuItem
-                    icon={item.icon}
-                    label={item.label}
-                    path={item.path}
-                    active={isActive(item.section)}
-                    onMouseEnter={() => setActiveSidebar(item.section)}
-                  />
-                </div>
-              </PopoverTrigger>
-            </Popover>
+            <MainMenuItem
+              key={item.section}
+              icon={item.icon}
+              label={item.label}
+              path={item.path}
+              active={isActive(item.section)}
+              subItems={item.subItems}
+              onMouseEnter={() => setActiveSidebar(item.section)}
+            />
           ))}
         </div>
       </div>

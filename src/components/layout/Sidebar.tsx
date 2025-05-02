@@ -16,7 +16,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
-  Bell,
   FileText,
   CreditCard,
   Wallet,
@@ -62,7 +61,7 @@ const SidebarItem = ({ icon: Icon, label, path, isCollapsed }: SidebarItemProps)
   );
 };
 
-export const Sidebar = ({ activeSidebar = "dashboard" }) => {
+export const Sidebar = ({ activeSidebar = "" }) => {
   const [collapsed, setCollapsed] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const isMobile = useIsMobile();
@@ -117,7 +116,7 @@ export const Sidebar = ({ activeSidebar = "dashboard" }) => {
       case "marketing": return marketingNavItems;
       case "finance": return financeNavItems;
       case "admin": return adminNavItems;
-      default: return dashboardNavItems;
+      default: return [];
     }
   };
 
@@ -129,11 +128,12 @@ export const Sidebar = ({ activeSidebar = "dashboard" }) => {
       case "marketing": return "Marketing";
       case "finance": return "Finance";
       case "admin": return "Admin";
-      default: return "Dashboard";
+      default: return "";
     }
   };
 
   const navItems = getNavItemsForSection();
+  const showSidebar = activeSidebar !== "" && navItems.length > 0;
   
   // Mobile sidebar overlay
   const MobileSidebarOverlay = () => {
@@ -146,6 +146,10 @@ export const Sidebar = ({ activeSidebar = "dashboard" }) => {
       />
     );
   };
+
+  if (!showSidebar) {
+    return null;
+  }
 
   return (
     <>
@@ -164,9 +168,10 @@ export const Sidebar = ({ activeSidebar = "dashboard" }) => {
       
       <aside
         className={cn(
-          "h-screen bg-sidebar fixed top-0 left-20 z-30 transition-all duration-300 ease-in-out hidden group-hover:block",
+          "h-screen bg-sidebar fixed top-0 left-20 z-30 transition-all duration-300 ease-in-out",
           collapsed ? "w-0" : "w-64",
-          isMobile && (mobileOpen ? "block translate-x-0" : "-translate-x-full")
+          isMobile && (mobileOpen ? "block translate-x-0" : "-translate-x-full"),
+          !showSidebar && "hidden"
         )}
         onMouseEnter={() => setCollapsed(false)}
         onMouseLeave={() => setCollapsed(true)}
