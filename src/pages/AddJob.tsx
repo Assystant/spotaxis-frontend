@@ -16,7 +16,7 @@ const AddJob = () => {
           Back to Jobs
         </Link>
         <h2 className="text-2xl font-semibold">Create New Job</h2>
-        <p className="text-muted-foreground">Add a new job posting to your recruitment pipeline</p>
+        <p className="text-muted-foreground">Complete the 3-step form to add a new job to your recruitment pipeline</p>
       </div>
       
       <AddJobForm />
