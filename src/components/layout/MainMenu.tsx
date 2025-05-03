@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -43,7 +42,7 @@ type MainMenuItemProps = {
   path: string;
   active: boolean;
   subItems?: Array<{icon: React.ElementType; label: string; path: string}>;
-  onMouseEnter?: () => void; // Add this line to fix the TypeScript error
+  onMouseEnter?: () => void;
 };
 
 const MainMenuItem = ({ icon: Icon, label, path, active, subItems, onMouseEnter }: MainMenuItemProps) => {
@@ -77,7 +76,7 @@ const MainMenuItem = ({ icon: Icon, label, path, active, subItems, onMouseEnter 
             active ? "bg-primary text-primary-foreground" : "hover:bg-accent",
             "w-16 h-16 sm:w-16 sm:h-16"
           )}
-          onMouseEnter={onMouseEnter} // Add the onMouseEnter handler here
+          onMouseEnter={onMouseEnter}
         >
           <Icon className="w-5 h-5 mb-1 sm:w-6 sm:h-6" strokeWidth={active ? 2.5 : 1.8} />
           <span className="text-xs text-center font-medium truncate w-full">
@@ -128,7 +127,7 @@ export const MainMenu = ({ setActiveSidebar }) => {
       case "ats":
         return currentPath.startsWith("/jobs") || currentPath.startsWith("/applicants") || currentPath.startsWith("/talent-pool");
       case "marketing":
-        return currentPath.startsWith("/form-builders") || currentPath.startsWith("/career-site");
+        return currentPath.startsWith("/form-builders") || currentPath.startsWith("/job-board") || currentPath.startsWith("/website");
       case "finance":
         return currentPath.startsWith("/finance");
       case "admin":
@@ -158,8 +157,7 @@ export const MainMenu = ({ setActiveSidebar }) => {
 
   const marketingSubItems = [
     { icon: FileSpreadsheet, label: "Form Builders", path: "/form-builders" },
-    { icon: Globe, label: "Career Site", path: "/career-site" },
-    { icon: FileText, label: "Website", path: "/website" }
+    { icon: Globe, label: "Job Board", path: "/job-board" },
   ];
 
   const financeSubItems = [
@@ -197,7 +195,7 @@ export const MainMenu = ({ setActiveSidebar }) => {
     {
       icon: ShoppingBag,
       label: "Marketing",
-      path: "/form-builders",
+      path: "/job-board",
       section: "marketing",
       subItems: marketingSubItems
     },

@@ -23,7 +23,7 @@ import FormBuilders from "./pages/FormBuilders";
 import FormBuilder from "./pages/FormBuilder";
 import Settings, { SettingsDefault } from "./pages/Settings";
 import PipelineSettings from "./pages/PipelineSettings";
-import CareerSiteGenerator from "./pages/CareerSiteGenerator";
+import JobBoardManager from "./pages/JobBoardManager";
 import UserRoleSettings from "./pages/UserRoleSettings";
 import SystemSettings from "./pages/SystemSettings";
 
@@ -74,7 +74,8 @@ const App = () => {
                     <Route path="user-roles" element={<UserRoleSettings />} />
                     <Route path="system" element={<SystemSettings />} />
                   </Route>
-                  <Route path="/career-site" element={<CareerSiteGenerator />} />
+                  <Route path="/job-board" element={<JobBoardManager />} />
+                  <Route path="/website" element={<JobBoardManager />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </AnimatePresence>

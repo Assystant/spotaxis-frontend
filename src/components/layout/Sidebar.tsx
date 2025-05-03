@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -94,8 +93,7 @@ export const Sidebar = ({ activeSidebar = "" }) => {
 
   const marketingNavItems = [
     { icon: FileSpreadsheet, label: "Form Builders", path: "/form-builders" },
-    { icon: Globe, label: "Career Site", path: "/career-site" },
-    { icon: FileText, label: "Website", path: "/website" }
+    { icon: Globe, label: "Job Board", path: "/job-board" }
   ];
 
   const financeNavItems = [
