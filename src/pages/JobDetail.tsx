@@ -3,10 +3,17 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { KanbanBoard } from "@/components/jobs/KanbanBoard";
-import { ArrowLeft, Edit, Link, Share, Archive, Clock } from "lucide-react";
+import { ArrowLeft, Edit, Link, Share, Archive, Clock, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { mockJobs } from "@/components/jobs/JobsTable";
+import { JobPromotionDialog } from "@/components/jobs/JobPromotionDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Example stages for the job applicants
 const applicantStages = [
@@ -53,6 +60,7 @@ const JobDetail = () => {
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [applicants, setApplicants] = useState<any[]>([]);
+  const [showPromotionDialog, setShowPromotionDialog] = useState(false);
 
   useEffect(() => {
     // In a real app, fetch the job from an API
@@ -65,6 +73,18 @@ const JobDetail = () => {
     
     setLoading(false);
   }, [id]);
+
+  const handleStatusChange = (status: string) => {
+    setJob(prev => ({...prev, status}));
+    // In a real app, this would be an API call to update the job status
+  };
+
+  const handleEditJob = () => {
+    // In a real app, redirect to edit page or open a modal with the job form
+    // For now, we'll just log the action
+    console.log("Edit job", job.id);
+    window.location.href = `/jobs/edit/${job.id}`;
+  };
 
   if (loading) {
     return (
@@ -102,18 +122,40 @@ const JobDetail = () => {
               <Link size={14} />
               Copy Link
             </Button>
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2"
+              onClick={() => setShowPromotionDialog(true)}
+            >
               <Share size={14} />
-              Share
+              Promote
             </Button>
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" className="gap-2" onClick={handleEditJob}>
               <Edit size={14} />
               Edit
             </Button>
-            <Button variant="destructive" size="sm" className="gap-2">
-              <Archive size={14} />
-              Archive
-            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="destructive" size="sm" className="gap-2">
+                  <Archive size={14} />
+                  {job.status}
+                  <ChevronDown size={14} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleStatusChange("Active")}>
+                  Active
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleStatusChange("Paused")}>
+                  Paused
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleStatusChange("Closed")}>
+                  Closed
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -181,6 +223,14 @@ const JobDetail = () => {
           />
         </div>
       </div>
+
+      {/* Job Promotion Dialog */}
+      <JobPromotionDialog
+        open={showPromotionDialog}
+        onOpenChange={setShowPromotionDialog}
+        jobTitle={job.title}
+        companyName={job.company}
+      />
     </PageContainer>
   );
 };
