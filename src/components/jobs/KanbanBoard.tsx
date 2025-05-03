@@ -49,6 +49,7 @@ interface KanbanBoardProps {
   entityType?: KanbanEntityType;
   onStageChange?: (itemId: string, newStageId: string) => void;
   jobId?: string; // Added the jobId prop
+  onAddItem?: () => void; // Added onAddItem prop
 }
 
 export const KanbanBoard = ({
@@ -57,6 +58,7 @@ export const KanbanBoard = ({
   entityType = "applicant",
   onStageChange,
   jobId,
+  onAddItem,
 }: KanbanBoardProps) => {
   const [localItems, setLocalItems] = useState<(ApplicantType | DealType)[]>(items);
 
@@ -194,7 +196,12 @@ export const KanbanBoard = ({
                         </Draggable>
                       ))}
                       {provided.placeholder}
-                      <Button variant="ghost" size="sm" className="w-full mt-2 text-muted-foreground">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="w-full mt-2 text-muted-foreground"
+                        onClick={onAddItem}
+                      >
                         <Plus size={14} className="mr-1" />
                         Add {entityType === "applicant" ? "Applicant" : "Deal"}
                       </Button>

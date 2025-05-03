@@ -33,9 +33,10 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface AddApplicantFormProps {
   onSuccess: () => void;
+  preselectedJobId?: string;
 }
 
-export const AddApplicantForm = ({ onSuccess }: AddApplicantFormProps) => {
+export const AddApplicantForm = ({ onSuccess, preselectedJobId }: AddApplicantFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const form = useForm<FormValues>({
@@ -46,7 +47,7 @@ export const AddApplicantForm = ({ onSuccess }: AddApplicantFormProps) => {
       email: "",
       phone: "",
       location: "",
-      jobId: "",
+      jobId: preselectedJobId || "",
       source: "",
       resume: "",
       note: "",
@@ -67,6 +68,17 @@ export const AddApplicantForm = ({ onSuccess }: AddApplicantFormProps) => {
         title: "Applicant Added",
         description: `${values.firstName} ${values.lastName} has been added successfully.`,
       });
+      
+      // Create full name to pass back
+      const applicantData = {
+        name: `${values.firstName} ${values.lastName}`,
+        email: values.email,
+        phone: values.phone || "",
+        location: values.location || "",
+        source: values.source || "",
+        resume: values.resume || "",
+        note: values.note || "",
+      };
       
       onSuccess();
     } catch (error) {
@@ -167,6 +179,7 @@ export const AddApplicantForm = ({ onSuccess }: AddApplicantFormProps) => {
                   <select
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     {...field}
+                    disabled={!!preselectedJobId}
                   >
                     <option value="">Select a job</option>
                     {mockJobs.map(job => (

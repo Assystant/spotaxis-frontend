@@ -14,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { AddApplicantDialog } from "@/components/applicants/AddApplicantDialog";
 
 // Example stages for the job applicants
 const applicantStages = [
@@ -24,7 +25,7 @@ const applicantStages = [
   { id: "rejected", name: "Rejected", color: "bg-red-500", order: 4 }
 ];
 
-// Mock applicants data
+// Enhanced mock applicants data
 const mockApplicants = [
   {
     id: "app1",
@@ -33,7 +34,9 @@ const mockApplicants = [
     phone: "123-456-7890",
     stage: "new",
     appliedDate: "2023-05-10",
-    jobId: "job1"
+    jobId: "job1",
+    photo: "",
+    resume: "resume_john_doe.pdf"
   },
   {
     id: "app2",
@@ -42,7 +45,9 @@ const mockApplicants = [
     phone: "123-456-7891",
     stage: "screening",
     appliedDate: "2023-05-12",
-    jobId: "job1"
+    jobId: "job1",
+    photo: "",
+    resume: "resume_jane_smith.pdf"
   },
   {
     id: "app3",
@@ -51,7 +56,31 @@ const mockApplicants = [
     phone: "123-456-7892",
     stage: "interview",
     appliedDate: "2023-05-15",
-    jobId: "job2"
+    jobId: "job2",
+    photo: "",
+    resume: "resume_bob_johnson.pdf"
+  },
+  {
+    id: "app4",
+    name: "Sarah Williams",
+    email: "sarah@example.com",
+    phone: "123-456-7893",
+    stage: "new",
+    appliedDate: "2023-05-16",
+    jobId: "job1",
+    photo: "",
+    resume: "resume_sarah_williams.pdf"
+  },
+  {
+    id: "app5",
+    name: "Michael Brown",
+    email: "michael@example.com",
+    phone: "123-456-7894",
+    stage: "offer",
+    appliedDate: "2023-05-08",
+    jobId: "job1",
+    photo: "",
+    resume: "resume_michael_brown.pdf"
   }
 ];
 
@@ -61,6 +90,7 @@ const JobDetail = () => {
   const [loading, setLoading] = useState(true);
   const [applicants, setApplicants] = useState<any[]>([]);
   const [showPromotionDialog, setShowPromotionDialog] = useState(false);
+  const [showAddApplicantDialog, setShowAddApplicantDialog] = useState(false);
 
   useEffect(() => {
     // In a real app, fetch the job from an API
@@ -84,6 +114,32 @@ const JobDetail = () => {
     // For now, we'll just log the action
     console.log("Edit job", job.id);
     window.location.href = `/jobs/edit/${job.id}`;
+  };
+
+  const handleAddApplicant = (applicant: any) => {
+    // Add the new applicant to the list with the current job ID
+    const newApplicant = {
+      ...applicant,
+      id: `app${Date.now()}`, // Generate a unique ID
+      jobId: id,
+      stage: "new", // New applicants start in the "new" stage
+      appliedDate: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+    };
+    
+    setApplicants((prev) => [...prev, newApplicant]);
+    setShowAddApplicantDialog(false);
+  };
+
+  // Handle applicant stage change in kanban board
+  const handleStageChange = (applicantId: string, newStageId: string) => {
+    setApplicants(prev => 
+      prev.map(applicant => 
+        applicant.id === applicantId 
+          ? { ...applicant, stage: newStageId } 
+          : applicant
+      )
+    );
+    // In a real app, this would be an API call to update the applicant stage
   };
 
   if (loading) {
@@ -200,7 +256,7 @@ const JobDetail = () => {
                     </div>
                     <div className="flex justify-between py-2 border-b">
                       <span className="text-muted-foreground">Applicants</span>
-                      <span className="font-medium">{job.applicants}</span>
+                      <span className="font-medium">{applicants.length}</span>
                     </div>
                     <div className="flex justify-between py-2">
                       <span className="text-muted-foreground">Posted Date</span>
@@ -215,11 +271,22 @@ const JobDetail = () => {
 
         {/* Kanban Board */}
         <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Applicant Pipeline</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Applicant Pipeline</h2>
+            <Button 
+              variant="default" 
+              size="sm"
+              onClick={() => setShowAddApplicantDialog(true)}
+            >
+              Add Applicant
+            </Button>
+          </div>
           <KanbanBoard 
             stages={applicantStages} 
             items={applicants}
             entityType="applicant"
+            onStageChange={handleStageChange}
+            jobId={id}
           />
         </div>
       </div>
@@ -230,6 +297,15 @@ const JobDetail = () => {
         onOpenChange={setShowPromotionDialog}
         jobTitle={job.title}
         companyName={job.company}
+      />
+
+      {/* Add Applicant Dialog */}
+      <AddApplicantDialog
+        open={showAddApplicantDialog}
+        onOpenChange={setShowAddApplicantDialog}
+        onAddApplicant={handleAddApplicant}
+        jobId={id}
+        jobTitle={job.title}
       />
     </PageContainer>
   );
