@@ -43,9 +43,10 @@ type MainMenuItemProps = {
   path: string;
   active: boolean;
   subItems?: Array<{icon: React.ElementType; label: string; path: string}>;
+  onMouseEnter?: () => void; // Add this line to fix the TypeScript error
 };
 
-const MainMenuItem = ({ icon: Icon, label, path, active, subItems }: MainMenuItemProps) => {
+const MainMenuItem = ({ icon: Icon, label, path, active, subItems, onMouseEnter }: MainMenuItemProps) => {
   const isMobile = useIsMobile();
   
   if (isMobile) {
@@ -76,6 +77,7 @@ const MainMenuItem = ({ icon: Icon, label, path, active, subItems }: MainMenuIte
             active ? "bg-primary text-primary-foreground" : "hover:bg-accent",
             "w-16 h-16 sm:w-16 sm:h-16"
           )}
+          onMouseEnter={onMouseEnter} // Add the onMouseEnter handler here
         >
           <Icon className="w-5 h-5 mb-1 sm:w-6 sm:h-6" strokeWidth={active ? 2.5 : 1.8} />
           <span className="text-xs text-center font-medium truncate w-full">
