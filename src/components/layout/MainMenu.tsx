@@ -126,6 +126,8 @@ export const MainMenu = ({ setActiveSidebar }) => {
         return currentPath.startsWith("/contacts") || currentPath.startsWith("/companies") || currentPath.startsWith("/deals");
       case "ats":
         return currentPath.startsWith("/jobs") || currentPath.startsWith("/applicants") || currentPath.startsWith("/talent-pool");
+      case "ats1":
+        return currentPath.startsWith("/ats1");
       case "marketing":
         return currentPath.startsWith("/form-builders") || currentPath.startsWith("/job-board") || currentPath.startsWith("/website");
       case "finance":
@@ -153,6 +155,12 @@ export const MainMenu = ({ setActiveSidebar }) => {
     { icon: Briefcase, label: "Jobs", path: "/jobs" },
     { icon: Users, label: "Applicants", path: "/applicants" },
     { icon: Star, label: "Talent Pool", path: "/talent-pool" }
+  ];
+
+  const ats1SubItems = [
+    { icon: Briefcase, label: "Jobs", path: "/ats1/jobs" },
+    { icon: Users, label: "Applicants", path: "/ats1/applicants" },
+    { icon: Star, label: "Talent Pool", path: "/ats1/talent-pool" }
   ];
 
   const marketingSubItems = [
@@ -191,6 +199,13 @@ export const MainMenu = ({ setActiveSidebar }) => {
       path: "/jobs",
       section: "ats",
       subItems: atsSubItems
+    },
+    {
+      icon: Briefcase,
+      label: "ATS1",
+      path: "/ats1/jobs",
+      section: "ats1",
+      subItems: ats1SubItems
     },
     {
       icon: ShoppingBag,

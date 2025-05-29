@@ -91,6 +91,12 @@ export const Sidebar = ({ activeSidebar = "" }) => {
     { icon: Star, label: "Talent Pool", path: "/talent-pool" }
   ];
 
+  const ats1NavItems = [
+    { icon: Briefcase, label: "Jobs", path: "/ats1/jobs" },
+    { icon: Users, label: "Applicants", path: "/ats1/applicants" },
+    { icon: Star, label: "Talent Pool", path: "/ats1/talent-pool" }
+  ];
+
   const marketingNavItems = [
     { icon: FileSpreadsheet, label: "Form Builders", path: "/form-builders" },
     { icon: Globe, label: "Job Board", path: "/job-board" }
@@ -111,6 +117,7 @@ export const Sidebar = ({ activeSidebar = "" }) => {
       case "dashboard": return dashboardNavItems;
       case "crm": return crmNavItems;
       case "ats": return atsNavItems;
+      case "ats1": return ats1NavItems;
       case "marketing": return marketingNavItems;
       case "finance": return financeNavItems;
       case "admin": return adminNavItems;
@@ -123,6 +130,7 @@ export const Sidebar = ({ activeSidebar = "" }) => {
       case "dashboard": return "Dashboard";
       case "crm": return "CRM";
       case "ats": return "ATS";
+      case "ats1": return "ATS1";
       case "marketing": return "Marketing";
       case "finance": return "Finance";
       case "admin": return "Admin";

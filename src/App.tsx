@@ -26,6 +26,12 @@ import PipelineSettings from "./pages/PipelineSettings";
 import JobBoardManager from "./pages/JobBoardManager";
 import UserRoleSettings from "./pages/UserRoleSettings";
 import SystemSettings from "./pages/SystemSettings";
+// ATS1 imports
+import Ats1Jobs from "./pages/Ats1Jobs";
+import Ats1JobDetail from "./pages/Ats1JobDetail";
+import Ats1AddJob from "./pages/Ats1AddJob";
+import Ats1Applicants from "./pages/Ats1Applicants";
+import Ats1TalentPool from "./pages/Ats1TalentPool";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +69,14 @@ const App = () => {
                   <Route path="/jobs/:id" element={<JobDetail />} />
                   <Route path="/applicants" element={<Applicants />} />
                   <Route path="/talent-pool" element={<TalentPool />} />
+                  {/* ATS1 Routes */}
+                  <Route path="/ats1/jobs" element={<Ats1Jobs />} />
+                  <Route path="/ats1/jobs/add" element={<Ats1AddJob />} />
+                  <Route path="/ats1/jobs/:id" element={<Ats1JobDetail />} />
+                  <Route path="/ats1/jobs/:id/edit" element={<Ats1AddJob />} />
+                  <Route path="/ats1/applicants" element={<Ats1Applicants />} />
+                  <Route path="/ats1/talent-pool" element={<Ats1TalentPool />} />
+                  
                   <Route path="/contacts" element={<Contacts />} />
                   <Route path="/companies" element={<Companies />} />
                   <Route path="/deals" element={<Deals />} />
