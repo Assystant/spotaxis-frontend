@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -150,6 +149,11 @@ Requirements:
     navigate(`/ats1/jobs/${id}/edit`);
   };
 
+  const handleAddApplicant = (applicant: any) => {
+    console.log("Adding applicant to job:", applicant);
+    setIsAddApplicantDialogOpen(false);
+  };
+
   const ApplicantCard = ({ applicant }: { applicant: any }) => (
     <Card className="mb-3 p-3 hover:shadow-md transition-shadow cursor-pointer">
       <div className="space-y-2">
@@ -192,7 +196,7 @@ Requirements:
   );
 
   return (
-    <PageContainer>
+    <PageContainer title={job.title}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -397,11 +401,16 @@ Requirements:
         <JobPromotionDialog 
           open={isPromoteDialogOpen} 
           onOpenChange={setIsPromoteDialogOpen}
+          jobTitle={job.title}
+          companyName={job.company}
         />
         
         <AddApplicantDialog
           open={isAddApplicantDialogOpen}
           onOpenChange={setIsAddApplicantDialogOpen}
+          onAddApplicant={handleAddApplicant}
+          jobId={job.id}
+          jobTitle={job.title}
         />
       </div>
     </PageContainer>

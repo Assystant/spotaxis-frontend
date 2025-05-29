@@ -27,7 +27,7 @@ const Ats1AddJob = () => {
   };
 
   return (
-    <PageContainer>
+    <PageContainer title="Create New Job">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -60,11 +60,7 @@ const Ats1AddJob = () => {
             <CardTitle>Job Information</CardTitle>
           </CardHeader>
           <CardContent>
-            <AddJobForm 
-              currentStep={currentStep}
-              onStepChange={setCurrentStep}
-              onSave={handleSave}
-            />
+            <AddJobForm />
           </CardContent>
         </Card>
       </div>

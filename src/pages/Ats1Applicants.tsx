@@ -10,6 +10,12 @@ import { PageContainer } from "@/components/layout/PageContainer";
 const Ats1Applicants = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(null);
+
+  const handleAddApplicant = (applicant: any) => {
+    console.log("Adding applicant:", applicant);
+    setIsAddDialogOpen(false);
+  };
 
   return (
     <PageContainer title="ATS1 Applicants">
@@ -39,12 +45,18 @@ const Ats1Applicants = () => {
         </div>
 
         {/* Content */}
-        <ApplicantsList searchTerm={searchTerm} />
+        <ApplicantsList 
+          onSelectApplicant={setSelectedApplicantId}
+          selectedId={selectedApplicantId}
+        />
 
         {/* Add Applicant Dialog */}
         <AddApplicantDialog 
           open={isAddDialogOpen} 
           onOpenChange={setIsAddDialogOpen}
+          onAddApplicant={handleAddApplicant}
+          jobId={undefined}
+          jobTitle="General Application"
         />
       </div>
     </PageContainer>
