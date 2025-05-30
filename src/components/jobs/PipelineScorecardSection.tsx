@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Select,
   SelectContent,
@@ -64,7 +63,6 @@ const scorecardOptions = [
 
 export const PipelineScorecardSection = ({ pipelineId, pipelineName }: PipelineScorecardSectionProps) => {
   const [stages, setStages] = useState<Stage[]>(mockPipelineStages[pipelineId] || []);
-  const [activeTab, setActiveTab] = useState("stages");
 
   const handleScorecardChange = (stageId: string, scorecardValue: string) => {
     const selectedOption = scorecardOptions.find(opt => opt.value === scorecardValue);
@@ -107,128 +105,104 @@ export const PipelineScorecardSection = ({ pipelineId, pipelineName }: PipelineS
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="stages">Stages</TabsTrigger>
-            <TabsTrigger value="rules">Rules</TabsTrigger>
-            <TabsTrigger value="automate">Automate</TabsTrigger>
-          </TabsList>
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium">Pipeline Stages</h3>
+            <p className="text-sm text-muted-foreground">
+              Drag stages to reorder the pipeline flow
+            </p>
+          </div>
           
-          <TabsContent value="stages" className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-medium">Pipeline Stages</h3>
-              <p className="text-sm text-muted-foreground">
-                Drag stages to reorder the pipeline flow
-              </p>
-            </div>
-            
-            <div className="border rounded-lg overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-12"></TableHead>
-                    <TableHead>Stage Name</TableHead>
-                    <TableHead>Scorecard</TableHead>
-                    <TableHead className="w-24">Preview</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {stages.map((stage, index) => (
-                    <TableRow key={stage.id}>
-                      <TableCell>
-                        <div className="flex items-center justify-center">
-                          <GripVertical 
-                            className="h-4 w-4 text-muted-foreground cursor-move" 
-                            onMouseDown={(e) => {
-                              // Simple drag implementation - in a real app, you'd use a proper drag library
-                              console.log("Drag started for stage:", stage.name);
-                            }}
-                          />
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium">{stage.name}</div>
-                        <div className="text-sm text-muted-foreground">
-                          Stage {index + 1} of {stages.length}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Select
-                            value={stage.scorecardId}
-                            onValueChange={(value) => handleScorecardChange(stage.id, value)}
-                          >
-                            <SelectTrigger className="w-48">
-                              <SelectValue placeholder="Select scorecard" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {scorecardOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                  <div className="flex items-center gap-2">
-                                    <span>{option.label}</span>
-                                    {option.type === "Customise" && (
-                                      <Plus className="h-3 w-3" />
-                                    )}
-                                  </div>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          
-                          {stage.scorecardType === "Customise" && (
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={handleCreateCustom}
-                            >
-                              Create
-                            </Button>
-                          )}
-                        </div>
-                        
-                        <div className="text-xs text-muted-foreground mt-1">
-                          Type: {stage.scorecardType}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handlePreview(stage.scorecardId || "")}
-                          disabled={!stage.scorecardId || stage.scorecardType === "Customise"}
+          <div className="border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-12"></TableHead>
+                  <TableHead>Stage Name</TableHead>
+                  <TableHead>Scorecard</TableHead>
+                  <TableHead className="w-24">Preview</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {stages.map((stage, index) => (
+                  <TableRow key={stage.id}>
+                    <TableCell>
+                      <div className="flex items-center justify-center">
+                        <GripVertical 
+                          className="h-4 w-4 text-muted-foreground cursor-move" 
+                          onMouseDown={(e) => {
+                            // Simple drag implementation - in a real app, you'd use a proper drag library
+                            console.log("Drag started for stage:", stage.name);
+                          }}
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="font-medium">{stage.name}</div>
+                      <div className="text-sm text-muted-foreground">
+                        Stage {index + 1} of {stages.length}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Select
+                          value={stage.scorecardId}
+                          onValueChange={(value) => handleScorecardChange(stage.id, value)}
                         >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-            
-            {stages.length === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
-                No stages configured for this pipeline
-              </div>
-            )}
-          </TabsContent>
+                          <SelectTrigger className="w-48">
+                            <SelectValue placeholder="Select scorecard" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {scorecardOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                <div className="flex items-center gap-2">
+                                  <span>{option.label}</span>
+                                  {option.type === "Customise" && (
+                                    <Plus className="h-3 w-3" />
+                                  )}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        
+                        {stage.scorecardType === "Customise" && (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={handleCreateCustom}
+                          >
+                            Create
+                          </Button>
+                        )}
+                      </div>
+                      
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Type: {stage.scorecardType}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handlePreview(stage.scorecardId || "")}
+                        disabled={!stage.scorecardId || stage.scorecardType === "Customise"}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
           
-          <TabsContent value="rules" className="space-y-4">
+          {stages.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
-              <h3 className="text-lg font-medium mb-2">Pipeline Rules</h3>
-              <p>Configure automation rules and criteria for stage progression</p>
-              <p className="text-sm mt-2">Coming soon...</p>
+              No stages configured for this pipeline
             </div>
-          </TabsContent>
-          
-          <TabsContent value="automate" className="space-y-4">
-            <div className="text-center py-8 text-muted-foreground">
-              <h3 className="text-lg font-medium mb-2">Automation Settings</h3>
-              <p>Set up automated actions and notifications</p>
-              <p className="text-sm mt-2">Coming soon...</p>
-            </div>
-          </TabsContent>
-        </Tabs>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
