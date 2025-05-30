@@ -492,14 +492,6 @@ export const AddJobForm = () => {
                   )}
                 </div>
 
-                {/* Pipeline Scorecard Section - Only show when pipeline is selected */}
-                {selectedPipelineId && selectedPipeline && !createNewPipeline && (
-                  <PipelineScorecardSection 
-                    pipelineId={selectedPipelineId}
-                    pipelineName={selectedPipeline.name}
-                  />
-                )}
-
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium">Scorecard</h3>
                   
