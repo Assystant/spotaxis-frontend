@@ -1,11 +1,12 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { FormValues } from "./types";
 import { mockPipelines } from "./mockData";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -22,6 +23,7 @@ import {
 } from "@/components/ui/form";
 import { ListChecks, Plus } from "lucide-react";
 import { PipelineScorecardSection } from "./PipelineScorecardSection";
+import { PipelineRulesTab } from "./PipelineRulesTab";
 
 interface PipelineStepProps {
   form: UseFormReturn<FormValues>;
@@ -108,10 +110,26 @@ export const PipelineStep = ({ form }: PipelineStepProps) => {
 
       {/* Show pipeline configuration if a pipeline is selected */}
       {selectedPipeline && (
-        <PipelineScorecardSection 
-          pipelineId={selectedPipeline.id} 
-          pipelineName={selectedPipeline.name} 
-        />
+        <Tabs defaultValue="scorecard" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="scorecard">Scorecard</TabsTrigger>
+            <TabsTrigger value="rules">Rules</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="scorecard" className="mt-6">
+            <PipelineScorecardSection 
+              pipelineId={selectedPipeline.id} 
+              pipelineName={selectedPipeline.name} 
+            />
+          </TabsContent>
+          
+          <TabsContent value="rules" className="mt-6">
+            <PipelineRulesTab 
+              pipelineId={selectedPipeline.id} 
+              pipelineName={selectedPipeline.name} 
+            />
+          </TabsContent>
+        </Tabs>
       )}
     </div>
   );
