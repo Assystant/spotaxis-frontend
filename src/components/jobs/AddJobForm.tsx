@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -43,6 +42,7 @@ import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog } from "@/components/ui/dialog";
 import { JobPromotionDialog } from "./JobPromotionDialog";
+import { PipelineScorecardSection } from "./PipelineScorecardSection";
 
 // Job form schema
 const formSchema = z.object({
@@ -132,6 +132,10 @@ export const AddJobForm = () => {
   const createNewPipeline = watch("createNewPipeline");
   const createNewScoreCard = watch("createNewScoreCard");
   const useDefaultForm = watch("useDefaultForm");
+  const selectedPipelineId = watch("pipelineId");
+  const selectedPipeline = selectedPipelineId 
+    ? mockPipelines.find(p => p.id === selectedPipelineId)
+    : null;
   
   const formValues = watch();
 
@@ -488,6 +492,14 @@ export const AddJobForm = () => {
                   )}
                 </div>
 
+                {/* Pipeline Scorecard Section - Only show when pipeline is selected */}
+                {selectedPipelineId && selectedPipeline && !createNewPipeline && (
+                  <PipelineScorecardSection 
+                    pipelineId={selectedPipelineId}
+                    pipelineName={selectedPipeline.name}
+                  />
+                )}
+
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium">Scorecard</h3>
                   
@@ -692,7 +704,7 @@ export const AddJobForm = () => {
               <Button
                 type="button"
                 variant="outline"
-                onClick={currentStep === 0 ? () => navigate("/jobs") : prevStep}
+                onClick={currentStep === 0 ? () => navigate("/ats1/jobs") : prevStep}
                 disabled={isSubmitting}
                 className="gap-2"
               >
