@@ -64,9 +64,6 @@ const formSchema = z.object({
   pipelineId: z.string().optional(),
   createNewPipeline: z.boolean().default(false),
   newPipelineName: z.string().optional(),
-  scoreCardId: z.string().optional(),
-  createNewScoreCard: z.boolean().default(false),
-  newScoreCardName: z.string().optional(),
   
   // Step 3: Application form
   applicationFormId: z.string().optional(),
@@ -78,17 +75,11 @@ type FormValues = z.infer<typeof formSchema>;
 const jobTypes = ["Full-time", "Part-time", "Contract", "Remote"];
 const jobStatuses = ["Active", "Paused", "Closed"];
 
-// Mock data for pipelines, scorecards, and application forms
+// Mock data for pipelines and application forms
 const mockPipelines = [
   { id: "p1", name: "Standard Recruitment Pipeline" },
   { id: "p2", name: "Executive Search Pipeline" },
   { id: "p3", name: "Technical Hiring Pipeline" },
-];
-
-const mockScoreCards = [
-  { id: "s1", name: "Engineering Assessment" },
-  { id: "s2", name: "Leadership Evaluation" },
-  { id: "s3", name: "Cultural Fit Assessment" },
 ];
 
 const mockApplicationForms = [
