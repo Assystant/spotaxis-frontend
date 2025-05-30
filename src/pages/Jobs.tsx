@@ -1,4 +1,3 @@
-
 import { PageContainer } from "@/components/layout/PageContainer";
 import { JobsTable } from "@/components/jobs/JobsTable";
 import { Button } from "@/components/ui/button";
@@ -80,7 +79,7 @@ const Jobs = () => {
           </div>
         </div>
         
-        <JobsTable />
+        <JobsTable basePath="/jobs" />
       </div>
     </PageContainer>
   );

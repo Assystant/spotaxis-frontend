@@ -104,7 +104,11 @@ const StatusBadge = ({ status }: { status: Job["status"] }) => {
   );
 };
 
-export const JobsTable = () => {
+interface JobsTableProps {
+  basePath?: string;
+}
+
+export const JobsTable = ({ basePath = "/jobs" }: JobsTableProps) => {
   return (
     <div className="bg-white rounded-xl border border-border shadow-subtle overflow-hidden">
       <div className="p-6 border-b border-border flex items-center justify-between">
@@ -139,7 +143,7 @@ export const JobsTable = () => {
               <tr key={job.id} className="table-row">
                 <td className="table-cell pl-6">
                   <div>
-                    <Link to={`/jobs/${job.id}`} className="font-medium hover:text-primary transition-colors">
+                    <Link to={`${basePath}/${job.id}`} className="font-medium hover:text-primary transition-colors">
                       {job.title}
                     </Link>
                     <p className="text-muted-foreground text-xs">{job.company}</p>

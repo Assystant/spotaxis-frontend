@@ -74,7 +74,7 @@ const Ats1Jobs = () => {
           </TabsList>
           
           <TabsContent value="table" className="space-y-4">
-            <JobsTable />
+            <JobsTable basePath="/ats1/jobs" />
           </TabsContent>
           
           <TabsContent value="kanban" className="space-y-4">
