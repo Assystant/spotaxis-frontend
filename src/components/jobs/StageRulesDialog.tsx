@@ -2,9 +2,10 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 
 interface Rule {
   id: string;
@@ -60,6 +61,13 @@ const availableRules: Rule[] = [
 
 export const StageRulesDialog = ({ open, onOpenChange, stageName }: StageRulesDialogProps) => {
   const [selectedRules, setSelectedRules] = useState<Rule[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [draggedRule, setDraggedRule] = useState<Rule | null>(null);
+
+  const filteredRules = availableRules.filter(rule => 
+    rule.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    rule.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleAddRule = (rule: Rule) => {
     const newRule = { ...rule, id: `${rule.id}-${Date.now()}` };
@@ -76,16 +84,47 @@ export const StageRulesDialog = ({ open, onOpenChange, stageName }: StageRulesDi
     onOpenChange(false);
   };
 
+  const handleDragStart = (e: React.DragEvent, rule: Rule) => {
+    setDraggedRule(rule);
+    e.dataTransfer.effectAllowed = "copy";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (draggedRule) {
+      handleAddRule(draggedRule);
+      setDraggedRule(null);
+    }
+  };
+
+  const handleAddNewRule = () => {
+    console.log("Create new rule");
+    // This would typically open a form to create a new rule
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[50vw] max-h-[50vh] flex flex-col">
-        <DialogHeader>
+        <DialogHeader className="flex flex-row items-center justify-between space-y-0">
           <DialogTitle>Add Rules for {stageName}</DialogTitle>
+          <Button onClick={handleAddNewRule} size="sm" className="ml-4">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Rule
+          </Button>
         </DialogHeader>
         
         <div className="flex-1 flex flex-col min-h-0">
           {/* Selected Rules Area */}
-          <div className="border-2 border-dashed border-muted-foreground/25 bg-muted/20 rounded-lg p-4 mb-4 min-h-[120px]">
+          <div 
+            className="border-2 border-dashed border-muted-foreground/25 bg-muted/20 rounded-lg p-4 mb-4 min-h-[120px] transition-colors"
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+          >
             {selectedRules.length === 0 ? (
               <div className="flex items-center justify-center h-full text-muted-foreground">
                 <p>Drop rules here or click + to add</p>
@@ -108,11 +147,27 @@ export const StageRulesDialog = ({ open, onOpenChange, stageName }: StageRulesDi
 
           {/* Available Rules List */}
           <div className="flex-1">
-            <h4 className="text-sm font-medium mb-3">Available Rules</h4>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-medium">Available Rules</h4>
+              <div className="relative w-64">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search rules..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9 h-8"
+                />
+              </div>
+            </div>
             <ScrollArea className="h-[200px] border rounded-lg">
               <div className="p-3 space-y-2">
-                {availableRules.map((rule) => (
-                  <Card key={rule.id} className="cursor-pointer hover:shadow-sm transition-shadow">
+                {filteredRules.map((rule) => (
+                  <Card 
+                    key={rule.id} 
+                    className="cursor-grab hover:shadow-sm transition-shadow active:cursor-grabbing"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, rule)}
+                  >
                     <CardContent className="p-3">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
@@ -135,6 +190,11 @@ export const StageRulesDialog = ({ open, onOpenChange, stageName }: StageRulesDi
                     </CardContent>
                   </Card>
                 ))}
+                {filteredRules.length === 0 && (
+                  <div className="text-center py-4 text-muted-foreground text-sm">
+                    No rules found matching your search
+                  </div>
+                )}
               </div>
             </ScrollArea>
           </div>
