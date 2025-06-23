@@ -1,6 +1,7 @@
 
 import { Bell, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "./ThemeToggle";
 
 type HeaderProps = {
   title: string;
@@ -27,6 +28,8 @@ export const Header = ({
       </div>
       
       <div className="flex items-center gap-2 md:gap-4">
+        <ThemeToggle />
+        
         {actionButton && (
           <div className="mr-1 md:mr-2">
             {actionButton}
