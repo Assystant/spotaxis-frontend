@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -23,6 +24,7 @@ import FormBuilders from "./pages/FormBuilders";
 import FormBuilder from "./pages/FormBuilder";
 import Settings, { SettingsDefault } from "./pages/Settings";
 import PipelineSettings from "./pages/PipelineSettings";
+import WorkflowSettings from "./pages/WorkflowSettings";
 import JobBoardManager from "./pages/JobBoardManager";
 import UserRoleSettings from "./pages/UserRoleSettings";
 import SystemSettings from "./pages/SystemSettings";
@@ -86,6 +88,7 @@ const App = () => {
                     <Route path="/settings" element={<Settings />}>
                       <Route index element={<SettingsDefault />} />
                       <Route path="pipeline" element={<PipelineSettings />} />
+                      <Route path="workflow" element={<WorkflowSettings />} />
                       <Route path="user-roles" element={<UserRoleSettings />} />
                       <Route path="system" element={<SystemSettings />} />
                     </Route>
