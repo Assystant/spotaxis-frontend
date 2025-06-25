@@ -3,13 +3,34 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Zap, Code } from 'lucide-react';
+import { Zap, Code, Mail, ArrowRight, CheckSquare } from 'lucide-react';
 
 interface NewAutomationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSelect: (mode: 'template' | 'scratch') => void;
+  onSelect: (mode: 'template' | 'scratch', templateId?: string) => void;
 }
+
+const templates = [
+  {
+    id: 'welcome_applicant',
+    name: 'Welcome New Applicants',
+    description: 'Send welcome email when candidate applies',
+    icon: Mail,
+  },
+  {
+    id: 'interview_reminder',
+    name: 'Interview Reminders',
+    description: 'Send reminder emails 24h before interviews',
+    icon: CheckSquare,
+  },
+  {
+    id: 'stage_notification',
+    name: 'Stage Change Notifications',
+    description: 'Notify hiring managers of candidate progress',
+    icon: ArrowRight,
+  },
+];
 
 export const NewAutomationDialog: React.FC<NewAutomationDialogProps> = ({
   open,
@@ -18,11 +39,11 @@ export const NewAutomationDialog: React.FC<NewAutomationDialogProps> = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle>Create New Automation</DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-2 gap-6 mt-4">
           <Card 
             className="cursor-pointer hover:shadow-md transition-shadow border-2 hover:border-primary/20"
             onClick={() => onSelect('template')}
@@ -37,13 +58,15 @@ export const NewAutomationDialog: React.FC<NewAutomationDialogProps> = ({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Welcome new applicants</li>
-                <li>• Interview reminders</li>
-                <li>• Status updates</li>
-                <li>• Follow-up tasks</li>
-              </ul>
-              <Button className="w-full mt-4" onClick={() => onSelect('template')}>
+              <div className="space-y-2 mb-4">
+                {templates.map((template) => (
+                  <div key={template.id} className="flex items-center space-x-2 p-2 bg-muted/50 rounded">
+                    <template.icon className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm">{template.name}</span>
+                  </div>
+                ))}
+              </div>
+              <Button className="w-full" onClick={() => onSelect('template')}>
                 Browse Templates
               </Button>
             </CardContent>
@@ -63,13 +86,13 @@ export const NewAutomationDialog: React.FC<NewAutomationDialogProps> = ({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ul className="text-sm text-muted-foreground space-y-1">
+              <ul className="text-sm text-muted-foreground space-y-1 mb-4">
                 <li>• Choose your trigger event</li>
                 <li>• Add custom actions</li>
                 <li>• Configure conditions</li>
                 <li>• Full customization</li>
               </ul>
-              <Button className="w-full mt-4" onClick={() => onSelect('scratch')}>
+              <Button className="w-full" onClick={() => onSelect('scratch')}>
                 Start Building
               </Button>
             </CardContent>

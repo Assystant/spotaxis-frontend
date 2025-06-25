@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -28,7 +27,6 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({
   const { triggerEvents, actionTypes } = useWorkflow();
   const [selectedTrigger, setSelectedTrigger] = useState<TriggerEvent | null>(null);
   const [triggerConfig, setTriggerConfig] = useState<Record<string, any>>({});
-  const [selectedAction, setSelectedAction] = useState<ActionType | null>(null);
 
   // Group trigger events by category
   const triggerCategories = triggerEvents.reduce((acc, event) => {
@@ -62,14 +60,17 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({
       eventType: selectedTrigger.id,
       config: triggerConfig,
       position: { x: 100, y: 100 },
-      isConfigured: Object.keys(triggerConfig).length > 0,
+      isConfigured: !!triggerConfig.name,
     };
 
     onSaveTrigger(triggerBlock);
+    setSelectedTrigger(null);
+    setTriggerConfig({});
   };
 
-  const handleActionDragStart = (action: ActionType) => {
-    setSelectedAction(action);
+  const handleActionDragStart = (action: ActionType, e: React.DragEvent) => {
+    e.dataTransfer.setData('application/json', JSON.stringify(action));
+    e.dataTransfer.effectAllowed = 'copy';
   };
 
   const renderTriggerStep = () => (
@@ -85,10 +86,10 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({
                   <Button
                     key={event.id}
                     variant={selectedTrigger?.id === event.id ? "default" : "ghost"}
-                    className="w-full justify-start h-auto p-3"
+                    className="w-full justify-start h-auto p-3 text-left"
                     onClick={() => handleTriggerSelect(event)}
                   >
-                    <div className="text-left">
+                    <div>
                       <div className="font-medium">{event.name}</div>
                       <div className="text-xs text-muted-foreground">{event.description}</div>
                     </div>
@@ -107,7 +108,7 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({
             <h4 className="font-medium mb-3">Configure Trigger</h4>
             <div className="space-y-3">
               <div>
-                <Label htmlFor="trigger-name">Trigger Name</Label>
+                <Label htmlFor="trigger-name">Trigger Name *</Label>
                 <Input
                   id="trigger-name"
                   value={triggerConfig.name || ''}
@@ -155,11 +156,11 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({
                   <div
                     key={action.id}
                     draggable
-                    onDragStart={() => handleActionDragStart(action)}
+                    onDragStart={(e) => handleActionDragStart(action, e)}
                     className="p-3 border rounded-md cursor-move hover:bg-accent transition-colors"
                   >
                     <div className="flex items-center space-x-3">
-                      <Badge variant="secondary">{action.icon}</Badge>
+                      <Badge variant="secondary" className="text-xs">{action.icon}</Badge>
                       <div>
                         <div className="font-medium text-sm">{action.name}</div>
                         <div className="text-xs text-muted-foreground">{action.description}</div>

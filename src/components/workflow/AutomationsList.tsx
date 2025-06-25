@@ -5,13 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Switch } from '@/components/ui/switch';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
 import { useWorkflow } from '@/contexts/WorkflowContext';
 import { NewAutomationDialog } from './NewAutomationDialog';
 
 interface AutomationsListProps {
-  onNewAutomation: (mode: 'template' | 'scratch') => void;
+  onNewAutomation: (mode: 'template' | 'scratch', templateId?: string) => void;
   onEditAutomation: (id: string) => void;
 }
 
@@ -22,9 +21,9 @@ export const AutomationsList: React.FC<AutomationsListProps> = ({
   const { automations, toggleAutomation, deleteAutomation } = useWorkflow();
   const [showNewDialog, setShowNewDialog] = useState(false);
 
-  const handleNewAutomation = (mode: 'template' | 'scratch') => {
+  const handleNewAutomation = (mode: 'template' | 'scratch', templateId?: string) => {
     setShowNewDialog(false);
-    onNewAutomation(mode);
+    onNewAutomation(mode, templateId);
   };
 
   const formatDate = (date: Date) => {
@@ -36,11 +35,12 @@ export const AutomationsList: React.FC<AutomationsListProps> = ({
   };
 
   const getTriggerSummary = (automation: any) => {
-    return automation.trigger ? automation.trigger.eventType : 'No trigger configured';
+    if (!automation.trigger) return 'No trigger configured';
+    return automation.trigger.eventType?.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Unknown trigger';
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
@@ -54,22 +54,22 @@ export const AutomationsList: React.FC<AutomationsListProps> = ({
             New Automation
           </Button>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
+                <TableHead className="pl-6">Name</TableHead>
                 <TableHead>Trigger Summary</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead>Modified</TableHead>
-                <TableHead className="w-12"></TableHead>
+                <TableHead className="w-12 pr-6"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {automations.map((automation) => (
                 <TableRow key={automation.id}>
-                  <TableCell>
+                  <TableCell className="pl-6">
                     <div>
                       <div className="font-medium">{automation.name}</div>
                       <div className="text-sm text-muted-foreground">
@@ -78,7 +78,7 @@ export const AutomationsList: React.FC<AutomationsListProps> = ({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-sm">
                       {getTriggerSummary(automation)}
                     </span>
                   </TableCell>
@@ -101,7 +101,7 @@ export const AutomationsList: React.FC<AutomationsListProps> = ({
                   <TableCell className="text-sm text-muted-foreground">
                     {formatDate(automation.modified)}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="pr-6">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm">

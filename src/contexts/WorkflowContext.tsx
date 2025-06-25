@@ -37,15 +37,25 @@ export interface Automation {
   modified: Date;
 }
 
+export interface WorkflowTemplate {
+  id: string;
+  name: string;
+  description: string;
+  trigger: WorkflowBlock | null;
+  actions: WorkflowBlock[];
+}
+
 interface WorkflowContextType {
   automations: Automation[];
   currentAutomation: Automation | null;
   triggerEvents: TriggerEvent[];
   actionTypes: ActionType[];
+  templates: WorkflowTemplate[];
   setCurrentAutomation: (automation: Automation | null) => void;
   saveAutomation: (automation: Automation) => void;
   deleteAutomation: (id: string) => void;
   toggleAutomation: (id: string, enabled: boolean) => void;
+  getTemplate: (id: string) => WorkflowTemplate | undefined;
 }
 
 const WorkflowContext = createContext<WorkflowContextType | undefined>(undefined);
@@ -69,23 +79,66 @@ const mockTriggerEvents: TriggerEvent[] = [
   { id: 'offer_accepted', name: 'Offer Accepted', description: 'When a candidate accepts an offer', category: 'Offers' },
   { id: 'offer_declined', name: 'Offer Declined', description: 'When a candidate declines an offer', category: 'Offers' },
   { id: 'application_withdrawn', name: 'Application Withdrawn', description: 'When a candidate withdraws their application', category: 'Applications' },
-  { id: 'candidate_rejected', name: 'Candidate Rejected', description: 'When a candidate is rejected', category: 'Pipeline' },
-  { id: 'assessment_completed', name: 'Assessment Completed', description: 'When a candidate completes an assessment', category: 'Assessments' },
-  { id: 'document_uploaded', name: 'Document Uploaded', description: 'When a document is uploaded', category: 'Documents' },
-  { id: 'comment_added', name: 'New Comment Added', description: 'When a comment is added to a candidate', category: 'Comments' },
-  { id: 'pipeline_changed', name: 'Pipeline Created or Deleted', description: 'When a pipeline is created or deleted', category: 'Pipeline' },
-  { id: 'permissions_changed', name: 'Permissions Changed', description: 'When user permissions are modified', category: 'System' },
 ];
 
 const mockActionTypes: ActionType[] = [
-  { id: 'send_email', name: 'Send Email', description: 'Send an email notification', icon: 'Mail', category: 'Communication' },
-  { id: 'move_candidate', name: 'Move Candidate', description: 'Move candidate to a different stage', icon: 'ArrowRight', category: 'Pipeline' },
-  { id: 'create_task', name: 'Create Task', description: 'Create a follow-up task', icon: 'CheckSquare', category: 'Tasks' },
-  { id: 'schedule_interview', name: 'Schedule Interview', description: 'Automatically schedule an interview', icon: 'Calendar', category: 'Interviews' },
-  { id: 'send_sms', name: 'Send SMS', description: 'Send SMS notification', icon: 'MessageSquare', category: 'Communication' },
-  { id: 'update_field', name: 'Update Field', description: 'Update a candidate or job field', icon: 'Edit', category: 'Data' },
-  { id: 'create_note', name: 'Create Note', description: 'Add a note to the candidate profile', icon: 'FileText', category: 'Notes' },
-  { id: 'webhook', name: 'Send Webhook', description: 'Send data to external system', icon: 'Globe', category: 'Integration' },
+  { id: 'send_email', name: 'Send Email', description: 'Send an email notification', icon: '✉️', category: 'Communication' },
+  { id: 'move_candidate', name: 'Move Candidate', description: 'Move candidate to a different stage', icon: '➡️', category: 'Pipeline' },
+  { id: 'create_task', name: 'Create Task', description: 'Create a follow-up task', icon: '✅', category: 'Tasks' },
+  { id: 'schedule_interview', name: 'Schedule Interview', description: 'Automatically schedule an interview', icon: '📅', category: 'Interviews' },
+  { id: 'send_sms', name: 'Send SMS', description: 'Send SMS notification', icon: '💬', category: 'Communication' },
+  { id: 'update_field', name: 'Update Field', description: 'Update a candidate or job field', icon: '📝', category: 'Data' },
+  { id: 'create_note', name: 'Create Note', description: 'Add a note to the candidate profile', icon: '📄', category: 'Notes' },
+  { id: 'webhook', name: 'Send Webhook', description: 'Send data to external system', icon: '🔗', category: 'Integration' },
+];
+
+const mockTemplates: WorkflowTemplate[] = [
+  {
+    id: 'welcome_applicant',
+    name: 'Welcome New Applicants',
+    description: 'Send welcome email when candidate applies',
+    trigger: {
+      id: 'trigger_template_1',
+      type: 'trigger',
+      eventType: 'candidate_applies',
+      config: {},
+      position: { x: 100, y: 100 },
+      isConfigured: false,
+    },
+    actions: [
+      {
+        id: 'action_template_1',
+        type: 'action',
+        actionType: 'send_email',
+        config: {},
+        position: { x: 100, y: 250 },
+        isConfigured: false,
+      },
+    ],
+  },
+  {
+    id: 'interview_reminder',
+    name: 'Interview Reminders',
+    description: 'Send reminder emails 24h before interviews',
+    trigger: {
+      id: 'trigger_template_2',
+      type: 'trigger',
+      eventType: 'interview_scheduled',
+      config: {},
+      position: { x: 100, y: 100 },
+      isConfigured: false,
+    },
+    actions: [
+      {
+        id: 'action_template_2',
+        type: 'action',
+        actionType: 'send_email',
+        config: {},
+        position: { x: 100, y: 250 },
+        isConfigured: false,
+      },
+    ],
+  },
 ];
 
 const mockAutomations: Automation[] = [
@@ -94,8 +147,28 @@ const mockAutomations: Automation[] = [
     name: 'Welcome New Applicants',
     description: 'Send welcome email when candidate applies',
     enabled: true,
-    trigger: null,
-    actions: [],
+    trigger: {
+      id: 'trigger_1',
+      type: 'trigger',
+      eventType: 'candidate_applies',
+      config: { name: 'New Application Received' },
+      position: { x: 100, y: 100 },
+      isConfigured: true,
+    },
+    actions: [
+      {
+        id: 'action_1',
+        type: 'action',
+        actionType: 'send_email',
+        config: {
+          to: 'candidate',
+          subject: 'Welcome to our team!',
+          body: 'Thank you for your application...',
+        },
+        position: { x: 100, y: 250 },
+        isConfigured: true,
+      },
+    ],
     created: new Date('2024-01-15'),
     modified: new Date('2024-01-15'),
   },
@@ -135,15 +208,21 @@ export const WorkflowProvider: React.FC<{ children: ReactNode }> = ({ children }
     ));
   };
 
+  const getTemplate = (id: string) => {
+    return mockTemplates.find(t => t.id === id);
+  };
+
   const value: WorkflowContextType = {
     automations,
     currentAutomation,
     triggerEvents: mockTriggerEvents,
     actionTypes: mockActionTypes,
+    templates: mockTemplates,
     setCurrentAutomation,
     saveAutomation,
     deleteAutomation,
     toggleAutomation,
+    getTemplate,
   };
 
   return (
