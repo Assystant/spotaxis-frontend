@@ -1,30 +1,32 @@
 
-import { Bell, Search } from "lucide-react";
+import { Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 type HeaderProps = {
   title: string;
   description?: string;
   actionButton?: React.ReactNode;
-  sidebarCollapsed?: boolean;
 };
 
 export const Header = ({ 
   title, 
   description, 
-  actionButton, 
-  sidebarCollapsed = false 
+  actionButton,
 }: HeaderProps) => {
   return (
     <header className="h-16 px-4 md:px-6 border-b border-border flex items-center justify-between bg-background/80 backdrop-blur-sm sticky top-0 z-30">
-      <div className="animate-slide-in-left flex flex-col justify-center">
-        <h1 className="text-lg md:text-xl font-medium tracking-tight truncate max-w-[200px] sm:max-w-none">
-          {title}
-        </h1>
-        {description && (
-          <p className="text-xs md:text-sm text-muted-foreground line-clamp-1">{description}</p>
-        )}
+      <div className="flex items-center gap-4">
+        <SidebarTrigger />
+        <div className="animate-slide-in-left flex flex-col justify-center">
+          <h1 className="text-lg md:text-xl font-medium tracking-tight truncate max-w-[200px] sm:max-w-none">
+            {title}
+          </h1>
+          {description && (
+            <p className="text-xs md:text-sm text-muted-foreground line-clamp-1">{description}</p>
+          )}
+        </div>
       </div>
       
       <div className="flex items-center gap-2 md:gap-4">

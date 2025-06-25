@@ -7,10 +7,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { ThemeToggleProvider } from "./contexts/ThemeContext";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { AppSidebar } from "./components/layout/AppSidebar";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import { Sidebar } from "./components/layout/Sidebar";
-import { MainMenu } from "./components/layout/MainMenu";
 import Dashboard from "./pages/Dashboard";
 import Jobs from "./pages/Jobs";
 import JobDetail from "./pages/JobDetail";
@@ -49,8 +49,6 @@ const ScrollToTop = () => {
 };
 
 const App = () => {
-  const [activeSidebar, setActiveSidebar] = useState("dashboard");
-
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeToggleProvider>
@@ -59,46 +57,47 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
-            <div className="flex min-h-screen">
-              <MainMenu setActiveSidebar={setActiveSidebar} />
-              <Sidebar activeSidebar={activeSidebar} />
-              <div className="flex-1 transition-all duration-300">
-                <AnimatePresence mode="wait">
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/jobs" element={<Jobs />} />
-                    <Route path="/jobs/add" element={<AddJob />} />
-                    <Route path="/jobs/:id" element={<JobDetail />} />
-                    <Route path="/applicants" element={<Applicants />} />
-                    <Route path="/talent-pool" element={<TalentPool />} />
-                    {/* ATS1 Routes */}
-                    <Route path="/ats1/jobs" element={<Ats1Jobs />} />
-                    <Route path="/ats1/jobs/add" element={<Ats1AddJob />} />
-                    <Route path="/ats1/jobs/:id" element={<Ats1JobDetail />} />
-                    <Route path="/ats1/jobs/:id/edit" element={<Ats1AddJob />} />
-                    <Route path="/ats1/applicants" element={<Ats1Applicants />} />
-                    <Route path="/ats1/talent-pool" element={<Ats1TalentPool />} />
-                    
-                    <Route path="/contacts" element={<Contacts />} />
-                    <Route path="/companies" element={<Companies />} />
-                    <Route path="/deals" element={<Deals />} />
-                    <Route path="/form-builders" element={<FormBuilders />} />
-                    <Route path="/form-builder" element={<FormBuilder />} />
-                    <Route path="/settings" element={<Settings />}>
-                      <Route index element={<SettingsDefault />} />
-                      <Route path="pipeline" element={<PipelineSettings />} />
-                      <Route path="workflow" element={<WorkflowSettings />} />
-                      <Route path="user-roles" element={<UserRoleSettings />} />
-                      <Route path="system" element={<SystemSettings />} />
-                    </Route>
-                    <Route path="/job-board" element={<JobBoardManager />} />
-                    <Route path="/website" element={<JobBoardManager />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </AnimatePresence>
+            <SidebarProvider>
+              <div className="min-h-screen flex w-full">
+                <AppSidebar />
+                <SidebarInset className="flex-1">
+                  <AnimatePresence mode="wait">
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/jobs" element={<Jobs />} />
+                      <Route path="/jobs/add" element={<AddJob />} />
+                      <Route path="/jobs/:id" element={<JobDetail />} />
+                      <Route path="/applicants" element={<Applicants />} />
+                      <Route path="/talent-pool" element={<TalentPool />} />
+                      {/* ATS1 Routes */}
+                      <Route path="/ats1/jobs" element={<Ats1Jobs />} />
+                      <Route path="/ats1/jobs/add" element={<Ats1AddJob />} />
+                      <Route path="/ats1/jobs/:id" element={<Ats1JobDetail />} />
+                      <Route path="/ats1/jobs/:id/edit" element={<Ats1AddJob />} />
+                      <Route path="/ats1/applicants" element={<Ats1Applicants />} />
+                      <Route path="/ats1/talent-pool" element={<Ats1TalentPool />} />
+                      
+                      <Route path="/contacts" element={<Contacts />} />
+                      <Route path="/companies" element={<Companies />} />
+                      <Route path="/deals" element={<Deals />} />
+                      <Route path="/form-builders" element={<FormBuilders />} />
+                      <Route path="/form-builder" element={<FormBuilder />} />
+                      <Route path="/settings" element={<Settings />}>
+                        <Route index element={<SettingsDefault />} />
+                        <Route path="pipeline" element={<PipelineSettings />} />
+                        <Route path="workflow" element={<WorkflowSettings />} />
+                        <Route path="user-roles" element={<UserRoleSettings />} />
+                        <Route path="system" element={<SystemSettings />} />
+                      </Route>
+                      <Route path="/job-board" element={<JobBoardManager />} />
+                      <Route path="/website" element={<JobBoardManager />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </AnimatePresence>
+                </SidebarInset>
               </div>
-            </div>
+            </SidebarProvider>
           </BrowserRouter>
         </TooltipProvider>
       </ThemeToggleProvider>
