@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -21,6 +21,15 @@ import {
   Receipt,
   CreditCard,
   Search,
+  ChevronDown,
+  ChevronRight,
+  Shield,
+  Mail,
+  Bell,
+  Kanban,
+  Workflow,
+  UserCog,
+  Sliders,
 } from "lucide-react";
 import {
   Sidebar,
@@ -53,6 +62,7 @@ import {
 
 const navigationGroups = [
   {
+    id: "dashboard",
     label: "Dashboard",
     items: [
       { icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
@@ -61,6 +71,7 @@ const navigationGroups = [
     ],
   },
   {
+    id: "crm",
     label: "CRM",
     items: [
       { icon: Contact, label: "Contacts", path: "/contacts" },
@@ -69,6 +80,7 @@ const navigationGroups = [
     ],
   },
   {
+    id: "ats",
     label: "ATS",
     items: [
       { icon: Briefcase, label: "Jobs", path: "/jobs" },
@@ -77,6 +89,7 @@ const navigationGroups = [
     ],
   },
   {
+    id: "ats1",
     label: "ATS1",
     items: [
       { icon: Briefcase, label: "Jobs", path: "/ats1/jobs" },
@@ -85,6 +98,7 @@ const navigationGroups = [
     ],
   },
   {
+    id: "marketing",
     label: "Marketing",
     items: [
       { icon: FileSpreadsheet, label: "Form Builders", path: "/form-builders" },
@@ -92,6 +106,7 @@ const navigationGroups = [
     ],
   },
   {
+    id: "finance",
     label: "Finance",
     items: [
       { icon: Receipt, label: "Invoices", path: "/finance/invoices" },
@@ -100,15 +115,50 @@ const navigationGroups = [
     ],
   },
   {
+    id: "settings",
     label: "Settings",
     items: [
-      { icon: Settings, label: "Settings", path: "/settings" },
+      { icon: User, label: "Profile", path: "/settings/profile" },
+      { icon: Shield, label: "Security", path: "/settings/security" },
+      { icon: Mail, label: "Notifications", path: "/settings/notifications" },
+      { icon: Bell, label: "Email Templates", path: "/settings/email-templates" },
+      { icon: Globe, label: "Career Site", path: "/settings/career-site" },
+      { icon: CreditCard, label: "Billing", path: "/settings/billing" },
+      { icon: Kanban, label: "Pipeline Manager", path: "/settings/pipeline" },
+      { icon: Workflow, label: "Workflow", path: "/settings/workflow" },
+      { icon: UserCog, label: "User Roles", path: "/settings/user-roles" },
+      { icon: Sliders, label: "System Settings", path: "/settings/system" },
     ],
   },
 ];
 
+// Helper function to get/set localStorage state
+const getStoredGroupState = (groupId: string): boolean => {
+  const stored = localStorage.getItem(`sidebar-group-${groupId}`);
+  return stored ? JSON.parse(stored) : true; // Default to expanded
+};
+
+const setStoredGroupState = (groupId: string, isOpen: boolean) => {
+  localStorage.setItem(`sidebar-group-${groupId}`, JSON.stringify(isOpen));
+};
+
 export function AppSidebar() {
   const location = useLocation();
+  
+  // Initialize collapse states from localStorage
+  const [groupStates, setGroupStates] = useState<Record<string, boolean>>(() => {
+    const initialStates: Record<string, boolean> = {};
+    navigationGroups.forEach(group => {
+      initialStates[group.id] = getStoredGroupState(group.id);
+    });
+    return initialStates;
+  });
+
+  const toggleGroup = (groupId: string) => {
+    const newState = !groupStates[groupId];
+    setGroupStates(prev => ({ ...prev, [groupId]: newState }));
+    setStoredGroupState(groupId, newState);
+  };
 
   return (
     <Sidebar>
@@ -130,54 +180,50 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        {navigationGroups.map((group) => (
-          <SidebarGroup key={group.label}>
-            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => {
-                  const isActive = location.pathname === item.path || 
-                    (item.path === '/settings' && location.pathname.startsWith('/settings'));
-                  
-                  return (
-                    <SidebarMenuItem key={item.path}>
-                      <SidebarMenuButton asChild isActive={isActive}>
-                        <Link to={item.path}>
-                          <item.icon />
-                          <span>{item.label}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                      {item.path === '/settings' && location.pathname.startsWith('/settings') && (
-                        <SidebarMenuSub>
-                          <SidebarMenuSubItem>
-                            <SidebarMenuSubButton asChild isActive={location.pathname === '/settings/pipeline'}>
-                              <Link to="/settings/pipeline">Pipeline Manager</Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                          <SidebarMenuSubItem>
-                            <SidebarMenuSubButton asChild isActive={location.pathname === '/settings/workflow'}>
-                              <Link to="/settings/workflow">Workflow</Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                          <SidebarMenuSubItem>
-                            <SidebarMenuSubButton asChild isActive={location.pathname === '/settings/user-roles'}>
-                              <Link to="/settings/user-roles">User Roles</Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                          <SidebarMenuSubItem>
-                            <SidebarMenuSubButton asChild isActive={location.pathname === '/settings/system'}>
-                              <Link to="/settings/system">System Settings</Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        </SidebarMenuSub>
-                      )}
-                    </SidebarMenuItem>
-                  );
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+        {navigationGroups.map((group) => {
+          const isExpanded = groupStates[group.id];
+          const hasActiveItem = group.items.some(item => 
+            location.pathname === item.path || 
+            (item.path === '/settings' && location.pathname.startsWith('/settings'))
+          );
+
+          return (
+            <SidebarGroup key={group.id}>
+              <Collapsible open={isExpanded} onOpenChange={() => toggleGroup(group.id)}>
+                <CollapsibleTrigger asChild>
+                  <SidebarGroupLabel className="group/label w-full flex items-center justify-between hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-md px-2 py-1 cursor-pointer">
+                    <span>{group.label}</span>
+                    {isExpanded ? (
+                      <ChevronDown className="h-4 w-4 transition-transform" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4 transition-transform" />
+                    )}
+                  </SidebarGroupLabel>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {group.items.map((item) => {
+                        const isActive = location.pathname === item.path;
+                        
+                        return (
+                          <SidebarMenuItem key={item.path}>
+                            <SidebarMenuButton asChild isActive={isActive}>
+                              <Link to={item.path}>
+                                <item.icon />
+                                <span>{item.label}</span>
+                              </Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        );
+                      })}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </CollapsibleContent>
+              </Collapsible>
+            </SidebarGroup>
+          );
+        })}
       </SidebarContent>
 
       <SidebarFooter>

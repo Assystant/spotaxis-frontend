@@ -1,5 +1,4 @@
 
-import { PageContainer } from "@/components/layout/PageContainer";
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RoleManagement } from "@/components/settings/RoleManagement";
@@ -18,7 +17,7 @@ const UserRoleSettings = () => {
   }, []);
 
   return (
-    <PageContainer title="User Roles & Permissions">
+    <div className="container mx-auto p-6">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold">User Roles & Permissions</h2>
         <p className="text-muted-foreground">Manage user roles, permissions, and assignments</p>
@@ -56,7 +55,7 @@ const UserRoleSettings = () => {
           <UserAssignment />
         </TabsContent>
       </Tabs>
-    </PageContainer>
+    </div>
   );
 };
 

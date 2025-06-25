@@ -1,18 +1,14 @@
 
 import { Outlet } from "react-router-dom";
 import { PageContainer } from "@/components/layout/PageContainer";
-import { SettingsSidebar } from "@/components/settings/SettingsSidebar";
 import { Card } from "@/components/ui/card";
 import { Settings as SettingsIcon } from "lucide-react";
 
 const Settings = () => {
   return (
     <PageContainer title="Settings">
-      <div className="flex h-[calc(100vh-140px)]">
-        <SettingsSidebar />
-        <div className="flex-1 p-6 overflow-y-auto">
-          <Outlet />
-        </div>
+      <div className="w-full">
+        <Outlet />
       </div>
     </PageContainer>
   );

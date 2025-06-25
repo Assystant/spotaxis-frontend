@@ -1,5 +1,4 @@
 
-import { PageContainer } from "@/components/layout/PageContainer";
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FieldCustomization } from "@/components/settings/FieldCustomization";
@@ -18,7 +17,7 @@ const SystemSettings = () => {
   }, []);
 
   return (
-    <PageContainer title="System Settings">
+    <div className="container mx-auto p-6">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold">System Settings</h2>
         <p className="text-muted-foreground">Customize system behavior and configure global settings</p>
@@ -56,7 +55,7 @@ const SystemSettings = () => {
           <SystemAudit />
         </TabsContent>
       </Tabs>
-    </PageContainer>
+    </div>
   );
 };
 
