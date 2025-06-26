@@ -6,6 +6,16 @@ export interface TriggerEvent {
   name: string;
   description: string;
   category: string;
+  parameters: TriggerParameter[];
+}
+
+export interface TriggerParameter {
+  id: string;
+  name: string;
+  type: 'select' | 'text' | 'datetime' | 'number';
+  required: boolean;
+  options?: { value: string; label: string }[];
+  placeholder?: string;
 }
 
 export interface ActionType {
@@ -14,16 +24,43 @@ export interface ActionType {
   description: string;
   icon: string;
   category: string;
+  parameters: ActionParameter[];
+}
+
+export interface ActionParameter {
+  id: string;
+  name: string;
+  type: 'select' | 'text' | 'textarea' | 'number' | 'email';
+  required: boolean;
+  options?: { value: string; label: string }[];
+  placeholder?: string;
+}
+
+export interface ConditionalBranch {
+  id: string;
+  name: string;
+  description: string;
+  parameters: BranchParameter[];
+}
+
+export interface BranchParameter {
+  id: string;
+  name: string;
+  type: 'select' | 'text' | 'number';
+  required: boolean;
+  options?: { value: string; label: string }[];
 }
 
 export interface WorkflowBlock {
   id: string;
-  type: 'trigger' | 'action';
+  type: 'trigger' | 'action' | 'branch';
   eventType?: string;
   actionType?: string;
+  branchType?: string;
   config: Record<string, any>;
   position: { x: number; y: number };
   isConfigured: boolean;
+  connections?: string[];
 }
 
 export interface Automation {
@@ -35,6 +72,8 @@ export interface Automation {
   actions: WorkflowBlock[];
   created: Date;
   modified: Date;
+  runsSucceeded: number;
+  runsFailed: number;
 }
 
 export interface WorkflowTemplate {
@@ -50,12 +89,16 @@ interface WorkflowContextType {
   currentAutomation: Automation | null;
   triggerEvents: TriggerEvent[];
   actionTypes: ActionType[];
+  conditionalBranches: ConditionalBranch[];
   templates: WorkflowTemplate[];
   setCurrentAutomation: (automation: Automation | null) => void;
   saveAutomation: (automation: Automation) => void;
   deleteAutomation: (id: string) => void;
   toggleAutomation: (id: string, enabled: boolean) => void;
   getTemplate: (id: string) => WorkflowTemplate | undefined;
+  getTriggerEvent: (id: string) => TriggerEvent | undefined;
+  getActionType: (id: string) => ActionType | undefined;
+  getConditionalBranch: (id: string) => ConditionalBranch | undefined;
 }
 
 const WorkflowContext = createContext<WorkflowContextType | undefined>(undefined);
@@ -69,76 +112,143 @@ export const useWorkflow = () => {
 };
 
 const mockTriggerEvents: TriggerEvent[] = [
-  { id: 'job_created', name: 'Job Created', description: 'When a new job posting is created', category: 'Jobs' },
-  { id: 'job_updated', name: 'Job Updated', description: 'When a job posting is modified', category: 'Jobs' },
-  { id: 'candidate_applies', name: 'Candidate Applies', description: 'When a candidate submits an application', category: 'Applications' },
-  { id: 'candidate_stage_change', name: 'Candidate Stage Change', description: 'When a candidate moves between pipeline stages', category: 'Pipeline' },
-  { id: 'interview_scheduled', name: 'Interview Scheduled', description: 'When an interview is scheduled', category: 'Interviews' },
-  { id: 'interview_completed', name: 'Interview Completed', description: 'When an interview is marked as completed', category: 'Interviews' },
-  { id: 'offer_extended', name: 'Offer Extended', description: 'When an offer is sent to a candidate', category: 'Offers' },
-  { id: 'offer_accepted', name: 'Offer Accepted', description: 'When a candidate accepts an offer', category: 'Offers' },
-  { id: 'offer_declined', name: 'Offer Declined', description: 'When a candidate declines an offer', category: 'Offers' },
-  { id: 'application_withdrawn', name: 'Application Withdrawn', description: 'When a candidate withdraws their application', category: 'Applications' },
+  {
+    id: 'candidate_applies',
+    name: 'Candidate Applies',
+    description: 'When a candidate submits an application',
+    category: 'Applications',
+    parameters: [
+      { id: 'job_id', name: 'Job Position', type: 'select', required: false, options: [
+        { value: 'any', label: 'Any Position' },
+        { value: 'developer', label: 'Software Developer' },
+        { value: 'designer', label: 'UI/UX Designer' }
+      ]}
+    ]
+  },
+  {
+    id: 'candidate_stage_change',
+    name: 'Candidate Stage Change',
+    description: 'When a candidate moves between pipeline stages',
+    category: 'Pipeline',
+    parameters: [
+      { id: 'from_stage', name: 'From Stage', type: 'select', required: true, options: [
+        { value: 'applied', label: 'Applied' },
+        { value: 'screening', label: 'Screening' },
+        { value: 'interview', label: 'Interview' }
+      ]},
+      { id: 'to_stage', name: 'To Stage', type: 'select', required: true, options: [
+        { value: 'screening', label: 'Screening' },
+        { value: 'interview', label: 'Interview' },
+        { value: 'offer', label: 'Offer' }
+      ]}
+    ]
+  },
+  {
+    id: 'interview_scheduled',
+    name: 'Interview Scheduled',
+    description: 'When an interview is scheduled',
+    category: 'Interviews',
+    parameters: [
+      { id: 'interviewer', name: 'Interviewer', type: 'select', required: false, options: [
+        { value: 'any', label: 'Any Interviewer' },
+        { value: 'john_doe', label: 'John Doe' },
+        { value: 'jane_smith', label: 'Jane Smith' }
+      ]}
+    ]
+  },
+  {
+    id: 'offer_extended',
+    name: 'Offer Extended',
+    description: 'When an offer is sent to a candidate',
+    category: 'Offers',
+    parameters: [
+      { id: 'min_amount', name: 'Minimum Offer Amount', type: 'number', required: false, placeholder: 'e.g. 50000' }
+    ]
+  }
 ];
 
 const mockActionTypes: ActionType[] = [
-  { id: 'send_email', name: 'Send Email', description: 'Send an email notification', icon: '✉️', category: 'Communication' },
-  { id: 'move_candidate', name: 'Move Candidate', description: 'Move candidate to a different stage', icon: '➡️', category: 'Pipeline' },
-  { id: 'create_task', name: 'Create Task', description: 'Create a follow-up task', icon: '✅', category: 'Tasks' },
-  { id: 'schedule_interview', name: 'Schedule Interview', description: 'Automatically schedule an interview', icon: '📅', category: 'Interviews' },
-  { id: 'send_sms', name: 'Send SMS', description: 'Send SMS notification', icon: '💬', category: 'Communication' },
-  { id: 'update_field', name: 'Update Field', description: 'Update a candidate or job field', icon: '📝', category: 'Data' },
-  { id: 'create_note', name: 'Create Note', description: 'Add a note to the candidate profile', icon: '📄', category: 'Notes' },
-  { id: 'webhook', name: 'Send Webhook', description: 'Send data to external system', icon: '🔗', category: 'Integration' },
+  {
+    id: 'send_email',
+    name: 'Send Email',
+    description: 'Send an email notification',
+    icon: '✉️',
+    category: 'Communication',
+    parameters: [
+      { id: 'to', name: 'Recipient', type: 'select', required: true, options: [
+        { value: 'candidate', label: 'Candidate' },
+        { value: 'hiring_manager', label: 'Hiring Manager' },
+        { value: 'recruiter', label: 'Recruiter' }
+      ]},
+      { id: 'subject', name: 'Subject', type: 'text', required: true, placeholder: 'Email subject' },
+      { id: 'body', name: 'Message', type: 'textarea', required: true, placeholder: 'Email message...' }
+    ]
+  },
+  {
+    id: 'move_candidate',
+    name: 'Move Candidate',
+    description: 'Move candidate to a different stage',
+    icon: '➡️',
+    category: 'Pipeline',
+    parameters: [
+      { id: 'stage', name: 'Target Stage', type: 'select', required: true, options: [
+        { value: 'screening', label: 'Screening' },
+        { value: 'interview', label: 'Interview' },
+        { value: 'offer', label: 'Offer' },
+        { value: 'hired', label: 'Hired' }
+      ]},
+      { id: 'reason', name: 'Reason', type: 'textarea', required: false, placeholder: 'Reason for moving candidate...' }
+    ]
+  },
+  {
+    id: 'create_task',
+    name: 'Create Task',
+    description: 'Create a follow-up task',
+    icon: '✅',
+    category: 'Tasks',
+    parameters: [
+      { id: 'title', name: 'Task Title', type: 'text', required: true, placeholder: 'Task title' },
+      { id: 'assignee', name: 'Assign To', type: 'select', required: true, options: [
+        { value: 'hiring_manager', label: 'Hiring Manager' },
+        { value: 'recruiter', label: 'Recruiter' },
+        { value: 'me', label: 'Me' }
+      ]},
+      { id: 'due_date', name: 'Due Date', type: 'select', required: false, options: [
+        { value: '1_hour', label: '1 Hour' },
+        { value: '1_day', label: '1 Day' },
+        { value: '3_days', label: '3 Days' },
+        { value: '1_week', label: '1 Week' }
+      ]}
+    ]
+  }
 ];
 
-const mockTemplates: WorkflowTemplate[] = [
+const mockConditionalBranches: ConditionalBranch[] = [
   {
-    id: 'welcome_applicant',
-    name: 'Welcome New Applicants',
-    description: 'Send welcome email when candidate applies',
-    trigger: {
-      id: 'trigger_template_1',
-      type: 'trigger',
-      eventType: 'candidate_applies',
-      config: {},
-      position: { x: 100, y: 100 },
-      isConfigured: false,
-    },
-    actions: [
-      {
-        id: 'action_template_1',
-        type: 'action',
-        actionType: 'send_email',
-        config: {},
-        position: { x: 100, y: 250 },
-        isConfigured: false,
-      },
-    ],
+    id: 'experience_check',
+    name: 'Years Experience Check',
+    description: 'Check candidate years of experience',
+    parameters: [
+      { id: 'operator', name: 'Operator', type: 'select', required: true, options: [
+        { value: 'gte', label: '>=' },
+        { value: 'lte', label: '<=' },
+        { value: 'eq', label: '=' }
+      ]},
+      { id: 'value', name: 'Years', type: 'number', required: true }
+    ]
   },
   {
-    id: 'interview_reminder',
-    name: 'Interview Reminders',
-    description: 'Send reminder emails 24h before interviews',
-    trigger: {
-      id: 'trigger_template_2',
-      type: 'trigger',
-      eventType: 'interview_scheduled',
-      config: {},
-      position: { x: 100, y: 100 },
-      isConfigured: false,
-    },
-    actions: [
-      {
-        id: 'action_template_2',
-        type: 'action',
-        actionType: 'send_email',
-        config: {},
-        position: { x: 100, y: 250 },
-        isConfigured: false,
-      },
-    ],
-  },
+    id: 'salary_check',
+    name: 'Salary Expectation Check',
+    description: 'Check candidate salary expectations',
+    parameters: [
+      { id: 'operator', name: 'Operator', type: 'select', required: true, options: [
+        { value: 'gte', label: '>=' },
+        { value: 'lte', label: '<=' }
+      ]},
+      { id: 'value', name: 'Amount', type: 'number', required: true }
+    ]
+  }
 ];
 
 const mockAutomations: Automation[] = [
@@ -151,7 +261,7 @@ const mockAutomations: Automation[] = [
       id: 'trigger_1',
       type: 'trigger',
       eventType: 'candidate_applies',
-      config: { name: 'New Application Received' },
+      config: { job_id: 'any' },
       position: { x: 100, y: 100 },
       isConfigured: true,
     },
@@ -171,6 +281,8 @@ const mockAutomations: Automation[] = [
     ],
     created: new Date('2024-01-15'),
     modified: new Date('2024-01-15'),
+    runsSucceeded: 142,
+    runsFailed: 3,
   },
   {
     id: '2',
@@ -181,6 +293,8 @@ const mockAutomations: Automation[] = [
     actions: [],
     created: new Date('2024-01-10'),
     modified: new Date('2024-01-12'),
+    runsSucceeded: 0,
+    runsFailed: 0,
   },
 ];
 
@@ -212,17 +326,33 @@ export const WorkflowProvider: React.FC<{ children: ReactNode }> = ({ children }
     return mockTemplates.find(t => t.id === id);
   };
 
+  const getTriggerEvent = (id: string) => {
+    return mockTriggerEvents.find(t => t.id === id);
+  };
+
+  const getActionType = (id: string) => {
+    return mockActionTypes.find(a => a.id === id);
+  };
+
+  const getConditionalBranch = (id: string) => {
+    return mockConditionalBranches.find(b => b.id === id);
+  };
+
   const value: WorkflowContextType = {
     automations,
     currentAutomation,
     triggerEvents: mockTriggerEvents,
     actionTypes: mockActionTypes,
-    templates: mockTemplates,
+    conditionalBranches: mockConditionalBranches,
+    templates: [],
     setCurrentAutomation,
     saveAutomation,
     deleteAutomation,
     toggleAutomation,
     getTemplate,
+    getTriggerEvent,
+    getActionType,
+    getConditionalBranch,
   };
 
   return (
@@ -231,3 +361,5 @@ export const WorkflowProvider: React.FC<{ children: ReactNode }> = ({ children }
     </WorkflowContext.Provider>
   );
 };
+
+const mockTemplates: WorkflowTemplate[] = [];

@@ -41,12 +41,11 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
       const template = getTemplate(templateId);
       if (template) {
         setAutomationName(template.name);
-        // Create empty blocks from template structure
         if (template.trigger) {
           const emptyTrigger = {
             ...template.trigger,
             id: `trigger_${Date.now()}`,
-            config: {}, // Empty config for user to fill
+            config: {},
             isConfigured: false,
           };
           setTriggerBlock(emptyTrigger);
@@ -55,7 +54,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
         const emptyActions = template.actions.map((action, index) => ({
           ...action,
           id: `action_${Date.now()}_${index}`,
-          config: {}, // Empty config for user to fill
+          config: {},
           isConfigured: false,
         }));
         setActionBlocks(emptyActions);
@@ -76,26 +75,54 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     setActionBlocks(blocks);
   };
 
-  const handleSaveAutomation = () => {
+  const handleTriggerEdit = () => {
+    setCurrentStep('trigger');
+  };
+
+  const canSave = triggerBlock && triggerBlock.isConfigured && 
+    actionBlocks.every(action => action.isConfigured);
+
+  const canLaunch = canSave;
+
+  const handleSaveFlow = () => {
     if (!triggerBlock) return;
 
     const automation: Automation = {
       id: automationId || `automation_${Date.now()}`,
       name: automationName,
-      description: `Automation triggered by ${triggerBlock.eventType}`,
-      enabled: true,
+      description: `Automation triggered by ${triggerBlock.eventType?.replace('_', ' ')}`,
+      enabled: false, // Save as draft
       trigger: triggerBlock,
       actions: actionBlocks,
       created: existingAutomation?.created || new Date(),
       modified: new Date(),
+      runsSucceeded: existingAutomation?.runsSucceeded || 0,
+      runsFailed: existingAutomation?.runsFailed || 0,
     };
 
     saveAutomation(automation);
     onBack();
   };
 
-  const canSave = triggerBlock && triggerBlock.isConfigured && 
-    actionBlocks.every(action => action.isConfigured);
+  const handleSaveAndLaunch = () => {
+    if (!triggerBlock) return;
+
+    const automation: Automation = {
+      id: automationId || `automation_${Date.now()}`,
+      name: automationName,
+      description: `Automation triggered by ${triggerBlock.eventType?.replace('_', ' ')}`,
+      enabled: true, // Save and activate
+      trigger: triggerBlock,
+      actions: actionBlocks,
+      created: existingAutomation?.created || new Date(),
+      modified: new Date(),
+      runsSucceeded: existingAutomation?.runsSucceeded || 0,
+      runsFailed: existingAutomation?.runsFailed || 0,
+    };
+
+    saveAutomation(automation);
+    onBack();
+  };
 
   return (
     <div className="h-screen flex flex-col">
@@ -120,10 +147,6 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
             </div>
           </div>
         </div>
-        <Button onClick={handleSaveAutomation} disabled={!canSave}>
-          <Save className="w-4 h-4 mr-2" />
-          Save Automation
-        </Button>
       </div>
 
       {/* Main Content */}
@@ -136,16 +159,37 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
             triggerBlock={triggerBlock}
             onSaveTrigger={handleSaveTrigger}
             onAddAction={handleAddAction}
+            onStepChange={setCurrentStep}
           />
         </div>
 
         {/* Canvas Area - 70% */}
-        <div className="w-[70%] bg-background">
+        <div className="w-[70%] bg-background relative">
           <CanvasArea
             triggerBlock={triggerBlock}
             actionBlocks={actionBlocks}
             onUpdateActionBlocks={handleUpdateActionBlocks}
+            onTriggerDoubleClick={handleTriggerEdit}
           />
+          
+          {/* Bottom-right controls */}
+          <div className="absolute bottom-6 right-6 flex space-x-3">
+            <Button 
+              variant="outline" 
+              onClick={handleSaveFlow}
+              disabled={!canSave}
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Save Flow
+            </Button>
+            <Button 
+              onClick={handleSaveAndLaunch}
+              disabled={!canLaunch}
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Save & Launch
+            </Button>
+          </div>
         </div>
       </div>
     </div>

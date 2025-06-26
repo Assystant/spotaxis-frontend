@@ -1,26 +1,58 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowDown, Settings, Trash2, GripVertical } from 'lucide-react';
 import { type WorkflowBlock } from '@/contexts/WorkflowContext';
-import { ActionConfigDialog } from './ActionConfigDialog';
+import { BlockConfigDialog } from './BlockConfigDialog';
 
 interface CanvasAreaProps {
   triggerBlock: WorkflowBlock | null;
   actionBlocks: WorkflowBlock[];
   onUpdateActionBlocks: (blocks: WorkflowBlock[]) => void;
+  onTriggerDoubleClick?: () => void;
 }
 
 export const CanvasArea: React.FC<CanvasAreaProps> = ({
   triggerBlock,
   actionBlocks,
   onUpdateActionBlocks,
+  onTriggerDoubleClick,
 }) => {
   const [configuring, setConfiguring] = useState<WorkflowBlock | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
+  const [snapTarget, setSnapTarget] = useState<string | null>(null);
   const dropZoneRef = useRef<HTMLDivElement>(null);
+
+  const findSnapTarget = useCallback((x: number, y: number) => {
+    const SNAP_DISTANCE = 100;
+    
+    // Check trigger block
+    if (triggerBlock) {
+      const triggerDistance = Math.sqrt(
+        Math.pow(x - (triggerBlock.position.x + 160), 2) + 
+        Math.pow(y - (triggerBlock.position.y + 80), 2)
+      );
+      if (triggerDistance < SNAP_DISTANCE) {
+        return 'trigger';
+      }
+    }
+
+    // Check action blocks
+    for (let i = 0; i < actionBlocks.length; i++) {
+      const block = actionBlocks[i];
+      const distance = Math.sqrt(
+        Math.pow(x - (block.position.x + 160), 2) + 
+        Math.pow(y - (block.position.y + 80), 2)
+      );
+      if (distance < SNAP_DISTANCE) {
+        return `action-${i}`;
+      }
+    }
+
+    return null;
+  }, [triggerBlock, actionBlocks]);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -29,41 +61,78 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
     if (actionData) {
       try {
         const parsedAction = JSON.parse(actionData);
-        const newAction: WorkflowBlock = {
-          id: `action_${Date.now()}`,
-          type: 'action',
-          actionType: parsedAction.id,
-          config: {},
-          position: { x: 100, y: 200 + (actionBlocks.length * 150) },
-          isConfigured: false,
-        };
+        const rect = dropZoneRef.current?.getBoundingClientRect();
         
-        onUpdateActionBlocks([...actionBlocks, newAction]);
-        setConfiguring(newAction);
+        if (rect) {
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const target = findSnapTarget(x, y);
+          
+          if (target) {
+            let position;
+            if (target === 'trigger' && triggerBlock) {
+              position = { x: triggerBlock.position.x, y: triggerBlock.position.y + 150 };
+            } else if (target.startsWith('action-')) {
+              const index = parseInt(target.split('-')[1]);
+              const targetBlock = actionBlocks[index];
+              position = { x: targetBlock.position.x, y: targetBlock.position.y + 150 };
+            } else {
+              return; // No valid snap target
+            }
+
+            const newBlock: WorkflowBlock = {
+              id: `${parsedAction.type}_${Date.now()}`,
+              type: parsedAction.type as 'action' | 'branch',
+              [parsedAction.type === 'action' ? 'actionType' : 'branchType']: parsedAction.id,
+              config: {},
+              position,
+              isConfigured: false,
+            };
+            
+            onUpdateActionBlocks([...actionBlocks, newBlock]);
+            setConfiguring(newBlock);
+          }
+        }
       } catch (error) {
         console.error('Failed to parse action data:', error);
       }
     }
     setDragging(null);
+    setSnapTarget(null);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    setDragging('canvas');
+    const rect = dropZoneRef.current?.getBoundingClientRect();
+    
+    if (rect) {
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const target = findSnapTarget(x, y);
+      
+      setSnapTarget(target);
+      setDragging(target ? 'snapping' : 'canvas');
+    }
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
     if (!dropZoneRef.current?.contains(e.relatedTarget as Node)) {
       setDragging(null);
+      setSnapTarget(null);
     }
   };
 
-  const handleConfigureAction = (block: WorkflowBlock) => {
+  const handleConfigureBlock = (block: WorkflowBlock) => {
     setConfiguring(block);
   };
 
-  const handleSaveActionConfig = (config: Record<string, any>) => {
+  const handleSaveBlockConfig = (config: Record<string, any>) => {
     if (!configuring) return;
+
+    if (configuring.type === 'trigger' && onTriggerDoubleClick) {
+      // Handle trigger update differently if needed
+      return;
+    }
 
     const updatedBlocks = actionBlocks.map(block =>
       block.id === configuring.id
@@ -75,21 +144,16 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
     setConfiguring(null);
   };
 
-  const handleDeleteAction = (blockId: string) => {
+  const handleDeleteBlock = (blockId: string) => {
     const updatedBlocks = actionBlocks.filter(block => block.id !== blockId);
     onUpdateActionBlocks(updatedBlocks);
-  };
-
-  const moveAction = (fromIndex: number, toIndex: number) => {
-    const newBlocks = [...actionBlocks];
-    const [moved] = newBlocks.splice(fromIndex, 1);
-    newBlocks.splice(toIndex, 0, moved);
-    onUpdateActionBlocks(newBlocks);
   };
 
   const getBlockTitle = (block: WorkflowBlock) => {
     if (block.type === 'trigger') {
       return block.eventType?.replace('_', ' ').toUpperCase() || 'TRIGGER';
+    } else if (block.type === 'branch') {
+      return block.branchType?.replace('_', ' ').toUpperCase() || 'BRANCH';
     }
     return block.actionType?.replace('_', ' ').toUpperCase() || 'ACTION';
   };
@@ -101,88 +165,96 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
     return block.isConfigured ? 'Configured' : 'Needs configuration';
   };
 
-  const renderWorkflowBlock = (block: WorkflowBlock, index: number) => (
-    <div key={block.id} className="relative group">
-      <Card className={`w-80 mx-auto transition-all ${
-        !block.isConfigured 
-          ? 'border-orange-300 bg-orange-50 shadow-orange-100' 
-          : 'border-green-300 bg-green-50 shadow-green-100'
-      }`}>
-        <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            <Badge variant={block.type === 'trigger' ? 'default' : 'secondary'}>
-              {block.type === 'trigger' ? 'Trigger' : 'Action'}
-            </Badge>
-            <div className="flex items-center space-x-1">
-              {block.type === 'action' && (
-                <>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <GripVertical className="w-3 h-3" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => handleConfigureAction(block)}
-                  >
-                    <Settings className="w-3 h-3" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
-                    onClick={() => handleDeleteAction(block.id)}
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
-                </>
+  const renderWorkflowBlock = (block: WorkflowBlock, index: number) => {
+    const isSnapTarget: boolean = snapTarget === (block.type === 'trigger' ? 'trigger' : `action-${index}`);
+    const validationColor = block.isConfigured ? 'border-green-300 bg-green-50' : 'border-red-300 bg-red-50';
+    const glowClass = block.isConfigured ? 'shadow-green-200' : 'shadow-red-200';
+    
+    return (
+      <div key={block.id} className="relative group">
+        <Card className={`w-80 mx-auto transition-all ${validationColor} ${glowClass} ${
+          isSnapTarget ? 'ring-2 ring-blue-400 ring-opacity-50' : ''
+        } shadow-lg`}>
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <Badge variant={block.type === 'trigger' ? 'default' : block.type === 'branch' ? 'outline' : 'secondary'}>
+                {block.type === 'trigger' ? 'Trigger' : block.type === 'branch' ? 'Branch' : 'Action'}
+              </Badge>
+              <div className="flex items-center space-x-1">
+                {block.type !== 'trigger' && (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <GripVertical className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => handleConfigureBlock(block)}
+                    >
+                      <Settings className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
+                      onClick={() => handleDeleteBlock(block.id)}
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+            <CardTitle 
+              className="text-sm font-medium cursor-pointer" 
+              onDoubleClick={block.type === 'trigger' ? onTriggerDoubleClick : undefined}
+            >
+              {getBlockTitle(block)}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="text-xs mb-2">
+              {block.isConfigured ? (
+                <span className="text-green-600 flex items-center">
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                  Configured
+                </span>
+              ) : (
+                <span className="text-red-600 flex items-center">
+                  <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                  Needs configuration
+                </span>
               )}
             </div>
-          </div>
-          <CardTitle className="text-sm font-medium">
-            {getBlockTitle(block)}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="text-xs">
-            {block.isConfigured ? (
-              <span className="text-green-600 flex items-center">
-                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Configured
-              </span>
-            ) : (
-              <span className="text-orange-600 flex items-center">
-                <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
-                Needs configuration
-              </span>
-            )}
-          </div>
-          <div className="text-sm mt-2 text-muted-foreground">
-            {getBlockDescription(block)}
-          </div>
-        </CardContent>
-      </Card>
+            <div className="text-sm text-muted-foreground">
+              {getBlockDescription(block)}
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Connector line to next block */}
-      {(block.type === 'trigger' && actionBlocks.length > 0) || 
-       (block.type === 'action' && index < actionBlocks.length - 1) ? (
-        <div className="flex justify-center mt-4 mb-4">
-          <div className="w-px h-8 bg-border"></div>
-          <ArrowDown className="w-5 h-5 text-muted-foreground -mt-2" />
-        </div>
-      ) : null}
-    </div>
-  );
+        {/* Connector line to next block */}
+        {(block.type === 'trigger' && actionBlocks.length > 0) || 
+         (block.type !== 'trigger' && index < actionBlocks.length - 1) ? (
+          <div className="flex justify-center mt-4 mb-4">
+            <div className="w-px h-8 bg-border"></div>
+            <ArrowDown className="w-5 h-5 text-muted-foreground -mt-2" />
+          </div>
+        ) : null}
+      </div>
+    );
+  };
 
   return (
     <div className="h-full p-6 bg-gray-50/50 overflow-y-auto">
       <div 
         ref={dropZoneRef}
         className={`min-h-full border-2 border-dashed rounded-lg p-8 bg-white transition-colors ${
+          dragging === 'snapping' ? 'border-blue-400 bg-blue-50' : 
           dragging ? 'border-primary bg-primary/5' : 'border-gray-300'
         }`}
         onDrop={handleDrop}
@@ -202,24 +274,26 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
             
             {actionBlocks.map((block, index) => renderWorkflowBlock(block, index))}
             
-            {/* Drop zone for new actions */}
-            <div className={`w-80 mx-auto p-8 border-2 border-dashed rounded-lg text-center text-muted-foreground transition-colors ${
-              dragging ? 'border-primary bg-primary/5' : 'border-gray-300'
-            }`}>
-              <div className="text-sm">
-                {dragging ? 'Drop action here' : 'Drag actions here from the sidebar'}
+            {/* Drop zone indicator */}
+            {dragging && (
+              <div className={`w-80 mx-auto p-8 border-2 border-dashed rounded-lg text-center transition-colors mt-4 ${
+                snapTarget ? 'border-blue-400 bg-blue-50 text-blue-600' : 'border-gray-400 bg-gray-50 text-muted-foreground'
+              }`}>
+                <div className="text-sm">
+                  {snapTarget ? 'Drop here to connect' : 'Drag near a block to connect'}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
 
       {configuring && (
-        <ActionConfigDialog
+        <BlockConfigDialog
           block={configuring}
           open={!!configuring}
           onOpenChange={() => setConfiguring(null)}
-          onSave={handleSaveActionConfig}
+          onSave={handleSaveBlockConfig}
         />
       )}
     </div>

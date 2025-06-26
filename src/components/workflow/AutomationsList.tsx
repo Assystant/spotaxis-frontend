@@ -61,6 +61,8 @@ export const AutomationsList: React.FC<AutomationsListProps> = ({
                 <TableHead className="pl-6">Name</TableHead>
                 <TableHead>Trigger Summary</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Runs Succeeded</TableHead>
+                <TableHead>Runs Failed</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead>Modified</TableHead>
                 <TableHead className="w-12 pr-6"></TableHead>
@@ -92,6 +94,22 @@ export const AutomationsList: React.FC<AutomationsListProps> = ({
                       />
                       <span className="text-sm text-muted-foreground">
                         {automation.enabled ? 'Enabled' : 'Disabled'}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-sm font-medium text-green-700">
+                        {automation.runsSucceeded.toLocaleString()}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      <span className="text-sm font-medium text-red-700">
+                        {automation.runsFailed.toLocaleString()}
                       </span>
                     </div>
                   </TableCell>
@@ -127,7 +145,7 @@ export const AutomationsList: React.FC<AutomationsListProps> = ({
               ))}
               {automations.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8">
+                  <TableCell colSpan={8} className="text-center py-8">
                     <div className="text-muted-foreground">
                       No automations created yet. 
                       <Button 
