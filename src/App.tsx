@@ -1,108 +1,67 @@
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { WorkflowProvider } from './contexts/WorkflowContext';
+import Dashboard from './pages/Dashboard';
+import Automations from './pages/Automations';
+import Templates from './pages/Templates';
+import Settings, { SettingsDefault } from './pages/Settings';
+import GeneralSettings from './pages/GeneralSettings';
+import TeamSettings from './pages/TeamSettings';
+import BillingSettings from './pages/BillingSettings';
+import AppearanceSettings from './pages/AppearanceSettings';
+import NotificationsSettings from './pages/NotificationsSettings';
+import { NewAutomationDialog } from './components/workflow/NewAutomationDialog';
+import { WorkflowCanvas } from './components/workflow/WorkflowCanvas';
+import SettingsSidebar from './components/layout/SettingsSidebar';
+import { SiteLayout } from './components/layout/SiteLayout';
+import { ToastProvider } from './contexts/ToastContext';
+import { EmailTemplatesProvider } from '@/contexts/EmailTemplatesContext';
+import EmailTemplates from '@/pages/EmailTemplates';
 
-import { useState, useEffect } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
-import { ThemeToggleProvider } from "./contexts/ThemeContext";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { AppSidebar } from "./components/layout/AppSidebar";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Dashboard from "./pages/Dashboard";
-import Jobs from "./pages/Jobs";
-import JobDetail from "./pages/JobDetail";
-import AddJob from "./pages/AddJob";
-import Applicants from "./pages/Applicants";
-import TalentPool from "./pages/TalentPool";
-import Contacts from "./pages/Contacts";
-import Companies from "./pages/Companies";
-import Deals from "./pages/Deals";
-import FormBuilders from "./pages/FormBuilders";
-import FormBuilder from "./pages/FormBuilder";
-import Settings, { SettingsDefault } from "./pages/Settings";
-import PipelineSettings from "./pages/PipelineSettings";
-import WorkflowSettings from "./pages/WorkflowSettings";
-import JobBoardManager from "./pages/JobBoardManager";
-import UserRoleSettings from "./pages/UserRoleSettings";
-import SystemSettings from "./pages/SystemSettings";
-// ATS1 imports
-import Ats1Jobs from "./pages/Ats1Jobs";
-import Ats1JobDetail from "./pages/Ats1JobDetail";
-import Ats1AddJob from "./pages/Ats1AddJob";
-import Ats1Applicants from "./pages/Ats1Applicants";
-import Ats1TalentPool from "./pages/Ats1TalentPool";
-
-const queryClient = new QueryClient();
-
-// ScrollToTop component to handle scroll position when navigating
-const ScrollToTop = () => {
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-
-  return null;
-};
-
-const App = () => {
+function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeToggleProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <ScrollToTop />
-            <SidebarProvider>
-              <div className="min-h-screen flex w-full">
-                <AppSidebar />
-                <SidebarInset className="flex-1">
-                  <AnimatePresence mode="wait">
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/jobs" element={<Jobs />} />
-                      <Route path="/jobs/add" element={<AddJob />} />
-                      <Route path="/jobs/:id" element={<JobDetail />} />
-                      <Route path="/applicants" element={<Applicants />} />
-                      <Route path="/talent-pool" element={<TalentPool />} />
-                      {/* ATS1 Routes */}
-                      <Route path="/ats1/jobs" element={<Ats1Jobs />} />
-                      <Route path="/ats1/jobs/add" element={<Ats1AddJob />} />
-                      <Route path="/ats1/jobs/:id" element={<Ats1JobDetail />} />
-                      <Route path="/ats1/jobs/:id/edit" element={<Ats1AddJob />} />
-                      <Route path="/ats1/applicants" element={<Ats1Applicants />} />
-                      <Route path="/ats1/talent-pool" element={<Ats1TalentPool />} />
-                      
-                      <Route path="/contacts" element={<Contacts />} />
-                      <Route path="/companies" element={<Companies />} />
-                      <Route path="/deals" element={<Deals />} />
-                      <Route path="/form-builders" element={<FormBuilders />} />
-                      <Route path="/form-builder" element={<FormBuilder />} />
-                      <Route path="/settings" element={<Settings />}>
+    <Router>
+      <EmailTemplatesProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <WorkflowProvider>
+                <div className="min-h-screen bg-background">
+                  <Routes>
+                    <Route path="/" element={<SiteLayout />} >
+                      <Route index element={<Dashboard />} />
+                      <Route path="dashboard" element={<Dashboard />} />
+                      <Route path="automations" element={<Automations />} />
+                      <Route path="templates" element={<Templates />} />
+                      <Route path="templates/new" element={<WorkflowCanvas mode="template" onBack={() => { }} />} />
+                      <Route path="templates/:templateId/edit" element={<WorkflowCanvas mode="template" onBack={() => { }} />} />
+                      <Route path="automations/new" element={<WorkflowCanvas mode="scratch" onBack={() => { }} />} />
+                      <Route path="automations/:automationId/edit" element={<WorkflowCanvas automationId={''} mode="scratch" onBack={() => { }} />} />
+
+                      <Route path="settings" element={<Settings />} >
                         <Route index element={<SettingsDefault />} />
-                        <Route path="pipeline" element={<PipelineSettings />} />
-                        <Route path="workflow" element={<WorkflowSettings />} />
-                        <Route path="user-roles" element={<UserRoleSettings />} />
-                        <Route path="system" element={<SystemSettings />} />
+                        <Route path="general" element={<GeneralSettings />} />
+
+                        <Route element={<SettingsSidebar />} >
+                          <Route path="team" element={<TeamSettings />} />
+                          <Route path="billing" element={<BillingSettings />} />
+                          <Route path="appearance" element={<AppearanceSettings />} />
+                          <Route path="notifications" element={<NotificationsSettings />} />
+                        </Route>
                       </Route>
-                      <Route path="/job-board" element={<JobBoardManager />} />
-                      <Route path="/website" element={<JobBoardManager />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </AnimatePresence>
-                </SidebarInset>
-              </div>
-            </SidebarProvider>
-          </BrowserRouter>
-        </TooltipProvider>
-      </ThemeToggleProvider>
-    </QueryClientProvider>
+                    </Route>
+                    <Route path="/settings/email-templates" element={<EmailTemplates />} />
+                  </Routes>
+                </div>
+              </WorkflowProvider>
+            </ToastProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </EmailTemplatesProvider>
+    </Router>
   );
-};
+}
 
 export default App;
