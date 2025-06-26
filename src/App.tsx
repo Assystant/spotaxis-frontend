@@ -25,8 +25,8 @@ function App() {
                   <Route path="settings" element={<Settings />} >
                     <Route index element={<SettingsDefault />} />
                   </Route>
+                  <Route path="settings/email-templates" element={<EmailTemplates />} />
                 </Route>
-                <Route path="/settings/email-templates" element={<EmailTemplates />} />
               </Routes>
             </div>
           </WorkflowProvider>
