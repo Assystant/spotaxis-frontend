@@ -10,6 +10,7 @@ import { EmailTemplatesProvider } from '@/contexts/EmailTemplatesContext';
 import EmailTemplates from '@/pages/EmailTemplates';
 import SystemSettings from '@/pages/SystemSettings';
 import UserRoleSettings from '@/pages/UserRoleSettings';
+import PipelineSettings from '@/pages/PipelineSettings';
 
 function App() {
   return (
@@ -33,7 +34,7 @@ function App() {
                   <Route path="settings/security" element={<SettingsDefault />} />
                   <Route path="settings/career-site" element={<SettingsDefault />} />
                   <Route path="settings/billing" element={<SettingsDefault />} />
-                  <Route path="settings/pipeline" element={<SettingsDefault />} />
+                  <Route path="settings/pipeline" element={<PipelineSettings />} />
                   <Route path="settings/workflow" element={<SettingsDefault />} />
                 </Route>
               </Routes>
