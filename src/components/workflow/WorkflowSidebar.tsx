@@ -8,7 +8,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft } from 'lucide-react';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ArrowLeft, Check, ChevronsUpDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { useWorkflow, type WorkflowBlock, type TriggerEvent, type ActionType, type ConditionalBranch } from '@/contexts/WorkflowContext';
 
 interface WorkflowSidebarProps {
@@ -29,22 +32,15 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({
   onStepChange,
 }) => {
   const { triggerEvents, actionTypes, conditionalBranches, getTriggerEvent } = useWorkflow();
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedTrigger, setSelectedTrigger] = useState<TriggerEvent | null>(null);
   const [triggerConfig, setTriggerConfig] = useState<Record<string, any>>({});
-
-  // Filter triggers based on search term
-  const filteredTriggers = useMemo(() => {
-    return triggerEvents.filter(trigger =>
-      trigger.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      trigger.description.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [triggerEvents, searchTerm]);
+  const [triggerDropdownOpen, setTriggerDropdownOpen] = useState(false);
 
   const handleTriggerSelect = (triggerId: string) => {
     const trigger = triggerEvents.find(t => t.id === triggerId);
     setSelectedTrigger(trigger || null);
     setTriggerConfig({});
+    setTriggerDropdownOpen(false);
   };
 
   const handleConfigChange = (paramId: string, value: any) => {
@@ -124,6 +120,15 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({
             placeholder={param.placeholder}
           />
         );
+      case 'datetime':
+        return (
+          <Input
+            type="datetime-local"
+            value={value || ''}
+            onChange={(e) => handleConfigChange(param.id, e.target.value)}
+            placeholder={param.placeholder}
+          />
+        );
       default:
         return (
           <Input
@@ -138,31 +143,50 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({
   const renderTriggerStep = () => (
     <div className="space-y-4">
       <div>
-        <Label htmlFor="trigger-search">Search Triggers</Label>
-        <Input
-          id="trigger-search"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Type to search triggers..."
-          className="mb-3"
-        />
-        
         <Label htmlFor="trigger-select">Select Trigger Event</Label>
-        <Select onValueChange={handleTriggerSelect}>
-          <SelectTrigger>
-            <SelectValue placeholder="Choose a trigger event" />
-          </SelectTrigger>
-          <SelectContent>
-            {filteredTriggers.map((trigger) => (
-              <SelectItem key={trigger.id} value={trigger.id}>
-                <div>
-                  <div className="font-medium">{trigger.name}</div>
-                  <div className="text-xs text-muted-foreground">{trigger.description}</div>
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Popover open={triggerDropdownOpen} onOpenChange={setTriggerDropdownOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={triggerDropdownOpen}
+              className="w-full justify-between mt-2"
+            >
+              {selectedTrigger
+                ? selectedTrigger.name
+                : "Choose a trigger event..."}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full p-0" align="start">
+            <Command>
+              <CommandInput placeholder="Search triggers..." />
+              <CommandEmpty>No trigger found.</CommandEmpty>
+              <CommandList>
+                <CommandGroup>
+                  {triggerEvents.map((trigger) => (
+                    <CommandItem
+                      key={trigger.id}
+                      value={trigger.id}
+                      onSelect={() => handleTriggerSelect(trigger.id)}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          selectedTrigger?.id === trigger.id ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      <div>
+                        <div className="font-medium">{trigger.name}</div>
+                        <div className="text-xs text-muted-foreground">{trigger.description}</div>
+                      </div>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {selectedTrigger && (

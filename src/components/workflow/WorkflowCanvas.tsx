@@ -164,31 +164,35 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
         </div>
 
         {/* Canvas Area - 70% */}
-        <div className="w-[70%] bg-background relative">
-          <CanvasArea
-            triggerBlock={triggerBlock}
-            actionBlocks={actionBlocks}
-            onUpdateActionBlocks={handleUpdateActionBlocks}
-            onTriggerDoubleClick={handleTriggerEdit}
-          />
+        <div className="w-[70%] bg-background flex flex-col">
+          <div className="flex-1 overflow-y-auto">
+            <CanvasArea
+              triggerBlock={triggerBlock}
+              actionBlocks={actionBlocks}
+              onUpdateActionBlocks={handleUpdateActionBlocks}
+              onTriggerDoubleClick={handleTriggerEdit}
+            />
+          </div>
           
-          {/* Bottom-right controls */}
-          <div className="absolute bottom-6 right-6 flex space-x-3">
-            <Button 
-              variant="outline" 
-              onClick={handleSaveFlow}
-              disabled={!canSave}
-            >
-              <Save className="w-4 h-4 mr-2" />
-              Save Flow
-            </Button>
-            <Button 
-              onClick={handleSaveAndLaunch}
-              disabled={!canLaunch}
-            >
-              <Save className="w-4 h-4 mr-2" />
-              Save & Launch
-            </Button>
+          {/* Bottom controls - moved outside of CanvasArea */}
+          <div className="border-t bg-background p-6">
+            <div className="flex justify-center space-x-3">
+              <Button 
+                variant="outline" 
+                onClick={handleSaveFlow}
+                disabled={!canSave}
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Save Flow
+              </Button>
+              <Button 
+                onClick={handleSaveAndLaunch}
+                disabled={!canLaunch}
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Save & Launch
+              </Button>
+            </div>
           </div>
         </div>
       </div>
