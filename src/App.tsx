@@ -25,17 +25,17 @@ function App() {
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="settings" element={<Settings />} >
                     <Route index element={<SettingsDefault />} />
+                    <Route path="email-templates" element={<EmailTemplates />} />
+                    <Route path="notifications" element={<SystemSettings />} />
+                    <Route path="system" element={<SystemSettings />} />
+                    <Route path="user-roles" element={<UserRoleSettings />} />
+                    <Route path="pipeline" element={<PipelineSettings />} />
+                    <Route path="profile" element={<SettingsDefault />} />
+                    <Route path="security" element={<SettingsDefault />} />
+                    <Route path="career-site" element={<SettingsDefault />} />
+                    <Route path="billing" element={<SettingsDefault />} />
+                    <Route path="workflow" element={<SettingsDefault />} />
                   </Route>
-                  <Route path="settings/email-templates" element={<EmailTemplates />} />
-                  <Route path="settings/notifications" element={<SystemSettings />} />
-                  <Route path="settings/system" element={<SystemSettings />} />
-                  <Route path="settings/user-roles" element={<UserRoleSettings />} />
-                  <Route path="settings/profile" element={<SettingsDefault />} />
-                  <Route path="settings/security" element={<SettingsDefault />} />
-                  <Route path="settings/career-site" element={<SettingsDefault />} />
-                  <Route path="settings/billing" element={<SettingsDefault />} />
-                  <Route path="settings/pipeline" element={<PipelineSettings />} />
-                  <Route path="settings/workflow" element={<SettingsDefault />} />
                 </Route>
               </Routes>
             </div>
