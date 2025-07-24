@@ -20,7 +20,10 @@ const Ats1Jobs = () => {
   const [viewMode, setViewMode] = useState<"table" | "kanban">("table");
 
   return (
-    <PageContainer title="ATS1 Jobs">
+    <PageContainer 
+      title="Jobs" 
+      description="Manage your job posting and vacancies"
+    >
       <div className="space-y-6">
         {/* Header Actions */}
         <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">

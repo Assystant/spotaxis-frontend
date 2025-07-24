@@ -13,6 +13,7 @@ import {
 import { PageContainer } from "@/components/layout/PageContainer";
 import { JobPromotionDialog } from "@/components/jobs/JobPromotionDialog";
 import { AddApplicantDialog } from "@/components/applicants/AddApplicantDialog";
+import { JobPreviewModal } from "@/components/jobs/JobPreviewModal";
 import {
   ArrowLeft,
   Edit,
@@ -29,15 +30,19 @@ import {
   GraduationCap,
   Briefcase,
   Mail,
-  Phone
+  Phone,
+  MoreHorizontal,
+  Eye
 } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const Ats1JobDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isPromoteDialogOpen, setIsPromoteDialogOpen] = useState(false);
   const [isAddApplicantDialogOpen, setIsAddApplicantDialogOpen] = useState(false);
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
   const [jobStatus, setJobStatus] = useState("Active");
 
   // Mock job data
@@ -154,6 +159,19 @@ Requirements:
     setIsAddApplicantDialogOpen(false);
   };
 
+  const getStatusButtonColor = (status: string) => {
+    switch (status) {
+      case "Active":
+        return "bg-green-100 text-green-800 hover:bg-green-200";
+      case "Paused":
+        return "bg-amber-100 text-amber-800 hover:bg-amber-200";
+      case "Closed":
+        return "bg-gray-100 text-gray-800 hover:bg-gray-200";
+      default:
+        return "bg-gray-100 text-gray-800 hover:bg-gray-200";
+    }
+  };
+
   const ApplicantCard = ({ applicant }: { applicant: any }) => (
     <Card className="mb-3 p-3 hover:shadow-md transition-shadow cursor-pointer">
       <div className="space-y-2">
@@ -207,125 +225,131 @@ Requirements:
         </div>
 
         {/* Job Header */}
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex-1">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
-                <div className="flex items-center gap-4 text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Building size={16} />
-                    {job.company}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <MapPin size={16} />
-                    {job.location}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock size={16} />
-                    {job.type}
-                  </div>
-                </div>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
+            <div className="flex items-center gap-4 text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Building size={16} />
+                {job.company}
               </div>
-              <Badge variant={job.status === "Active" ? "default" : "secondary"}>
-                {job.status}
-              </Badge>
-            </div>
-
-            <div className="flex flex-wrap gap-2 mb-4">
-              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <MapPin size={16} />
+                {job.location}
+              </div>
+              <div className="flex items-center gap-1">
+                <Clock size={16} />
+                {job.type}
+              </div>
+              <div className="flex items-center gap-1">
                 <DollarSign size={16} />
                 {job.salary}
               </div>
-              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
                 <Calendar size={16} />
                 Posted {job.posted}
               </div>
             </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className={cn(
+                    "border-0",
+                    getStatusButtonColor(jobStatus)
+                  )}
+                >
+                  {jobStatus} <ChevronDown size={16} className="ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => handleStatusChange("Active")}>
+                  Active
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleStatusChange("Paused")}>
+                  Paused
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleStatusChange("Closed")}>
+                  Closed
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <MoreHorizontal size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleEditJob}>
+                  <Edit size={16} className="mr-2" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleCopyLink}>
+                  <Copy size={16} className="mr-2" />
+                  Copy Link
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsPromoteDialogOpen(true)}>
+                  Promote Job
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsPreviewDialogOpen(true)}>
+                  <Eye size={16} className="mr-2" />
+                  Preview
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
 
-            {/* Action Buttons */}
+        {/* Applicant Pipeline */}
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">Applicant Pipeline</h2>
             <div className="flex gap-2">
-              <Button onClick={handleEditJob}>
-                <Edit size={16} className="mr-2" />
-                Edit
+              <Button variant="outline" size="sm">
+                <Search size={16} className="mr-2" />
+                Search Candidates
               </Button>
-              
-              <Button variant="outline" onClick={() => setIsPromoteDialogOpen(true)}>
-                Promote Job
+              <Button size="sm" onClick={() => setIsAddApplicantDialogOpen(true)}>
+                <Plus size={16} className="mr-2" />
+                Add Applicant
               </Button>
-              
-              <Button variant="outline" onClick={handleCopyLink}>
-                <Copy size={16} className="mr-2" />
-                Copy Link
-              </Button>
-              
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline">
-                    Status <ChevronDown size={16} className="ml-2" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => handleStatusChange("Active")}>
-                    Active
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusChange("Paused")}>
-                    Paused
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusChange("Closed")}>
-                    Closed
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {pipelineStages.map((stage) => (
+              <Card key={stage.id} className="h-fit">
+                <CardHeader className="pb-3">
+                  <div className="flex justify-between items-center">
+                    <CardTitle className="text-sm font-medium">{stage.title}</CardTitle>
+                    <Badge variant="outline" className="text-xs">
+                      {stage.applicants.length}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-2">
+                    {stage.applicants.map((applicant) => (
+                      <ApplicantCard key={applicant.id} applicant={applicant} />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
 
         {/* Content Tabs */}
-        <Tabs defaultValue="pipeline" className="space-y-6">
+        <Tabs defaultValue="details" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
             <TabsTrigger value="details">Job Details</TabsTrigger>
             <TabsTrigger value="activity">Activity</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="pipeline" className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Applicant Pipeline</h2>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  <Search size={16} className="mr-2" />
-                  Search Candidates
-                </Button>
-                <Button size="sm" onClick={() => setIsAddApplicantDialogOpen(true)}>
-                  <Plus size={16} className="mr-2" />
-                  Add Applicant
-                </Button>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {pipelineStages.map((stage) => (
-                <Card key={stage.id} className="h-fit">
-                  <CardHeader className="pb-3">
-                    <div className="flex justify-between items-center">
-                      <CardTitle className="text-sm font-medium">{stage.title}</CardTitle>
-                      <Badge variant="outline" className="text-xs">
-                        {stage.applicants.length}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="space-y-2">
-                      {stage.applicants.map((applicant) => (
-                        <ApplicantCard key={applicant.id} applicant={applicant} />
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
 
           <TabsContent value="details" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -411,6 +435,12 @@ Requirements:
           onAddApplicant={handleAddApplicant}
           jobId={job.id}
           jobTitle={job.title}
+        />
+        
+        <JobPreviewModal
+          open={isPreviewDialogOpen}
+          onOpenChange={setIsPreviewDialogOpen}
+          job={job}
         />
       </div>
     </PageContainer>

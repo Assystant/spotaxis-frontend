@@ -5,7 +5,10 @@ import { Star } from "lucide-react";
 
 const Ats1TalentPool = () => {
   return (
-    <PageContainer title="ATS1 Talent Pool">
+    <PageContainer 
+      title="Talent Pool" 
+      description="Manage your talent database and build teams"
+    >
       <div className="flex items-center justify-center h-64">
         <Card className="p-6 text-center max-w-md">
           <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
