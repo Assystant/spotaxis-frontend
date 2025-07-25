@@ -6,13 +6,12 @@ import { Link } from "react-router-dom";
 
 const Jobs = () => {
   return (
-    <PageContainer title="Jobs">
+    <PageContainer 
+      title="Jobs" 
+      description="Manage your job postings and vacancies"
+    >
       <div className="mb-6">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold">Jobs</h2>
-            <p className="text-muted-foreground">Manage your job postings and vacancies</p>
-          </div>
           <div className="flex gap-3">
             <Button variant="outline" size="sm" className="gap-2">
               <DownloadIcon size={14} />

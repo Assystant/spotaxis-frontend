@@ -28,6 +28,8 @@ import Ats1JobDetail from '@/pages/Ats1JobDetail';
 import Ats1Applicants from '@/pages/Ats1Applicants';
 import Ats1TalentPool from '@/pages/Ats1TalentPool';
 import WorkflowSettings from '@/pages/WorkflowSettings';
+import Tasks from '@/pages/Tasks';
+import Calendar from '@/pages/Calendar';
 import NotFound from '@/pages/NotFound';
 
 function App() {
@@ -53,6 +55,8 @@ function App() {
                   <Route path="jobs/:id" element={<JobDetail />} />
                   <Route path="applicants" element={<Applicants />} />
                   <Route path="talent-pool" element={<TalentPool />} />
+                  <Route path="tasks" element={<Tasks />} />
+                  <Route path="calendar" element={<Calendar />} />
                   
                   {/* ATS1 Routes */}
                   <Route path="ats1/jobs" element={<Ats1Jobs />} />

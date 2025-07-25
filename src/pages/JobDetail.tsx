@@ -15,6 +15,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AddApplicantDialog } from "@/components/applicants/AddApplicantDialog";
+import { JobPreviewModal } from "@/components/jobs/JobPreviewModal";
+import { MoreVertical, Eye } from "lucide-react";
 
 // Example stages for the job applicants
 const applicantStages = [
@@ -91,6 +93,7 @@ const JobDetail = () => {
   const [applicants, setApplicants] = useState<any[]>([]);
   const [showPromotionDialog, setShowPromotionDialog] = useState(false);
   const [showAddApplicantDialog, setShowAddApplicantDialog] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   useEffect(() => {
     // In a real app, fetch the job from an API
@@ -114,6 +117,25 @@ const JobDetail = () => {
     // For now, we'll just log the action
     console.log("Edit job", job.id);
     window.location.href = `/jobs/edit/${job.id}`;
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    // In a real app, you'd show a toast notification
+    console.log("Link copied to clipboard");
+  };
+
+  const getStatusButtonStyle = (status: string) => {
+    switch (status) {
+      case "Active":
+        return "bg-green-100 text-green-800 hover:bg-green-200";
+      case "Paused":
+        return "bg-amber-100 text-amber-800 hover:bg-amber-200";
+      case "Closed":
+        return "bg-gray-100 text-gray-800 hover:bg-gray-200";
+      default:
+        return "bg-gray-100 text-gray-800 hover:bg-gray-200";
+    }
   };
 
   const handleAddApplicant = (applicant: any) => {
@@ -174,27 +196,13 @@ const JobDetail = () => {
             </Button>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-2">
-              <Link size={14} />
-              Copy Link
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="gap-2"
-              onClick={() => setShowPromotionDialog(true)}
-            >
-              <Share size={14} />
-              Promote
-            </Button>
-            <Button variant="outline" size="sm" className="gap-2" onClick={handleEditJob}>
-              <Edit size={14} />
-              Edit
-            </Button>
-            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="destructive" size="sm" className="gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className={`gap-2 ${getStatusButtonStyle(job.status)}`}
+                >
                   <Archive size={14} />
                   {job.status}
                   <ChevronDown size={14} />
@@ -212,10 +220,57 @@ const JobDetail = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <MoreVertical size={14} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleEditJob}>
+                  <Edit size={14} className="mr-2" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleCopyLink}>
+                  <Link size={14} className="mr-2" />
+                  Copy Link
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowPromotionDialog(true)}>
+                  <Share size={14} className="mr-2" />
+                  Promote
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowPreviewModal(true)}>
+                  <Eye size={14} className="mr-2" />
+                  Preview
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
-        {/* Job details */}
+        {/* Applicant Pipeline - Moved to top */}
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Applicant Pipeline</h2>
+            <Button 
+              variant="default" 
+              size="sm"
+              onClick={() => setShowAddApplicantDialog(true)}
+            >
+              Add Applicant
+            </Button>
+          </div>
+          <KanbanBoard 
+            stages={applicantStages} 
+            items={applicants}
+            entityType="applicant"
+            onStageChange={handleStageChange}
+            jobId={id}
+          />
+        </div>
+
+        {/* Job Details - Moved to collapsible section */}
         <Card>
           <CardContent className="p-6">
             <div className="grid md:grid-cols-2 gap-6">
@@ -228,7 +283,7 @@ const JobDetail = () => {
                     <Clock size={16} className="text-muted-foreground" />
                     <span>Posted {new Date(job.postedDate).toLocaleDateString()}</span>
                   </div>
-                  <span className="status-badge bg-green-100 text-green-800">{job.status}</span>
+                  <span className={`status-badge ${getStatusButtonStyle(job.status)}`}>{job.status}</span>
                   <span className="status-badge bg-blue-100 text-blue-800">{job.type}</span>
                 </div>
 
@@ -268,27 +323,6 @@ const JobDetail = () => {
             </div>
           </CardContent>
         </Card>
-
-        {/* Kanban Board */}
-        <div className="mt-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Applicant Pipeline</h2>
-            <Button 
-              variant="default" 
-              size="sm"
-              onClick={() => setShowAddApplicantDialog(true)}
-            >
-              Add Applicant
-            </Button>
-          </div>
-          <KanbanBoard 
-            stages={applicantStages} 
-            items={applicants}
-            entityType="applicant"
-            onStageChange={handleStageChange}
-            jobId={id}
-          />
-        </div>
       </div>
 
       {/* Job Promotion Dialog */}
@@ -306,6 +340,26 @@ const JobDetail = () => {
         onAddApplicant={handleAddApplicant}
         jobId={id}
         jobTitle={job.title}
+      />
+
+      {/* Job Preview Modal */}
+      <JobPreviewModal
+        open={showPreviewModal}
+        onOpenChange={setShowPreviewModal}
+        job={{
+          title: job.title,
+          company: job.company,
+          location: job.location,
+          type: job.type,
+          salary: job.salary || "$80,000 - $120,000",
+          description: "This is a placeholder for the job description. In a real application, this would contain the full job details, requirements, responsibilities, and other information.",
+          requirements: [
+            "Bachelor's degree in relevant field",
+            "3+ years of experience",
+            "Strong communication skills",
+            "Team player with leadership qualities"
+          ]
+        }}
       />
     </PageContainer>
   );
