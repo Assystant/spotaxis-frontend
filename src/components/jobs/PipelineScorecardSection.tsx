@@ -17,7 +17,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { GripVertical, Eye, Plus } from "lucide-react";
-import { StageRulesDialog } from "./StageRulesDialog";
 
 interface Stage {
   id: string;
@@ -63,8 +62,6 @@ const scorecardOptions = [
 
 export const PipelineScorecardSection = ({ pipelineId, pipelineName }: PipelineScorecardSectionProps) => {
   const [stages, setStages] = useState<Stage[]>(mockPipelineStages[pipelineId] || []);
-  const [showRulesDialog, setShowRulesDialog] = useState(false);
-  const [selectedStage, setSelectedStage] = useState<Stage | null>(null);
 
   const handleScorecardChange = (stageId: string, scorecardValue: string) => {
     const selectedOption = scorecardOptions.find(opt => opt.value === scorecardValue);
@@ -91,10 +88,6 @@ export const PipelineScorecardSection = ({ pipelineId, pipelineName }: PipelineS
     // Implement custom scorecard creation logic here
   };
 
-  const handleAddRules = (stage: Stage) => {
-    setSelectedStage(stage);
-    setShowRulesDialog(true);
-  };
 
   const moveStage = (fromIndex: number, toIndex: number) => {
     const newStages = [...stages];
@@ -129,7 +122,6 @@ export const PipelineScorecardSection = ({ pipelineId, pipelineName }: PipelineS
                     <TableHead>Stage Name</TableHead>
                     <TableHead>Scorecard</TableHead>
                     <TableHead className="w-24">Preview</TableHead>
-                    <TableHead className="w-24">Rules</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -200,15 +192,6 @@ export const PipelineScorecardSection = ({ pipelineId, pipelineName }: PipelineS
                           <Eye className="h-4 w-4" />
                         </Button>
                       </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleAddRules(stage)}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -224,11 +207,6 @@ export const PipelineScorecardSection = ({ pipelineId, pipelineName }: PipelineS
         </CardContent>
       </Card>
 
-      <StageRulesDialog
-        open={showRulesDialog}
-        onOpenChange={setShowRulesDialog}
-        stageName={selectedStage?.name || ""}
-      />
     </>
   );
 };
