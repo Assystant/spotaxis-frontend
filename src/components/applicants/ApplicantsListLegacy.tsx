@@ -1,6 +1,4 @@
-
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { 
   Card, 
   CardContent,
@@ -12,8 +10,12 @@ import { Avatar } from "@/components/ui/avatar";
 import { Search } from "lucide-react";
 import { mockApplicants } from "@/data/mockApplicants";
 
-export const ApplicantsList = () => {
-  const navigate = useNavigate();
+interface ApplicantsListLegacyProps {
+  onSelectApplicant: (id: string) => void;
+  selectedId: string | null;
+}
+
+export const ApplicantsListLegacy = ({ onSelectApplicant, selectedId }: ApplicantsListLegacyProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [applicants, setApplicants] = useState(mockApplicants);
   
@@ -31,12 +33,8 @@ export const ApplicantsList = () => {
     }
   }, [searchTerm]);
 
-  const handleApplicantClick = (applicantId: string) => {
-    navigate(`/applicants/${applicantId}`);
-  };
-
   return (
-    <Card className="rounded-2xl shadow-md">
+    <Card className="h-[calc(100vh-240px)] overflow-hidden flex flex-col">
       <CardHeader className="p-4">
         <CardTitle className="text-lg">Applicants</CardTitle>
         <div className="relative mt-2">
@@ -49,14 +47,16 @@ export const ApplicantsList = () => {
           />
         </div>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="p-0 overflow-y-auto flex-grow">
         <div className="divide-y">
           {applicants.length > 0 ? (
             applicants.map((applicant) => (
               <div
                 key={applicant.id}
-                className="p-4 cursor-pointer hover:bg-accent transition-colors"
-                onClick={() => handleApplicantClick(applicant.id)}
+                className={`p-4 cursor-pointer hover:bg-accent transition-colors ${
+                  selectedId === applicant.id ? "bg-accent" : ""
+                }`}
+                onClick={() => onSelectApplicant(applicant.id)}
               >
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10">
@@ -68,13 +68,10 @@ export const ApplicantsList = () => {
                     <div className="font-medium">{applicant.name}</div>
                     <div className="text-sm text-muted-foreground truncate">{applicant.email}</div>
                   </div>
-                  <div className="flex flex-col items-end gap-1">
+                  <div>
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                       {applicant.stage}
                     </span>
-                    <div className="text-xs text-muted-foreground">
-                      {new Date(applicant.appliedDate).toLocaleDateString()}
-                    </div>
                   </div>
                 </div>
                 <div className="mt-2 text-sm text-muted-foreground">

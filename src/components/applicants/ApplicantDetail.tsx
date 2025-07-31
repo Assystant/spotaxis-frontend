@@ -66,11 +66,11 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
   }
 
   return (
-    <Card className="h-[calc(100vh-240px)] overflow-hidden flex flex-col">
-      <CardHeader className="p-4 pb-0 flex-row items-start justify-between space-y-0">
+    <div className="space-y-6 p-4 rounded-2xl shadow-md bg-card border">{/* Removed Card wrapper for page layout */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <CardTitle className="text-xl">{applicant.name}</CardTitle>
-          <div className="text-muted-foreground">{applicant.jobTitle || "Multiple Positions"}</div>
+          <h1 className="text-2xl font-semibold">{applicant.name}</h1>
+          <p className="text-muted-foreground">{applicant.jobTitle || "Multiple Positions"}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
@@ -82,10 +82,10 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
             Move Stage
           </Button>
         </div>
-      </CardHeader>
-      <CardContent className="p-0 flex-grow overflow-y-auto">
+      </div>
+      <div className="flex-grow overflow-y-auto">
         <Tabs defaultValue="profile" className="w-full">
-          <div className="px-4 border-b">
+          <div className="border-b mb-6">
             <TabsList className="justify-start">
               <TabsTrigger value="profile">Profile</TabsTrigger>
               <TabsTrigger value="resume">Resume</TabsTrigger>
@@ -95,7 +95,7 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
             </TabsList>
           </div>
 
-          <TabsContent value="profile" className="p-4 space-y-6">
+          <TabsContent value="profile" className="space-y-6">
             <div className="grid md:grid-cols-3 gap-6">
               <div className="col-span-2">
                 <div className="border rounded-lg p-4 space-y-4">
@@ -218,7 +218,7 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
             </div>
           </TabsContent>
 
-          <TabsContent value="resume" className="p-4">
+          <TabsContent value="resume">
             <div className="border rounded-lg p-6 text-center">
               <FileText size={48} className="mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium mb-2">Resume Preview</h3>
@@ -232,7 +232,7 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
             </div>
           </TabsContent>
 
-          <TabsContent value="notes" className="p-4">
+          <TabsContent value="notes">
             <div className="border rounded-lg p-4">
               <h3 className="font-medium text-lg mb-4">Notes</h3>
               <div className="space-y-4">
@@ -259,7 +259,7 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
             </div>
           </TabsContent>
 
-          <TabsContent value="activity" className="p-4">
+          <TabsContent value="activity">
             <div className="border rounded-lg p-4">
               <h3 className="font-medium text-lg mb-4">Activity History</h3>
               <div className="space-y-4">
@@ -285,7 +285,7 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
             </div>
           </TabsContent>
 
-          <TabsContent value="emails" className="p-4">
+          <TabsContent value="emails">
             {isComposing ? (
               <ComposeEmail 
                 recipient={applicant}
@@ -313,7 +313,7 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
             )}
           </TabsContent>
         </Tabs>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };

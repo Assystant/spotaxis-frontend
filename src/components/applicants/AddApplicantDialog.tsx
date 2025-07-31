@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { AddApplicantForm } from "./AddApplicantForm";
-import { ApplicantsList } from "./ApplicantsList";
+import { ApplicantsListLegacy } from "./ApplicantsListLegacy";
 
 interface AddApplicantDialogProps {
   open: boolean;
@@ -62,7 +62,7 @@ export const AddApplicantDialog = ({
           <TabsContent value="search" className="space-y-4">
             <div className="grid md:grid-cols-6 gap-4">
               <div className="md:col-span-2">
-                <ApplicantsList 
+                <ApplicantsListLegacy 
                   onSelectApplicant={handleApplicantSelect}
                   selectedId={selectedApplicantId}
                 />

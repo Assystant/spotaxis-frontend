@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Filter, Users } from "lucide-react";
-import { ApplicantsList } from "@/components/applicants/ApplicantsList";
+import { ApplicantsListLegacy } from "@/components/applicants/ApplicantsListLegacy";
 import { AddApplicantDialog } from "@/components/applicants/AddApplicantDialog";
 import { PageContainer } from "@/components/layout/PageContainer";
 
@@ -48,7 +48,7 @@ const Ats1Applicants = () => {
         </div>
 
         {/* Content */}
-        <ApplicantsList 
+        <ApplicantsListLegacy 
           onSelectApplicant={setSelectedApplicantId}
           selectedId={selectedApplicantId}
         />

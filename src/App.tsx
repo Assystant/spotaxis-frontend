@@ -13,6 +13,7 @@ import UserRoleSettings from '@/pages/UserRoleSettings';
 import PipelineSettings from '@/pages/PipelineSettings';
 import Companies from '@/pages/Companies';
 import Applicants from '@/pages/Applicants';
+import ApplicantDetailPage from '@/pages/ApplicantDetailPage';
 import Jobs from '@/pages/Jobs';
 import JobDetail from '@/pages/JobDetail';
 import AddJob from '@/pages/AddJob';
@@ -53,7 +54,8 @@ function App() {
                   <Route path="jobs" element={<Jobs />} />
                   <Route path="jobs/add" element={<AddJob />} />
                   <Route path="jobs/:id" element={<JobDetail />} />
-                  <Route path="applicants" element={<Applicants />} />
+                   <Route path="applicants" element={<Applicants />} />
+                   <Route path="applicants/:applicantId" element={<ApplicantDetailPage />} />
                   <Route path="talent-pool" element={<TalentPool />} />
                   <Route path="tasks" element={<Tasks />} />
                   <Route path="calendar" element={<Calendar />} />

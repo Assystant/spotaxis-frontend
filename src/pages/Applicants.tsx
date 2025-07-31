@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { ApplicantsList } from "@/components/applicants/ApplicantsList";
-import { ApplicantDetail } from "@/components/applicants/ApplicantDetail";
 import { Button } from "@/components/ui/button";
 import { Plus, Filter, Download, Upload } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -10,12 +9,7 @@ import { AddApplicantForm } from "@/components/applicants/AddApplicantForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Applicants = () => {
-  const [selectedApplicantId, setSelectedApplicantId] = useState<string | null>(null);
   const [isAddApplicantOpen, setIsAddApplicantOpen] = useState(false);
-
-  const handleApplicantSelect = (id: string) => {
-    setSelectedApplicantId(id);
-  };
 
   const handleAddApplicantSuccess = () => {
     setIsAddApplicantOpen(false);
@@ -63,32 +57,8 @@ const Applicants = () => {
         </TabsList>
         
         <TabsContent value="list" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-1">
-              <ApplicantsList onSelectApplicant={handleApplicantSelect} selectedId={selectedApplicantId} />
-            </div>
-            
-            <div className="lg:col-span-2">
-              {selectedApplicantId ? (
-                <ApplicantDetail id={selectedApplicantId} />
-              ) : (
-                <div className="border rounded-lg p-8 text-center h-full flex flex-col items-center justify-center bg-slate-50">
-                  <div className="max-w-md">
-                    <h3 className="text-lg font-medium mb-2">No Applicant Selected</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Select an applicant from the list to view their details
-                    </p>
-                    <Button 
-                      onClick={() => setIsAddApplicantOpen(true)}
-                      className="gap-2"
-                    >
-                      <Plus size={14} />
-                      Add New Applicant
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
+          <div className="w-full">
+            <ApplicantsList />
           </div>
         </TabsContent>
         
