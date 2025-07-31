@@ -19,14 +19,14 @@ export const PageContainer = ({
   description,
 }: PageContainerProps) => {
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-x-hidden">
       <Header 
         title={title} 
         description={description} 
         actionButton={actionButton} 
       />
       <main className={cn(
-        "flex-1 p-4 md:p-6 animate-fade-in",
+        "flex-1 p-4 md:p-6 animate-fade-in overflow-x-hidden",
         className
       )}>
         {children}

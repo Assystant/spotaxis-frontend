@@ -7,9 +7,9 @@ import { AppSidebar } from './AppSidebar';
 export function SiteLayout() {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full overflow-x-hidden">
         <AppSidebar />
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 overflow-x-hidden">
           <Outlet />
         </main>
       </div>

@@ -1,11 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { KanbanBoard } from "@/components/jobs/KanbanBoard";
 import { ArrowLeft, Edit, Link, Share, Archive, Clock, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { mockJobs } from "@/components/jobs/JobsTable";
 import { JobPromotionDialog } from "@/components/jobs/JobPromotionDialog";
 import {
@@ -185,145 +183,93 @@ const JobDetail = () => {
   }
 
   return (
-    <PageContainer title={job.title}>
-      <div className="space-y-6">
-        {/* Header with back button and actions */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" className="gap-2" onClick={() => window.history.back()}>
-              <ArrowLeft size={16} />
-              Back to Jobs
-            </Button>
-          </div>
-          <div className="flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className={`gap-2 ${getStatusButtonStyle(job.status)}`}
-                >
-                  <Archive size={14} />
-                  {job.status}
-                  <ChevronDown size={14} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleStatusChange("Active")}>
-                  Active
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleStatusChange("Paused")}>
-                  Paused
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleStatusChange("Closed")}>
-                  Closed
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <MoreVertical size={14} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleEditJob}>
-                  <Edit size={14} className="mr-2" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleCopyLink}>
-                  <Link size={14} className="mr-2" />
-                  Copy Link
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowPromotionDialog(true)}>
-                  <Share size={14} className="mr-2" />
-                  Promote
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowPreviewModal(true)}>
-                  <Eye size={14} className="mr-2" />
-                  Preview
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-
-        {/* Applicant Pipeline - Moved to top */}
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Applicant Pipeline</h2>
-            <Button 
-              variant="default" 
-              size="sm"
-              onClick={() => setShowAddApplicantDialog(true)}
-            >
-              Add Applicant
-            </Button>
-          </div>
-          <KanbanBoard 
-            stages={applicantStages} 
-            items={applicants}
-            entityType="applicant"
-            onStageChange={handleStageChange}
-            jobId={id}
-          />
-        </div>
-
-        {/* Job Details - Moved to collapsible section */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h1 className="text-2xl font-bold mb-2">{job.title}</h1>
-                <p className="text-muted-foreground mb-4">{job.company} • {job.location}</p>
-                
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="flex items-center gap-1.5">
-                    <Clock size={16} className="text-muted-foreground" />
-                    <span>Posted {new Date(job.postedDate).toLocaleDateString()}</span>
-                  </div>
-                  <span className={`status-badge ${getStatusButtonStyle(job.status)}`}>{job.status}</span>
-                  <span className="status-badge bg-blue-100 text-blue-800">{job.type}</span>
-                </div>
-
-                <h3 className="font-semibold text-lg mb-2">Job Description</h3>
-                <p className="text-muted-foreground">
-                  This is a placeholder for the job description. In a real application, this would contain the full job details, requirements, responsibilities, and other information.
-                </p>
-              </div>
-
-              <div>
-                <div className="bg-slate-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-lg mb-2">Job Overview</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Status</span>
-                      <span className="font-medium">{job.status}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Job Type</span>
-                      <span className="font-medium">{job.type}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Location</span>
-                      <span className="font-medium">{job.location}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Applicants</span>
-                      <span className="font-medium">{applicants.length}</span>
-                    </div>
-                    <div className="flex justify-between py-2">
-                      <span className="text-muted-foreground">Posted Date</span>
-                      <span className="font-medium">{new Date(job.postedDate).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+    <div className="overflow-x-hidden">
+      <PageContainer title={job.title}>
+        <div className="space-y-6 overflow-x-hidden">
+          {/* Header with back button and actions */}
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="sm" className="gap-2" onClick={() => window.history.back()}>
+                <ArrowLeft size={16} />
+                Back to Jobs
+              </Button>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className={`gap-2 ${getStatusButtonStyle(job.status)}`}
+                  >
+                    <Archive size={14} />
+                    {job.status}
+                    <ChevronDown size={14} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => handleStatusChange("Active")}>
+                    Active
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleStatusChange("Paused")}>
+                    Paused
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleStatusChange("Closed")}>
+                    Closed
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <MoreVertical size={14} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleEditJob}>
+                    <Edit size={14} className="mr-2" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleCopyLink}>
+                    <Link size={14} className="mr-2" />
+                    Copy Link
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowPromotionDialog(true)}>
+                    <Share size={14} className="mr-2" />
+                    Promote
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowPreviewModal(true)}>
+                    <Eye size={14} className="mr-2" />
+                    Preview
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+
+          {/* Applicant Pipeline */}
+          <div className="w-full">
+            <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
+              <h2 className="text-xl font-semibold">Applicant Pipeline</h2>
+              <Button 
+                variant="default" 
+                size="sm"
+                onClick={() => setShowAddApplicantDialog(true)}
+              >
+                Add Applicant
+              </Button>
+            </div>
+            <KanbanBoard 
+              stages={applicantStages} 
+              items={applicants}
+              entityType="applicant"
+              onStageChange={handleStageChange}
+              jobId={id}
+            />
+          </div>
+        </div>
+      </PageContainer>
 
       {/* Job Promotion Dialog */}
       <JobPromotionDialog
@@ -361,7 +307,7 @@ const JobDetail = () => {
           ]
         }}
       />
-    </PageContainer>
+    </div>
   );
 };
 
