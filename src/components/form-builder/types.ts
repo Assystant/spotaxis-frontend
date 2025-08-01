@@ -10,6 +10,8 @@ export type FieldType =
   | "radio" 
   | "date";
 
+export type FormType = "Scorecard" | "Applicant Form" | "Feedback Form" | "Custom";
+
 export interface FormFieldOption {
   id: string;
   label: string;
@@ -25,6 +27,17 @@ export interface FormField {
   shortCode: string;
   options?: FormFieldOption[];
   defaultValue?: string;
+  description?: string;
+}
+
+export interface FormData {
+  id: string;
+  name: string;
+  type: FormType;
+  tags: string[];
+  lastModified: string;
+  fieldsCount: number;
+  fields: FormField[];
   description?: string;
 }
 
