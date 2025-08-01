@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
@@ -11,6 +10,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Calendar as CalendarIcon, Plus, Bell, ChevronLeft, ChevronRight, Clock, MapPin, Users, Edit, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { useThemeToggle } from '@/contexts/ThemeContext';
 
 type CalendarView = 'day' | 'week' | 'month' | 'agenda';
 
@@ -80,6 +80,7 @@ export default function Calendar() {
     interviewer: ''
   });
   const { toast } = useToast();
+  const { isNotionTheme } = useThemeToggle();
 
   const viewButtons = [
     { id: 'day', label: 'Day' },
@@ -104,7 +105,8 @@ export default function Calendar() {
   const EventCard = ({ event, className }: { event: CalendarEvent; className?: string }) => (
     <div
       className={cn(
-        "bg-white rounded-2xl p-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer border-l-4",
+        "rounded-2xl p-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer border-l-4",
+        isNotionTheme ? "bg-gray-50" : "bg-white",
         event.type === 'interview' && "border-l-blue-500",
         event.type === 'meeting' && "border-l-green-500",
         event.type === 'deadline' && "border-l-red-500",
@@ -138,11 +140,11 @@ export default function Calendar() {
         return (
           <div className="space-y-2">
             <h3 className="text-lg font-medium">
-              {selectedDate.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+              {selectedDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
               })}
             </h3>
             <div className="space-y-2">
@@ -163,10 +165,10 @@ export default function Calendar() {
               .map(event => (
                 <div key={event.id} className="space-y-2">
                   <h4 className="font-medium text-sm text-muted-foreground">
-                    {event.date.toLocaleDateString('en-US', { 
-                      weekday: 'long', 
-                      month: 'short', 
-                      day: 'numeric' 
+                    {event.date.toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      month: 'short',
+                      day: 'numeric'
                     })}
                   </h4>
                   <EventCard event={event} />
@@ -176,7 +178,7 @@ export default function Calendar() {
         );
 
       case 'month':
-      default:
+      default: {
         const today = new Date();
         const firstDayOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
         const lastDayOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
@@ -194,22 +196,23 @@ export default function Calendar() {
               </div>
             ))}
             {daysInMonth.map(date => {
-              const dayEvents = events.filter(event => 
+              const dayEvents = events.filter(event =>
                 event.date.toDateString() === date.toDateString()
               );
               const isToday = date.toDateString() === today.toDateString();
-              
+
               return (
                 <div
                   key={date.getDate()}
                   className={cn(
-                    "min-h-[100px] p-1 border border-border",
-                    isToday && "bg-primary/5 border-primary/20"
+                    "min-h-[100px] p-1 border",
+                    isNotionTheme ? "border-gray-200" : "border-border",
+                    isToday && (isNotionTheme ? "bg-blue-50" : "bg-primary/5")
                   )}
                 >
                   <div className={cn(
                     "text-sm font-medium mb-1",
-                    isToday && "text-primary"
+                    isToday && (isNotionTheme ? "text-blue-600" : "text-primary")
                   )}>
                     {date.getDate()}
                   </div>
@@ -217,7 +220,12 @@ export default function Calendar() {
                     {dayEvents.slice(0, 2).map(event => (
                       <div
                         key={event.id}
-                        className="text-xs p-1 bg-primary/10 rounded truncate cursor-pointer hover:bg-primary/20"
+                        className={cn(
+                          "text-xs p-1 rounded truncate cursor-pointer",
+                          isNotionTheme 
+                            ? "bg-blue-100 hover:bg-blue-200" 
+                            : "bg-primary/10 hover:bg-primary/20"
+                        )}
                         onClick={() => handleEventClick(event)}
                       >
                         {event.title}
@@ -234,6 +242,7 @@ export default function Calendar() {
             })}
           </div>
         );
+      }
     }
   };
 
@@ -303,17 +312,20 @@ export default function Calendar() {
               <ChevronLeft className="w-4 h-4" />
             </Button>
             <h2 className="text-xl font-semibold">
-              {selectedDate.toLocaleDateString('en-US', { 
-                month: 'long', 
-                year: 'numeric' 
+              {selectedDate.toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric'
               })}
             </h2>
             <Button variant="outline" size="icon">
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
-          
-          <div className="flex bg-muted rounded-lg p-1">
+
+          <div className={cn(
+            "rounded-lg p-1",
+            isNotionTheme ? "bg-gray-100" : "bg-muted"
+          )}>
             {viewButtons.map(view => (
               <Button
                 key={view.id}
@@ -332,7 +344,10 @@ export default function Calendar() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Filter Panel */}
           <div className="lg:col-span-1 space-y-4">
-            <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <div className={cn(
+              "rounded-xl p-4 shadow-sm border",
+              isNotionTheme ? "bg-white" : "bg-white"
+            )}>
               <h3 className="font-medium mb-4">Filters</h3>
               <div className="space-y-3">
                 <Select value={filters.job} onValueChange={(value) => setFilters(prev => ({ ...prev, job: value }))}>
@@ -345,7 +360,7 @@ export default function Calendar() {
                     <SelectItem value="designer">UI/UX Designer</SelectItem>
                   </SelectContent>
                 </Select>
-                
+
                 <Select value={filters.candidate} onValueChange={(value) => setFilters(prev => ({ ...prev, candidate: value }))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Candidate" />
@@ -356,7 +371,7 @@ export default function Calendar() {
                     <SelectItem value="bob-smith">Bob Smith</SelectItem>
                   </SelectContent>
                 </Select>
-                
+
                 <Select value={filters.interviewer} onValueChange={(value) => setFilters(prev => ({ ...prev, interviewer: value }))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Interviewer" />
@@ -368,10 +383,10 @@ export default function Calendar() {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               {/* Active Filters */}
               <div className="mt-4 flex flex-wrap gap-2">
-                {Object.entries(filters).map(([key, value]) => 
+                {Object.entries(filters).map(([key, value]) =>
                   value && (
                     <Badge key={key} variant="secondary" className="text-xs">
                       {value}
@@ -384,7 +399,10 @@ export default function Calendar() {
 
           {/* Calendar Canvas */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-xl p-6 shadow-sm border min-h-[600px]">
+            <div className={cn(
+              "rounded-xl p-6 shadow-sm border min-h-[600px]",
+              isNotionTheme ? "bg-white" : "bg-white"
+            )}>
               {renderCalendarView()}
             </div>
           </div>
@@ -407,14 +425,14 @@ export default function Calendar() {
                       </p>
                     </div>
                   </div>
-                  
+
                   {selectedEvent.location && (
                     <div className="flex items-center gap-3">
                       <MapPin className="w-5 h-5 text-muted-foreground" />
                       <span>{selectedEvent.location}</span>
                     </div>
                   )}
-                  
+
                   <div className="flex items-center gap-3">
                     <Users className="w-5 h-5 text-muted-foreground" />
                     <div className="flex flex-wrap gap-1">
@@ -423,14 +441,14 @@ export default function Calendar() {
                       ))}
                     </div>
                   </div>
-                  
+
                   {selectedEvent.hasReminder && (
                     <div className="flex items-center gap-3">
                       <Bell className="w-5 h-5 text-muted-foreground" />
                       <span>Reminder set for 10 minutes before</span>
                     </div>
                   )}
-                  
+
                   <div className="flex gap-2 pt-4">
                     <Button variant="outline" className="flex-1">
                       <Edit className="w-4 h-4 mr-2" />
