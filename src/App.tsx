@@ -19,6 +19,8 @@ import JobDetail from '@/pages/JobDetail';
 import AddJob from '@/pages/AddJob';
 import TalentPool from '@/pages/TalentPool';
 import Contacts from '@/pages/Contacts';
+import ContactDetailPage from '@/pages/ContactDetailPage';
+import CompanyDetailPage from '@/pages/CompanyDetailPage';
 import Deals from '@/pages/Deals';
 import FormBuilders from '@/pages/FormBuilders';
 import FormBuilder from '@/pages/FormBuilder';
