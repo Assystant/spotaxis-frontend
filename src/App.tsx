@@ -47,7 +47,9 @@ function App() {
                   
                   {/* CRM Routes */}
                   <Route path="contacts" element={<Contacts />} />
+                  <Route path="contacts/:contactId" element={<ContactDetailPage />} />
                   <Route path="companies" element={<Companies />} />
+                  <Route path="companies/:companyId" element={<CompanyDetailPage />} />
                   <Route path="deals" element={<Deals />} />
                   
                   {/* ATS Routes */}

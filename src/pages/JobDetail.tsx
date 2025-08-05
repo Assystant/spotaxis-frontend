@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { PageContainer } from "@/components/layout/PageContainer";
+import { TwoPanelDetailLayout } from "@/components/common/TwoPanelDetailLayout";
+import { AssociationPanel } from "@/components/common/AssociationPanel";
 import { KanbanBoard } from "@/components/jobs/KanbanBoard";
-import { ArrowLeft, Edit, Link, Share, Archive, Clock, ChevronDown } from "lucide-react";
+import { ArrowLeft, Edit, Link, Share, Archive, Clock, ChevronDown, MapPin, DollarSign, Calendar, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { mockJobs } from "@/components/jobs/JobsTable";
 import { JobPromotionDialog } from "@/components/jobs/JobPromotionDialog";
 import {
@@ -15,6 +19,12 @@ import {
 import { AddApplicantDialog } from "@/components/applicants/AddApplicantDialog";
 import { JobPreviewModal } from "@/components/jobs/JobPreviewModal";
 import { MoreVertical, Eye } from "lucide-react";
+import {
+  searchCompanies,
+  searchContacts,
+  searchApplications,
+  associationManager
+} from "@/services/associationService";
 
 // Example stages for the job applicants
 const applicantStages = [
@@ -182,17 +192,108 @@ const JobDetail = () => {
     );
   }
 
-  return (
-    <div className="overflow-x-hidden">
-      <PageContainer title={job.title}>
-        <div className="space-y-6 overflow-x-hidden">
-          {/* Header with back button and actions */}
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" className="gap-2" onClick={() => window.history.back()}>
-                <ArrowLeft size={16} />
-                Back to Jobs
-              </Button>
+  const handleLinkEntity = (entityType: string, entity: any) => {
+    if (job) {
+      associationManager.addAssociation(job.id, entityType, entity.id);
+      console.log(`Linked ${entityType}:`, entity);
+    }
+  };
+
+  const handleUnlinkEntity = (entityType: string, entityId: string) => {
+    if (job) {
+      associationManager.removeAssociation(job.id, entityType, entityId);
+      console.log(`Unlinked ${entityType}:`, entityId);
+    }
+  };
+
+  // Mock associated data - in a real app, this would come from the association manager
+  const associations = [
+    {
+      id: "company",
+      title: "Company",
+      records: [{
+        id: job.company,
+        name: job.company,
+        subtitle: "Hiring company",
+        route: `/companies/${job.company}`
+      }],
+      searchPlaceholder: "Search companies...",
+      onSearch: searchCompanies,
+      onLink: (entity: any) => handleLinkEntity("company", entity),
+      onUnlink: (entityId: string) => handleUnlinkEntity("company", entityId),
+      defaultOpen: true
+    },
+    {
+      id: "candidates",
+      title: "Candidates",
+      records: [], // Would be populated from associations
+      searchPlaceholder: "Search candidates...",
+      onSearch: (query: string) => searchContacts(query, 'candidate'),
+      onLink: (entity: any) => handleLinkEntity("candidates", entity),
+      onUnlink: (entityId: string) => handleUnlinkEntity("candidates", entityId),
+      defaultOpen: true
+    },
+    {
+      id: "applications",
+      title: "Applications",
+      records: applicants.map(app => ({
+        id: app.id,
+        name: `${app.name} → ${job.title}`,
+        subtitle: `Applied ${app.appliedDate}`,
+        route: `/applicants/${app.id}`
+      })),
+      searchPlaceholder: "Search applications...",
+      onSearch: searchApplications,
+      onLink: (entity: any) => handleLinkEntity("applications", entity),
+      onUnlink: (entityId: string) => handleUnlinkEntity("applications", entityId),
+      defaultOpen: true
+    },
+    {
+      id: "contacts",
+      title: "Client Contacts",
+      records: [], // Would be populated from associations
+      searchPlaceholder: "Search client contacts...",
+      onSearch: (query: string) => searchContacts(query, 'client'),
+      onLink: (entity: any) => handleLinkEntity("contacts", entity),
+      onUnlink: (entityId: string) => handleUnlinkEntity("contacts", entityId),
+      defaultOpen: false
+    }
+  ];
+
+  const leftPanel = (
+    <div className="space-y-6">
+      {/* Job Info Card */}
+      <Card className="rounded-2xl shadow-md">
+        <CardHeader className="p-6">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <CardTitle className="text-2xl mb-2">{job.title}</CardTitle>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Building className="h-4 w-4" />
+                  <span>{job.company}</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin className="h-4 w-4" />
+                  <span>{job.location}</span>
+                </div>
+                {job.salary && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <DollarSign className="h-4 w-4" />
+                    <span>{job.salary}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Calendar className="h-4 w-4" />
+                  <span>{job.type}</span>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center gap-2">
+                <Badge variant={job.status === 'Active' ? 'default' : 'secondary'}>
+                  {job.status}
+                </Badge>
+                <Badge variant="outline">{job.type}</Badge>
+              </div>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               <DropdownMenu>
@@ -247,28 +348,91 @@ const JobDetail = () => {
               </DropdownMenu>
             </div>
           </div>
-
-          {/* Applicant Pipeline */}
-          <div className="w-full">
-            <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
-              <h2 className="text-xl font-semibold">Applicant Pipeline</h2>
-              <Button 
-                variant="default" 
-                size="sm"
-                onClick={() => setShowAddApplicantDialog(true)}
-              >
-                Add Applicant
-              </Button>
+        </CardHeader>
+        <CardContent className="p-6 pt-0">
+          {job.skills && job.skills.length > 0 && (
+            <div className="mb-4">
+              <h4 className="font-medium mb-2">Required Skills</h4>
+              <div className="flex flex-wrap gap-2">
+                {job.skills.map((skill: string, index: number) => (
+                  <Badge key={index} variant="outline">{skill}</Badge>
+                ))}
+              </div>
             </div>
-            <KanbanBoard 
-              stages={applicantStages} 
-              items={applicants}
-              entityType="applicant"
-              onStageChange={handleStageChange}
-              jobId={id}
-            />
+          )}
+          {job.description && (
+            <div>
+              <h4 className="font-medium mb-2">Description</h4>
+              <p className="text-muted-foreground">{job.description}</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Quick Actions Card */}
+      <Card className="rounded-2xl shadow-md">
+        <CardHeader className="p-4">
+          <CardTitle className="text-lg">Quick Actions</CardTitle>
+        </CardHeader>
+        <CardContent className="p-4 pt-0">
+          <div className="grid grid-cols-2 gap-3">
+            <Button variant="outline" size="sm" className="gap-2" onClick={handleEditJob}>
+              <Edit className="h-4 w-4" />
+              Edit Job
+            </Button>
+            <Button variant="outline" size="sm" className="gap-2" onClick={() => handleStatusChange("Closed")}>
+              <Archive className="h-4 w-4" />
+              Archive Job
+            </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Applicant Pipeline */}
+      <div className="w-full">
+        <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
+          <h2 className="text-xl font-semibold">Applicant Pipeline</h2>
+          <Button 
+            variant="default" 
+            size="sm"
+            onClick={() => setShowAddApplicantDialog(true)}
+          >
+            Add Applicant
+          </Button>
         </div>
+        <KanbanBoard 
+          stages={applicantStages} 
+          items={applicants}
+          entityType="applicant"
+          onStageChange={handleStageChange}
+          jobId={id}
+        />
+      </div>
+    </div>
+  );
+
+  const rightPanel = (
+    <AssociationPanel
+      title="Associations"
+      associations={associations}
+    />
+  );
+
+  return (
+    <div className="overflow-x-hidden">
+      <PageContainer title={job.title}>
+        <TwoPanelDetailLayout
+          leftPanel={leftPanel}
+          rightPanel={rightPanel}
+        >
+          {/* Header with back button */}
+          <div className="flex items-center justify-between mb-6">
+            <Button variant="ghost" size="sm" className="gap-2" onClick={() => window.history.back()}>
+              <ArrowLeft size={16} />
+              Back to Jobs
+            </Button>
+          </div>
+        </TwoPanelDetailLayout>
       </PageContainer>
 
       {/* Job Promotion Dialog */}
