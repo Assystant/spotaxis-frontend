@@ -26,65 +26,79 @@ import { Avatar } from "@/components/ui/avatar";
 
 // Mock data for contacts
 const mockContacts = [
+  // Client Contacts
   {
-    id: "1",
-    name: "John Smith",
-    email: "john.smith@example.com",
+    id: "contact1",
+    name: "Alice Smith",
+    email: "alice.smith@acmecorp.com",
     phone: "+1 555-123-4567",
-    company: "Acme Inc.",
-    position: "Software Developer",
-    type: "Candidate",
-    location: "New York, USA",
-    tags: ["Developer", "React"],
-    lastContact: "2023-05-10"
+    company: "Acme Corp",
+    position: "Hiring Manager",
+    type: "Client",
+    location: "New York, NY",
+    tags: ["Hiring Manager", "Manufacturing"],
+    lastContact: "2024-01-15"
   },
   {
-    id: "2",
-    name: "Sarah Johnson",
-    email: "sarah.j@example.com",
+    id: "contact2",
+    name: "Bob Patel",
+    email: "bob.patel@brightsidetech.com",
     phone: "+1 555-234-5678",
-    company: "TechCorp",
-    position: "HR Manager",
+    company: "Brightside Tech",
+    position: "Team Lead",
     type: "Client",
-    location: "San Francisco, USA",
-    tags: ["HR", "Hiring Manager"],
-    lastContact: "2023-05-15"
+    location: "San Francisco, CA",
+    tags: ["Team Lead", "Software"],
+    lastContact: "2024-01-20"
   },
   {
-    id: "3",
-    name: "Michael Chen",
-    email: "michael.c@example.com",
+    id: "contact3",
+    name: "Cara Lee",
+    email: "cara.lee@greenfields.com",
     phone: "+1 555-345-6789",
-    company: "Global Solutions",
-    position: "CTO",
+    company: "GreenFields Inc.",
+    position: "Recruiter",
     type: "Client",
-    location: "Boston, USA",
-    tags: ["Executive", "Tech"],
-    lastContact: "2023-05-12"
+    location: "Chicago, IL",
+    tags: ["Recruiter", "Agriculture"],
+    lastContact: "2024-01-25"
   },
+  // Candidates
   {
-    id: "4",
-    name: "Emily Rodriguez",
-    email: "emily.r@example.com",
+    id: "contact4",
+    name: "Daniel Wong",
+    email: "daniel.wong@email.com",
     phone: "+1 555-456-7890",
-    company: "Startup Hub",
-    position: "UX Designer",
+    company: "Previous Company",
+    position: "Manufacturing Engineer",
     type: "Candidate",
-    location: "Austin, USA",
-    tags: ["Design", "UX/UI"],
-    lastContact: "2023-05-08"
+    location: "Detroit, MI",
+    tags: ["Manufacturing", "Engineer"],
+    lastContact: "2024-01-20"
   },
   {
-    id: "5",
-    name: "David Wilson",
-    email: "david.w@example.com",
+    id: "contact5",
+    name: "Eva Johnson",
+    email: "eva.johnson@email.com",
     phone: "+1 555-567-8901",
-    company: "Enterprise Ltd.",
-    position: "Sales Director",
-    type: "Partner",
-    location: "Chicago, USA",
-    tags: ["Sales", "Management"],
-    lastContact: "2023-05-14"
+    company: "Freelance",
+    position: "Frontend Developer",
+    type: "Candidate",
+    location: "Portland, OR",
+    tags: ["Frontend", "React"],
+    lastContact: "2024-01-22"
+  },
+  {
+    id: "contact6",
+    name: "Frank Müller",
+    email: "frank.muller@email.com",
+    phone: "+1 555-678-9012",
+    company: "Previous Employer",
+    position: "Agricultural Analyst",
+    type: "Candidate",
+    location: "Madison, WI",
+    tags: ["Agriculture", "Analysis"],
+    lastContact: "2024-01-28"
   }
 ];
 
@@ -198,8 +212,8 @@ const Contacts = () => {
                 </TableHeader>
                 <TableBody>
                   {filteredContacts.map((contact) => (
-                    <TableRow key={contact.id}>
-                      <TableCell>
+                    <TableRow key={contact.id} className="cursor-pointer hover:bg-muted/50" onClick={() => window.location.href = `/contacts/${contact.id}`}>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -256,7 +270,7 @@ const Contacts = () => {
                           ))}
                         </div>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm">
@@ -265,7 +279,7 @@ const Contacts = () => {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>View Details</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => window.location.href = `/contacts/${contact.id}`}>View Details</DropdownMenuItem>
                             <DropdownMenuItem>Edit Contact</DropdownMenuItem>
                             <DropdownMenuItem>Send Email</DropdownMenuItem>
                             <DropdownMenuSeparator />

@@ -1,16 +1,16 @@
 
 export const mockApplicants = [
   {
-    id: "app-1",
-    name: "Sarah Johnson",
-    email: "sarah.j@example.com",
-    phone: "(555) 123-4567",
-    location: "San Francisco, CA",
+    id: "app1",
+    name: "Daniel Wong",
+    email: "daniel.wong@email.com",
+    phone: "(555) 456-7890",
+    location: "Detroit, MI",
     stage: "Interview",
-    jobTitle: "Senior Frontend Developer",
-    appliedDate: "2023-08-15",
+    jobTitle: "Manufacturing Engineer",
+    appliedDate: "2024-01-20",
     source: "LinkedIn",
-    skills: ["React", "TypeScript", "CSS", "Node.js"],
+    skills: ["Lean Manufacturing", "CAD", "Process Optimization", "Quality Control"],
     experience: [
       {
         title: "Frontend Developer",
@@ -54,16 +54,16 @@ export const mockApplicants = [
     ]
   },
   {
-    id: "app-2",
-    name: "Michael Chen",
-    email: "m.chen@example.com",
-    phone: "(555) 987-6543",
-    location: "New York, NY",
-    stage: "Assessment",
-    jobTitle: "DevOps Engineer",
-    appliedDate: "2023-08-14",
-    source: "Indeed",
-    skills: ["Docker", "Kubernetes", "AWS", "CI/CD", "Python"],
+    id: "app2",
+    name: "Eva Johnson",
+    email: "eva.johnson@email.com",
+    phone: "(555) 567-8901",
+    location: "Portland, OR",
+    stage: "Screening",
+    jobTitle: "Frontend Developer",
+    appliedDate: "2024-01-22",
+    source: "Company Website",
+    skills: ["React", "TypeScript", "Next.js", "Tailwind CSS"],
     experience: [
       {
         title: "Cloud Engineer",
@@ -100,16 +100,16 @@ export const mockApplicants = [
     ]
   },
   {
-    id: "app-3",
-    name: "Aisha Patel",
-    email: "aisha.p@example.com",
-    phone: "(555) 456-7890",
-    location: "Austin, TX",
-    stage: "Offer",
-    jobTitle: "Product Manager",
-    appliedDate: "2023-08-10",
-    source: "Referral",
-    skills: ["Product Strategy", "Agile", "User Research", "Roadmapping"],
+    id: "app3",
+    name: "Frank Müller",
+    email: "frank.muller@email.com",
+    phone: "(555) 678-9012",
+    location: "Madison, WI",
+    stage: "New",
+    jobTitle: "Agricultural Analyst",
+    appliedDate: "2024-01-28",
+    source: "Indeed",
+    skills: ["Data Analysis", "Agricultural Science", "GIS", "Statistical Modeling"],
     experience: [
       {
         title: "Associate Product Manager",

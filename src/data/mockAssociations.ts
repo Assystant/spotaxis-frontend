@@ -55,82 +55,107 @@ export interface Application {
 export const mockCompanies: Company[] = [
   {
     id: "comp1",
-    name: "TechCorp Inc",
-    industry: "Technology",
-    location: "San Francisco, CA",
-    mission: "To revolutionize technology solutions",
-    vision: "Leading the future of innovation",
+    name: "Acme Corp",
+    industry: "Manufacturing",
+    location: "New York, NY",
+    mission: "Delivering innovative manufacturing solutions that drive efficiency and quality across industries",
+    vision: "To be the global leader in sustainable manufacturing technology and processes",
     size: "500-1000",
-    website: "https://techcorp.com"
+    website: "https://acmecorp.com"
   },
   {
     id: "comp2",
-    name: "Global Finance Ltd",
-    industry: "Finance",
-    location: "New York, NY",
-    mission: "Providing world-class financial services",
-    vision: "Empowering financial growth globally",
-    size: "1000+",
-    website: "https://globalfinance.com"
+    name: "Brightside Tech",
+    industry: "Software",
+    location: "San Francisco, CA",
+    mission: "Creating cutting-edge software solutions that empower businesses to achieve their full potential",
+    vision: "Building the future through intelligent, user-centered technology",
+    size: "200-500",
+    website: "https://brightsidetech.com"
   },
   {
     id: "comp3",
-    name: "HealthTech Solutions",
-    industry: "Healthcare",
-    location: "Boston, MA",
-    mission: "Advancing healthcare through technology",
-    vision: "Healthier communities through innovation",
-    size: "100-500",
-    website: "https://healthtech.com"
+    name: "GreenFields Inc.",
+    industry: "Agriculture",
+    location: "Chicago, IL",
+    mission: "Revolutionizing agriculture through sustainable farming practices and innovative technology",
+    vision: "Feeding the world while protecting our planet for future generations",
+    size: "100-200",
+    website: "https://greenfields.com"
   }
 ];
 
 // Mock Contacts (both clients and candidates)
 export const mockContacts: Contact[] = [
+  // Client Contacts
   {
     id: "contact1",
-    name: "John Smith",
-    email: "john.smith@techcorp.com",
+    name: "Alice Smith",
+    email: "alice.smith@acmecorp.com",
     phone: "(555) 123-4567",
     role: "Hiring Manager",
-    company: "TechCorp Inc",
+    company: "Acme Corp",
     companyId: "comp1",
-    location: "San Francisco, CA",
-    type: 'client'
-  },
-  {
-    id: "contact2",
-    name: "Sarah Johnson",
-    email: "sarah.johnson@email.com",
-    phone: "(555) 234-5678",
-    role: "Software Engineer",
-    company: "Freelance",
-    companyId: "",
-    location: "Seattle, WA",
-    source: "LinkedIn",
-    type: 'candidate'
-  },
-  {
-    id: "contact3",
-    name: "Mike Wilson",
-    email: "mike.wilson@globalfinance.com",
-    phone: "(555) 345-6789",
-    role: "HR Director",
-    company: "Global Finance Ltd",
-    companyId: "comp2",
     location: "New York, NY",
     type: 'client'
   },
   {
+    id: "contact2",
+    name: "Bob Patel",
+    email: "bob.patel@brightsidetech.com",
+    phone: "(555) 234-5678",
+    role: "Team Lead",
+    company: "Brightside Tech",
+    companyId: "comp2",
+    location: "San Francisco, CA",
+    type: 'client'
+  },
+  {
+    id: "contact3",
+    name: "Cara Lee",
+    email: "cara.lee@greenfields.com",
+    phone: "(555) 345-6789",
+    role: "Recruiter",
+    company: "GreenFields Inc.",
+    companyId: "comp3",
+    location: "Chicago, IL",
+    type: 'client'
+  },
+  // Candidates
+  {
     id: "contact4",
-    name: "Emily Davis",
-    email: "emily.davis@email.com",
+    name: "Daniel Wong",
+    email: "daniel.wong@email.com",
     phone: "(555) 456-7890",
-    role: "Data Scientist",
+    role: "Manufacturing Engineer",
     company: "Previous Company",
     companyId: "",
-    location: "Austin, TX",
-    source: "Referral",
+    location: "Detroit, MI",
+    source: "LinkedIn",
+    type: 'candidate'
+  },
+  {
+    id: "contact5",
+    name: "Eva Johnson",
+    email: "eva.johnson@email.com",
+    phone: "(555) 567-8901",
+    role: "Frontend Developer",
+    company: "Freelance",
+    companyId: "",
+    location: "Portland, OR",
+    source: "Company Website",
+    type: 'candidate'
+  },
+  {
+    id: "contact6",
+    name: "Frank Müller",
+    email: "frank.muller@email.com",
+    phone: "(555) 678-9012",
+    role: "Agricultural Analyst",
+    company: "Previous Employer",
+    companyId: "",
+    location: "Madison, WI",
+    source: "Indeed",
     type: 'candidate'
   }
 ];
@@ -139,40 +164,40 @@ export const mockContacts: Contact[] = [
 export const mockJobsData: Job[] = [
   {
     id: "job1",
-    title: "Senior Software Engineer",
+    title: "Manufacturing Engineer",
     companyId: "comp1",
-    company: "TechCorp Inc",
-    description: "We are looking for a senior software engineer...",
-    location: "San Francisco, CA",
+    company: "Acme Corp",
+    description: "Join our manufacturing team to design and optimize production processes. We're looking for an experienced engineer to help modernize our manufacturing operations and implement lean manufacturing principles.",
+    location: "New York, NY",
     type: "Full-time",
-    salary: "$120,000 - $160,000",
-    skills: ["React", "TypeScript", "Node.js"],
+    salary: "$85,000 - $115,000",
+    skills: ["Lean Manufacturing", "CAD", "Process Optimization", "Quality Control"],
     status: "Active",
     postedDate: "2024-01-15"
   },
   {
     id: "job2",
-    title: "Financial Analyst",
+    title: "Frontend Developer",
     companyId: "comp2",
-    company: "Global Finance Ltd",
-    description: "Seeking an experienced financial analyst...",
-    location: "New York, NY",
+    company: "Brightside Tech",
+    description: "We're seeking a talented Frontend Developer to join our growing team. You'll be working on cutting-edge web applications using modern technologies and frameworks.",
+    location: "San Francisco, CA",
     type: "Full-time",
-    salary: "$80,000 - $110,000",
-    skills: ["Excel", "SQL", "Financial Modeling"],
+    salary: "$120,000 - $160,000",
+    skills: ["React", "TypeScript", "Next.js", "Tailwind CSS"],
     status: "Active",
     postedDate: "2024-01-20"
   },
   {
     id: "job3",
-    title: "Product Manager",
+    title: "Agricultural Analyst",
     companyId: "comp3",
-    company: "HealthTech Solutions",
-    description: "Looking for a product manager to lead our health platform...",
-    location: "Boston, MA",
+    company: "GreenFields Inc.",
+    description: "Looking for an Agricultural Analyst to help optimize farming operations and analyze crop data. You'll work with farmers and technology teams to improve agricultural productivity.",
+    location: "Chicago, IL",
     type: "Full-time",
-    salary: "$100,000 - $140,000",
-    skills: ["Product Strategy", "Agile", "Healthcare"],
+    salary: "$70,000 - $95,000",
+    skills: ["Data Analysis", "Agricultural Science", "GIS", "Statistical Modeling"],
     status: "Active",
     postedDate: "2024-01-25"
   }
@@ -182,39 +207,39 @@ export const mockJobsData: Job[] = [
 export const mockApplications: Application[] = [
   {
     id: "app1",
-    candidateId: "contact2",
-    candidateName: "Sarah Johnson",
+    candidateId: "contact4",
+    candidateName: "Daniel Wong",
     jobId: "job1",
-    jobTitle: "Senior Software Engineer",
+    jobTitle: "Manufacturing Engineer",
     companyId: "comp1",
     appliedDate: "2024-01-20",
     status: "Active",
     stage: "interview",
-    resumeLink: "/resumes/sarah_johnson.pdf"
+    resumeLink: "/resumes/daniel_wong.pdf"
   },
   {
     id: "app2",
-    candidateId: "contact4",
-    candidateName: "Emily Davis",
+    candidateId: "contact5",
+    candidateName: "Eva Johnson",
     jobId: "job2",
-    jobTitle: "Financial Analyst",
+    jobTitle: "Frontend Developer",
     companyId: "comp2",
     appliedDate: "2024-01-22",
     status: "Active",
     stage: "screening",
-    resumeLink: "/resumes/emily_davis.pdf"
+    resumeLink: "/resumes/eva_johnson.pdf"
   },
   {
     id: "app3",
-    candidateId: "contact2",
-    candidateName: "Sarah Johnson",
+    candidateId: "contact6",
+    candidateName: "Frank Müller",
     jobId: "job3",
-    jobTitle: "Product Manager",
+    jobTitle: "Agricultural Analyst",
     companyId: "comp3",
     appliedDate: "2024-01-28",
     status: "Active",
     stage: "new",
-    resumeLink: "/resumes/sarah_johnson.pdf"
+    resumeLink: "/resumes/frank_muller.pdf"
   }
 ];
 

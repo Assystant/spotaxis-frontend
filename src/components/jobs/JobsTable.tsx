@@ -27,54 +27,34 @@ type Job = {
 
 export const mockJobs: Job[] = [
   {
-    id: "1",
-    title: "Senior Frontend Developer",
-    company: "TechCorp",
+    id: "job1",
+    title: "Manufacturing Engineer",
+    company: "Acme Corp",
+    location: "New York, NY",
+    type: "Full-time",
+    status: "Active",
+    applicants: 12,
+    postedDate: "2024-01-15"
+  },
+  {
+    id: "job2",
+    title: "Frontend Developer",
+    company: "Brightside Tech",
     location: "San Francisco, CA",
     type: "Full-time",
     status: "Active",
-    applicants: 32,
-    postedDate: "2023-07-15"
+    applicants: 8,
+    postedDate: "2024-01-20"
   },
   {
-    id: "2",
-    title: "UI/UX Designer",
-    company: "DesignStudio",
-    location: "Remote",
-    type: "Remote",
-    status: "Active",
-    applicants: 18,
-    postedDate: "2023-07-20"
-  },
-  {
-    id: "3",
-    title: "Product Manager",
-    company: "SaaS Inc.",
-    location: "New York, NY",
-    type: "Full-time",
-    status: "Paused",
-    applicants: 24,
-    postedDate: "2023-06-30"
-  },
-  {
-    id: "4",
-    title: "Backend Engineer",
-    company: "CloudTech",
-    location: "Seattle, WA",
-    type: "Full-time",
-    status: "Active",
-    applicants: 15,
-    postedDate: "2023-07-25"
-  },
-  {
-    id: "5",
-    title: "Content Writer",
-    company: "MediaCo",
+    id: "job3",
+    title: "Agricultural Analyst",
+    company: "GreenFields Inc.",
     location: "Chicago, IL",
-    type: "Part-time",
+    type: "Full-time",
     status: "Active",
-    applicants: 42,
-    postedDate: "2023-07-10"
+    applicants: 6,
+    postedDate: "2024-01-25"
   }
 ];
 
