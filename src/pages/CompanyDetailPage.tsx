@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, MapPin, Globe, Building, Users, Plus, Edit } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { TwoPanelDetailLayout } from "@/components/common/TwoPanelDetailLayout";
-import { AssociationPanel } from "@/components/common/AssociationPanel";
+import { AssociationCards } from "@/components/common/AssociationCards";
 import { CompanyTabs } from "@/components/companies/CompanyTabs";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -41,48 +41,33 @@ const CompanyDetailPage = () => {
 
   useEffect(() => {
     if (company) {
-      setAssociations([
+      const cardAssociations = [
         {
           id: "jobs",
           title: "Jobs",
           records: getAssociatedRecords(company.id, "jobs"),
-          searchPlaceholder: "Search jobs...",
-          onSearch: searchJobs,
-          onLink: (entity: any) => handleLinkEntity("jobs", entity),
-          onUnlink: (entityId: string) => handleUnlinkEntity("jobs", entityId),
-          defaultOpen: true
+          onAdd: () => console.log("Add job")
         },
         {
           id: "contacts",
           title: "Client Contacts",
           records: getAssociatedRecords(company.id, "contacts"),
-          searchPlaceholder: "Search client contacts...",
-          onSearch: (query: string) => searchContacts(query, 'client'),
-          onLink: (entity: any) => handleLinkEntity("contacts", entity),
-          onUnlink: (entityId: string) => handleUnlinkEntity("contacts", entityId),
-          defaultOpen: true
+          onAdd: () => console.log("Add contact")
         },
         {
           id: "candidates",
-          title: "Candidates",
+          title: "Candidates", 
           records: getAssociatedRecords(company.id, "candidates"),
-          searchPlaceholder: "Search candidates...",
-          onSearch: (query: string) => searchContacts(query, 'candidate'),
-          onLink: (entity: any) => handleLinkEntity("candidates", entity),
-          onUnlink: (entityId: string) => handleUnlinkEntity("candidates", entityId),
-          defaultOpen: false
+          onAdd: () => console.log("Add candidate")
         },
         {
           id: "applications",
           title: "Applications",
           records: getAssociatedRecords(company.id, "applications"),
-          searchPlaceholder: "Search applications...",
-          onSearch: searchApplications,
-          onLink: (entity: any) => handleLinkEntity("applications", entity),
-          onUnlink: (entityId: string) => handleUnlinkEntity("applications", entityId),
-          defaultOpen: false
+          onAdd: () => console.log("Add application")
         }
-      ]);
+      ];
+      setAssociations(cardAssociations);
     }
   }, [company]);
 
@@ -190,8 +175,8 @@ const CompanyDetailPage = () => {
   const leftPanel = <CompanyTabs company={company} />;
 
   const rightPanel = (
-    <AssociationPanel
-      title="Associations"
+    <AssociationCards
+      title="Related Records"
       associations={associations}
     />
   );
