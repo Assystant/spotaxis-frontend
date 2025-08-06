@@ -16,54 +16,34 @@ export type Company = {
 
 export const mockCompanies: Company[] = [
   {
-    id: "1",
-    name: "TechCorp",
-    industry: "Technology",
-    location: "San Francisco, CA",
-    website: "https://techcorp.example.com",
-    email: "contact@techcorp.example.com",
+    id: "comp1",
+    name: "Acme Corp",
+    industry: "Manufacturing",
+    location: "New York, NY",
+    website: "https://acmecorp.com",
+    email: "contact@acmecorp.com",
     phone: "+1 (555) 123-4567",
     status: "Active"
   },
   {
-    id: "2",
-    name: "DesignStudio",
-    industry: "Design",
-    location: "New York, NY",
-    website: "https://designstudio.example.com",
-    email: "info@designstudio.example.com",
-    phone: "+1 (555) 987-6543",
-    status: "Active"
-  },
-  {
-    id: "3",
-    name: "SaaS Inc.",
+    id: "comp2",
+    name: "Brightside Tech",
     industry: "Software",
-    location: "Austin, TX",
-    website: "https://saas.example.com",
-    email: "hello@saas.example.com",
-    phone: "+1 (555) 456-7890",
-    status: "Active"
-  },
-  {
-    id: "4",
-    name: "CloudTech",
-    industry: "Cloud Services",
-    location: "Seattle, WA",
-    website: "https://cloudtech.example.com",
-    email: "support@cloudtech.example.com",
+    location: "San Francisco, CA",
+    website: "https://brightsidetech.com",
+    email: "info@brightsidetech.com",
     phone: "+1 (555) 234-5678",
     status: "Active"
   },
   {
-    id: "5",
-    name: "MediaCo",
-    industry: "Media",
-    location: "Los Angeles, CA",
-    website: "https://mediaco.example.com",
-    email: "media@mediaco.example.com",
-    phone: "+1 (555) 876-5432",
-    status: "Inactive"
+    id: "comp3",
+    name: "GreenFields Inc.",
+    industry: "Agriculture",
+    location: "Chicago, IL",
+    website: "https://greenfields.com",
+    email: "hello@greenfields.com",
+    phone: "+1 (555) 345-6789",
+    status: "Active"
   }
 ];
 
@@ -87,7 +67,7 @@ export const CompaniesTable = () => {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {mockCompanies.map((company) => (
-              <tr key={company.id} className="hover:bg-gray-50">
+              <tr key={company.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => window.location.href = `/companies/${company.id}`}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
