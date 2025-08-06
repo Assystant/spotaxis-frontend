@@ -112,6 +112,7 @@ const JobDetail = () => {
   const [showPromotionDialog, setShowPromotionDialog] = useState(false);
   const [showAddApplicantDialog, setShowAddApplicantDialog] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [associations, setAssociations] = useState<any[]>([]);
 
   useEffect(() => {
     // In a real app, fetch the job from an API
@@ -277,57 +278,58 @@ const JobDetail = () => {
     ));
   };
 
-  const [associations, setAssociations] = useState(() => {
-    if (!job) return [];
-    
-    return [
-      {
-        id: "company",
-        title: "Company",
-        records: [{
-          id: job.company,
-          name: job.company,
-          subtitle: "Hiring company",
-          route: `/companies/${job.company}`
-        }],
-        searchPlaceholder: "Search companies...",
-        onSearch: searchCompanies,
-        onLink: (entity: any) => handleLinkEntity("company", entity),
-        onUnlink: (entityId: string) => handleUnlinkEntity("company", entityId),
-        defaultOpen: true
-      },
-      {
-        id: "candidates",
-        title: "Candidates",
-        records: getAssociatedRecords(job.id, "candidates"),
-        searchPlaceholder: "Search candidates...",
-        onSearch: (query: string) => searchContacts(query, 'candidate'),
-        onLink: (entity: any) => handleLinkEntity("candidates", entity),
-        onUnlink: (entityId: string) => handleUnlinkEntity("candidates", entityId),
-        defaultOpen: true
-      },
-      {
-        id: "applications",
-        title: "Applications",
-        records: getAssociatedRecords(job.id, "applications"),
-        searchPlaceholder: "Search applications...",
-        onSearch: searchApplications,
-        onLink: (entity: any) => handleLinkEntity("applications", entity),
-        onUnlink: (entityId: string) => handleUnlinkEntity("applications", entityId),
-        defaultOpen: true
-      },
-      {
-        id: "contacts",
-        title: "Client Contacts",
-        records: getAssociatedRecords(job.id, "contacts"),
-        searchPlaceholder: "Search client contacts...",
-        onSearch: (query: string) => searchContacts(query, 'client'),
-        onLink: (entity: any) => handleLinkEntity("contacts", entity),
-        onUnlink: (entityId: string) => handleUnlinkEntity("contacts", entityId),
-        defaultOpen: false
-      }
-    ];
-  });
+  useEffect(() => {
+    if (job) {
+      const newAssociations = [
+        {
+          id: "company",
+          title: "Company",
+          records: [{
+            id: job.company,
+            name: job.company,
+            subtitle: "Hiring company",
+            route: `/companies/${job.company}`
+          }],
+          searchPlaceholder: "Search companies...",
+          onSearch: searchCompanies,
+          onLink: (entity: any) => handleLinkEntity("company", entity),
+          onUnlink: (entityId: string) => handleUnlinkEntity("company", entityId),
+          defaultOpen: true
+        },
+        {
+          id: "candidates",
+          title: "Candidates",
+          records: getAssociatedRecords(job.id, "candidates"),
+          searchPlaceholder: "Search candidates...",
+          onSearch: (query: string) => searchContacts(query, 'candidate'),
+          onLink: (entity: any) => handleLinkEntity("candidates", entity),
+          onUnlink: (entityId: string) => handleUnlinkEntity("candidates", entityId),
+          defaultOpen: true
+        },
+        {
+          id: "applications",
+          title: "Applications",
+          records: getAssociatedRecords(job.id, "applications"),
+          searchPlaceholder: "Search applications...",
+          onSearch: searchApplications,
+          onLink: (entity: any) => handleLinkEntity("applications", entity),
+          onUnlink: (entityId: string) => handleUnlinkEntity("applications", entityId),
+          defaultOpen: true
+        },
+        {
+          id: "contacts",
+          title: "Client Contacts",
+          records: getAssociatedRecords(job.id, "contacts"),
+          searchPlaceholder: "Search client contacts...",
+          onSearch: (query: string) => searchContacts(query, 'client'),
+          onLink: (entity: any) => handleLinkEntity("contacts", entity),
+          onUnlink: (entityId: string) => handleUnlinkEntity("contacts", entityId),
+          defaultOpen: false
+        }
+      ];
+      setAssociations(newAssociations);
+    }
+  }, [job]);
 
   const leftPanel = (
     <div className="space-y-6">
