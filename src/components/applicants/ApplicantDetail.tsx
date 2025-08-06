@@ -158,15 +158,19 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
                   <div>
                     <div className="mb-2 font-medium">Experience</div>
                     <div className="space-y-3">
-                      {applicant.experience?.map((exp: any, index: number) => (
-                        <div key={index} className="border-l-2 border-primary/20 pl-4">
-                          <div className="font-medium">{exp.title}</div>
-                          <div className="text-sm">{exp.company}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {exp.start} - {exp.end || "Present"}
+                      {applicant.experience && applicant.experience.length > 0 ? (
+                        applicant.experience.map((exp: any, index: number) => (
+                          <div key={index} className="border-l-2 border-primary/20 pl-4">
+                            <div className="font-medium">{exp.title}</div>
+                            <div className="text-sm">{exp.company}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {exp.start} - {exp.end || "Present"}
+                            </div>
                           </div>
-                        </div>
-                      )) || "No experience listed"}
+                        ))
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No experience listed</p>
+                      )}
                     </div>
                   </div>
                 </div>
