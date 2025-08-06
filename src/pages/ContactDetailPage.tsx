@@ -33,6 +33,7 @@ const ContactDetailPage = () => {
   const navigate = useNavigate();
   const [contact, setContact] = useState<Contact | null>(null);
   const [loading, setLoading] = useState(true);
+  const [associations, setAssociations] = useState<any[]>([]);
 
   useEffect(() => {
     if (contactId) {
@@ -41,33 +42,6 @@ const ContactDetailPage = () => {
       setLoading(false);
     }
   }, [contactId]);
-
-  if (loading) {
-    return (
-      <PageContainer title="Loading...">
-        <div className="flex items-center justify-center h-64">
-          <p>Loading contact details...</p>
-        </div>
-      </PageContainer>
-    );
-  }
-
-  if (!contact) {
-    return (
-      <PageContainer title="Contact Not Found">
-        <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">Contact not found</p>
-          <Button onClick={() => navigate("/contacts")}>
-            Back to Contacts
-          </Button>
-        </div>
-      </PageContainer>
-    );
-  }
-
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
-  };
 
   const getAssociatedRecords = (contactId: string, entityType: string) => {
     const associatedIds = associationManager.getAssociations(contactId, entityType);
@@ -147,8 +121,6 @@ const ContactDetailPage = () => {
     ));
   };
 
-  const [associations, setAssociations] = useState<any[]>([]);
-
   useEffect(() => {
     if (contact) {
       const newAssociations = [
@@ -203,6 +175,33 @@ const ContactDetailPage = () => {
       setAssociations(newAssociations);
     }
   }, [contact]);
+
+  if (loading) {
+    return (
+      <PageContainer title="Loading...">
+        <div className="flex items-center justify-center h-64">
+          <p>Loading contact details...</p>
+        </div>
+      </PageContainer>
+    );
+  }
+
+  if (!contact) {
+    return (
+      <PageContainer title="Contact Not Found">
+        <div className="text-center py-12">
+          <p className="text-muted-foreground mb-4">Contact not found</p>
+          <Button onClick={() => navigate("/contacts")}>
+            Back to Contacts
+          </Button>
+        </div>
+      </PageContainer>
+    );
+  }
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
 
   const leftPanel = (
     <div className="space-y-6">
