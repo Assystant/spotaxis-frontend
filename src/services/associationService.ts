@@ -91,6 +91,11 @@ export const searchApplications = async (query: string): Promise<SearchResult[]>
 class AssociationManager {
   private associations: Map<string, Set<string>> = new Map();
 
+  constructor() {
+    // Initialize with sample associations
+    this.initializeSampleAssociations();
+  }
+
   // Get associations for an entity
   getAssociations(entityId: string, associationType: string): string[] {
     const key = `${entityId}:${associationType}`;
@@ -116,6 +121,34 @@ class AssociationManager {
 
     // Remove reverse association if needed
     this.removeReverseAssociation(entityId, associationType, targetId);
+  }
+
+  // Initialize sample associations
+  private initializeSampleAssociations(): void {
+    // Company → Contact associations
+    this.addAssociation('comp1', 'contacts', 'contact1'); // Acme Corp → Alice Smith
+    this.addAssociation('comp2', 'contacts', 'contact2'); // Brightside Tech → Bob Patel
+    this.addAssociation('comp3', 'contacts', 'contact3'); // GreenFields → Cara Lee
+
+    // Company → Job associations
+    this.addAssociation('comp1', 'jobs', 'job1'); // Acme Corp → Manufacturing Engineer
+    this.addAssociation('comp2', 'jobs', 'job2'); // Brightside Tech → Frontend Developer
+    this.addAssociation('comp3', 'jobs', 'job3'); // GreenFields → Agricultural Analyst
+
+    // Job → Candidate associations
+    this.addAssociation('job1', 'candidates', 'contact4'); // Manufacturing Engineer → Daniel Wong
+    this.addAssociation('job2', 'candidates', 'contact5'); // Frontend Developer → Eva Johnson
+    this.addAssociation('job3', 'candidates', 'contact6'); // Agricultural Analyst → Frank Müller
+
+    // Job → Application associations
+    this.addAssociation('job1', 'applications', 'app1'); // Manufacturing Engineer → Daniel's Application
+    this.addAssociation('job2', 'applications', 'app2'); // Frontend Developer → Eva's Application
+    this.addAssociation('job3', 'applications', 'app3'); // Agricultural Analyst → Frank's Application
+
+    // Candidate → Application associations
+    this.addAssociation('contact4', 'applications', 'app1'); // Daniel Wong → his application
+    this.addAssociation('contact5', 'applications', 'app2'); // Eva Johnson → her application
+    this.addAssociation('contact6', 'applications', 'app3'); // Frank Müller → his application
   }
 
   private addReverseAssociation(entityId: string, associationType: string, targetId: string): void {

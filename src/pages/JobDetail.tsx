@@ -8,6 +8,7 @@ import { ArrowLeft, Edit, Link, Share, Archive, Clock, ChevronDown, MapPin, Doll
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "@/hooks/use-toast";
 import { mockJobs } from "@/components/jobs/JobsTable";
 import { JobPromotionDialog } from "@/components/jobs/JobPromotionDialog";
 import {
@@ -19,11 +20,20 @@ import {
 import { AddApplicantDialog } from "@/components/applicants/AddApplicantDialog";
 import { JobPreviewModal } from "@/components/jobs/JobPreviewModal";
 import { MoreVertical, Eye } from "lucide-react";
+import { 
+  mockContacts, 
+  mockCompanies, 
+  mockJobsData, 
+  mockApplications 
+} from "@/data/mockAssociations";
 import {
   searchCompanies,
   searchContacts,
   searchApplications,
-  associationManager
+  associationManager,
+  companyToSearchResult,
+  contactToSearchResult,
+  applicationToSearchResult
 } from "@/services/associationService";
 
 // Example stages for the job applicants
@@ -192,73 +202,132 @@ const JobDetail = () => {
     );
   }
 
-  const handleLinkEntity = (entityType: string, entity: any) => {
-    if (job) {
-      associationManager.addAssociation(job.id, entityType, entity.id);
-      console.log(`Linked ${entityType}:`, entity);
+  const getAssociatedRecords = (jobId: string, entityType: string) => {
+    const associatedIds = associationManager.getAssociations(jobId, entityType);
+    
+    switch (entityType) {
+      case 'companies':
+        return mockCompanies
+          .filter(company => associatedIds.includes(company.id))
+          .map(companyToSearchResult);
+      case 'candidates':
+        return mockContacts
+          .filter(contact => associatedIds.includes(contact.id) && contact.type === 'candidate')
+          .map(contactToSearchResult);
+      case 'applications':
+        return mockApplications
+          .filter(app => associatedIds.includes(app.id))
+          .map(applicationToSearchResult);
+      case 'contacts':
+        return mockContacts
+          .filter(contact => associatedIds.includes(contact.id) && contact.type === 'client')
+          .map(contactToSearchResult);
+      default:
+        return [];
     }
+  };
+
+  const getEntityName = (entityType: string, entityId: string): string => {
+    switch (entityType) {
+      case 'companies':
+        return mockCompanies.find(c => c.id === entityId)?.name || 'Company';
+      case 'candidates':
+      case 'contacts':
+        return mockContacts.find(c => c.id === entityId)?.name || 'Contact';
+      case 'applications':
+        return mockApplications.find(a => a.id === entityId)?.candidateName || 'Application';
+      default:
+        return 'Entity';
+    }
+  };
+
+  const handleLinkEntity = (entityType: string, entity: any) => {
+    if (!job) return;
+    
+    associationManager.addAssociation(job.id, entityType, entity.id);
+    
+    toast({
+      title: "Association Added",
+      description: `Linked ${entity.name} to ${job.title}`,
+    });
+    
+    setAssociations(prev => prev.map(assoc => 
+      assoc.id === entityType 
+        ? { ...assoc, records: getAssociatedRecords(job.id, entityType) }
+        : assoc
+    ));
   };
 
   const handleUnlinkEntity = (entityType: string, entityId: string) => {
-    if (job) {
-      associationManager.removeAssociation(job.id, entityType, entityId);
-      console.log(`Unlinked ${entityType}:`, entityId);
-    }
+    if (!job) return;
+    
+    associationManager.removeAssociation(job.id, entityType, entityId);
+    
+    const entityName = getEntityName(entityType, entityId);
+    
+    toast({
+      title: "Association Removed",
+      description: `Unlinked ${entityName} from ${job.title}`,
+    });
+    
+    setAssociations(prev => prev.map(assoc => 
+      assoc.id === entityType 
+        ? { ...assoc, records: getAssociatedRecords(job.id, entityType) }
+        : assoc
+    ));
   };
 
-  // Mock associated data - in a real app, this would come from the association manager
-  const associations = [
-    {
-      id: "company",
-      title: "Company",
-      records: [{
-        id: job.company,
-        name: job.company,
-        subtitle: "Hiring company",
-        route: `/companies/${job.company}`
-      }],
-      searchPlaceholder: "Search companies...",
-      onSearch: searchCompanies,
-      onLink: (entity: any) => handleLinkEntity("company", entity),
-      onUnlink: (entityId: string) => handleUnlinkEntity("company", entityId),
-      defaultOpen: true
-    },
-    {
-      id: "candidates",
-      title: "Candidates",
-      records: [], // Would be populated from associations
-      searchPlaceholder: "Search candidates...",
-      onSearch: (query: string) => searchContacts(query, 'candidate'),
-      onLink: (entity: any) => handleLinkEntity("candidates", entity),
-      onUnlink: (entityId: string) => handleUnlinkEntity("candidates", entityId),
-      defaultOpen: true
-    },
-    {
-      id: "applications",
-      title: "Applications",
-      records: applicants.map(app => ({
-        id: app.id,
-        name: `${app.name} → ${job.title}`,
-        subtitle: `Applied ${app.appliedDate}`,
-        route: `/applicants/${app.id}`
-      })),
-      searchPlaceholder: "Search applications...",
-      onSearch: searchApplications,
-      onLink: (entity: any) => handleLinkEntity("applications", entity),
-      onUnlink: (entityId: string) => handleUnlinkEntity("applications", entityId),
-      defaultOpen: true
-    },
-    {
-      id: "contacts",
-      title: "Client Contacts",
-      records: [], // Would be populated from associations
-      searchPlaceholder: "Search client contacts...",
-      onSearch: (query: string) => searchContacts(query, 'client'),
-      onLink: (entity: any) => handleLinkEntity("contacts", entity),
-      onUnlink: (entityId: string) => handleUnlinkEntity("contacts", entityId),
-      defaultOpen: false
-    }
-  ];
+  const [associations, setAssociations] = useState(() => {
+    if (!job) return [];
+    
+    return [
+      {
+        id: "company",
+        title: "Company",
+        records: [{
+          id: job.company,
+          name: job.company,
+          subtitle: "Hiring company",
+          route: `/companies/${job.company}`
+        }],
+        searchPlaceholder: "Search companies...",
+        onSearch: searchCompanies,
+        onLink: (entity: any) => handleLinkEntity("company", entity),
+        onUnlink: (entityId: string) => handleUnlinkEntity("company", entityId),
+        defaultOpen: true
+      },
+      {
+        id: "candidates",
+        title: "Candidates",
+        records: getAssociatedRecords(job.id, "candidates"),
+        searchPlaceholder: "Search candidates...",
+        onSearch: (query: string) => searchContacts(query, 'candidate'),
+        onLink: (entity: any) => handleLinkEntity("candidates", entity),
+        onUnlink: (entityId: string) => handleUnlinkEntity("candidates", entityId),
+        defaultOpen: true
+      },
+      {
+        id: "applications",
+        title: "Applications",
+        records: getAssociatedRecords(job.id, "applications"),
+        searchPlaceholder: "Search applications...",
+        onSearch: searchApplications,
+        onLink: (entity: any) => handleLinkEntity("applications", entity),
+        onUnlink: (entityId: string) => handleUnlinkEntity("applications", entityId),
+        defaultOpen: true
+      },
+      {
+        id: "contacts",
+        title: "Client Contacts",
+        records: getAssociatedRecords(job.id, "contacts"),
+        searchPlaceholder: "Search client contacts...",
+        onSearch: (query: string) => searchContacts(query, 'client'),
+        onLink: (entity: any) => handleLinkEntity("contacts", entity),
+        onUnlink: (entityId: string) => handleUnlinkEntity("contacts", entityId),
+        defaultOpen: false
+      }
+    ];
+  });
 
   const leftPanel = (
     <div className="space-y-6">

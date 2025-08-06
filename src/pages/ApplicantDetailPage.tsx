@@ -8,13 +8,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Mail, Phone, MapPin, MoveRight, Calendar, FileText } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { mockApplicants } from "@/data/mockApplicants";
+import { 
+  mockContacts, 
+  mockCompanies, 
+  mockJobsData, 
+  mockApplications 
+} from "@/data/mockAssociations";
 import {
   searchJobs,
   searchCompanies,
   searchContacts,
   searchApplications,
-  associationManager
+  associationManager,
+  companyToSearchResult,
+  jobToSearchResult,
+  applicationToSearchResult,
+  contactToSearchResult
 } from "@/services/associationService";
 
 const ApplicantDetailPage = () => {
@@ -54,14 +65,80 @@ const ApplicantDetailPage = () => {
     );
   }
 
+  const getAssociatedRecords = (applicantId: string, entityType: string) => {
+    const associatedIds = associationManager.getAssociations(applicantId, entityType);
+    
+    switch (entityType) {
+      case 'companies':
+        return mockCompanies
+          .filter(company => associatedIds.includes(company.id))
+          .map(companyToSearchResult);
+      case 'jobs':
+        return mockJobsData
+          .filter(job => associatedIds.includes(job.id))
+          .map(jobToSearchResult);
+      case 'applications':
+        return mockApplications
+          .filter(app => associatedIds.includes(app.id))
+          .map(applicationToSearchResult);
+      case 'contacts':
+        return mockContacts
+          .filter(contact => associatedIds.includes(contact.id) && contact.type === 'client')
+          .map(contactToSearchResult);
+      default:
+        return [];
+    }
+  };
+
+  const getEntityName = (entityType: string, entityId: string): string => {
+    switch (entityType) {
+      case 'companies':
+        return mockCompanies.find(c => c.id === entityId)?.name || 'Company';
+      case 'jobs':
+        return mockJobsData.find(j => j.id === entityId)?.title || 'Job';
+      case 'applications':
+        return mockApplications.find(a => a.id === entityId)?.candidateName || 'Application';
+      case 'contacts':
+        return mockContacts.find(c => c.id === entityId)?.name || 'Contact';
+      default:
+        return 'Entity';
+    }
+  };
+
   const handleLinkEntity = (entityType: string, entity: any) => {
+    if (!applicant) return;
+    
     associationManager.addAssociation(applicant.id, entityType, entity.id);
-    console.log(`Linked ${entityType}:`, entity);
+    
+    toast({
+      title: "Association Added",
+      description: `Linked ${entity.name} to ${applicant.name}`,
+    });
+    
+    setAssociations(prev => prev.map(assoc => 
+      assoc.id === entityType 
+        ? { ...assoc, records: getAssociatedRecords(applicant.id, entityType) }
+        : assoc
+    ));
   };
 
   const handleUnlinkEntity = (entityType: string, entityId: string) => {
+    if (!applicant) return;
+    
     associationManager.removeAssociation(applicant.id, entityType, entityId);
-    console.log(`Unlinked ${entityType}:`, entityId);
+    
+    const entityName = getEntityName(entityType, entityId);
+    
+    toast({
+      title: "Association Removed",
+      description: `Unlinked ${entityName} from ${applicant.name}`,
+    });
+    
+    setAssociations(prev => prev.map(assoc => 
+      assoc.id === entityType 
+        ? { ...assoc, records: getAssociatedRecords(applicant.id, entityType) }
+        : assoc
+    ));
   };
 
   const getStageColor = (stage: string) => {
@@ -76,16 +153,14 @@ const ApplicantDetailPage = () => {
   };
 
   // Mock associated data
-  const associations = [
+  const [associations, setAssociations] = useState(() => {
+    if (!applicant) return [];
+    
+    return [
     {
       id: "applications",
       title: "Applications",
-      records: [{
-        id: applicant.id,
-        name: `${applicant.jobTitle || 'Current Application'}`,
-        subtitle: `Applied ${applicant.appliedDate}`,
-        route: `/applicants/${applicant.id}`
-      }],
+      records: getAssociatedRecords(applicant.id, "applications"),
       searchPlaceholder: "Search applications...",
       onSearch: searchApplications,
       onLink: (entity: any) => handleLinkEntity("applications", entity),
@@ -95,7 +170,7 @@ const ApplicantDetailPage = () => {
     {
       id: "jobs",
       title: "Jobs",
-      records: [], // Would be populated from associations
+      records: getAssociatedRecords(applicant.id, "jobs"),
       searchPlaceholder: "Search jobs...",
       onSearch: searchJobs,
       onLink: (entity: any) => handleLinkEntity("jobs", entity),
@@ -105,7 +180,7 @@ const ApplicantDetailPage = () => {
     {
       id: "companies",
       title: "Companies",
-      records: [], // Would be populated from associations
+      records: getAssociatedRecords(applicant.id, "companies"),
       searchPlaceholder: "Search companies...",
       onSearch: searchCompanies,
       onLink: (entity: any) => handleLinkEntity("companies", entity),
@@ -115,14 +190,15 @@ const ApplicantDetailPage = () => {
     {
       id: "contacts",
       title: "Client Contacts",
-      records: [], // Would be populated from associations
+      records: getAssociatedRecords(applicant.id, "contacts"),
       searchPlaceholder: "Search client contacts...",
       onSearch: (query: string) => searchContacts(query, 'client'),
       onLink: (entity: any) => handleLinkEntity("contacts", entity),
       onUnlink: (entityId: string) => handleUnlinkEntity("contacts", entityId),
       defaultOpen: false
     }
-  ];
+    ];
+  });
 
   const leftPanel = (
     <div className="space-y-6">
