@@ -147,63 +147,11 @@ const ContactDetailPage = () => {
     ));
   };
 
-  const [associations, setAssociations] = useState(() => {
-    if (!contact) return [];
-    
-    return [
-      {
-        id: "companies",
-        title: "Companies",
-        records: contact.companyId ? [{
-          id: contact.companyId,
-          name: contact.company,
-          subtitle: "Primary company",
-          route: `/companies/${contact.companyId}`
-        }, ...getAssociatedRecords(contact.id, "companies")] : getAssociatedRecords(contact.id, "companies"),
-        searchPlaceholder: "Search companies...",
-        onSearch: searchCompanies,
-        onLink: (entity: any) => handleLinkEntity("companies", entity),
-        onUnlink: (entityId: string) => handleUnlinkEntity("companies", entityId),
-        defaultOpen: true
-      },
-      {
-        id: "jobs",
-        title: "Jobs",
-        records: getAssociatedRecords(contact.id, "jobs"),
-        searchPlaceholder: "Search jobs...",
-        onSearch: searchJobs,
-        onLink: (entity: any) => handleLinkEntity("jobs", entity),
-        onUnlink: (entityId: string) => handleUnlinkEntity("jobs", entityId),
-        defaultOpen: true
-      },
-      {
-        id: "applications",
-        title: "Applications",
-        records: getAssociatedRecords(contact.id, "applications"),
-        searchPlaceholder: "Search applications...",
-        onSearch: searchApplications,
-        onLink: (entity: any) => handleLinkEntity("applications", entity),
-        onUnlink: (entityId: string) => handleUnlinkEntity("applications", entityId),
-        defaultOpen: true
-      },
-      {
-        id: contact.type === 'client' ? "candidates" : "contacts",
-        title: contact.type === 'client' ? "Candidates" : "Client Contacts",
-        records: getAssociatedRecords(contact.id, contact.type === 'client' ? "candidates" : "contacts"),
-        searchPlaceholder: contact.type === 'client' ? "Search candidates..." : "Search client contacts...",
-        onSearch: contact.type === 'client' ? 
-          (query: string) => searchContacts(query, 'candidate') :
-          (query: string) => searchContacts(query, 'client'),
-        onLink: (entity: any) => handleLinkEntity(contact.type === 'client' ? "candidates" : "contacts", entity),
-        onUnlink: (entityId: string) => handleUnlinkEntity(contact.type === 'client' ? "candidates" : "contacts", entityId),
-        defaultOpen: false
-      }
-    ];
-  });
+  const [associations, setAssociations] = useState<any[]>([]);
 
   useEffect(() => {
     if (contact) {
-      setAssociations([
+      const newAssociations = [
         {
           id: "companies",
           title: "Companies",
@@ -251,7 +199,8 @@ const ContactDetailPage = () => {
           onUnlink: (entityId: string) => handleUnlinkEntity(contact.type === 'client' ? "candidates" : "contacts", entityId),
           defaultOpen: false
         }
-      ]);
+      ];
+      setAssociations(newAssociations);
     }
   }, [contact]);
 
