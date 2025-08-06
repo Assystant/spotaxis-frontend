@@ -33,6 +33,7 @@ const ApplicantDetailPage = () => {
   const navigate = useNavigate();
   const [applicant, setApplicant] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [associations, setAssociations] = useState<any[]>([]);
 
   useEffect(() => {
     if (applicantId) {
@@ -41,29 +42,6 @@ const ApplicantDetailPage = () => {
       setLoading(false);
     }
   }, [applicantId]);
-
-  if (loading) {
-    return (
-      <PageContainer title="Loading...">
-        <div className="flex items-center justify-center h-64">
-          <p>Loading applicant details...</p>
-        </div>
-      </PageContainer>
-    );
-  }
-
-  if (!applicantId || !applicant) {
-    return (
-      <PageContainer title="Applicant Not Found">
-        <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">Applicant not found</p>
-          <Button onClick={() => navigate("/applicants")}>
-            Back to Applicants
-          </Button>
-        </div>
-      </PageContainer>
-    );
-  }
 
   const getAssociatedRecords = (applicantId: string, entityType: string) => {
     const associatedIds = associationManager.getAssociations(applicantId, entityType);
@@ -152,53 +130,76 @@ const ApplicantDetailPage = () => {
     }
   };
 
-  // Mock associated data
-  const [associations, setAssociations] = useState(() => {
-    if (!applicant) return [];
-    
-    return [
-    {
-      id: "applications",
-      title: "Applications",
-      records: getAssociatedRecords(applicant.id, "applications"),
-      searchPlaceholder: "Search applications...",
-      onSearch: searchApplications,
-      onLink: (entity: any) => handleLinkEntity("applications", entity),
-      onUnlink: (entityId: string) => handleUnlinkEntity("applications", entityId),
-      defaultOpen: true
-    },
-    {
-      id: "jobs",
-      title: "Jobs",
-      records: getAssociatedRecords(applicant.id, "jobs"),
-      searchPlaceholder: "Search jobs...",
-      onSearch: searchJobs,
-      onLink: (entity: any) => handleLinkEntity("jobs", entity),
-      onUnlink: (entityId: string) => handleUnlinkEntity("jobs", entityId),
-      defaultOpen: true
-    },
-    {
-      id: "companies",
-      title: "Companies",
-      records: getAssociatedRecords(applicant.id, "companies"),
-      searchPlaceholder: "Search companies...",
-      onSearch: searchCompanies,
-      onLink: (entity: any) => handleLinkEntity("companies", entity),
-      onUnlink: (entityId: string) => handleUnlinkEntity("companies", entityId),
-      defaultOpen: false
-    },
-    {
-      id: "contacts",
-      title: "Client Contacts",
-      records: getAssociatedRecords(applicant.id, "contacts"),
-      searchPlaceholder: "Search client contacts...",
-      onSearch: (query: string) => searchContacts(query, 'client'),
-      onLink: (entity: any) => handleLinkEntity("contacts", entity),
-      onUnlink: (entityId: string) => handleUnlinkEntity("contacts", entityId),
-      defaultOpen: false
+  useEffect(() => {
+    if (applicant) {
+      const newAssociations = [
+        {
+          id: "applications",
+          title: "Applications",
+          records: getAssociatedRecords(applicant.id, "applications"),
+          searchPlaceholder: "Search applications...",
+          onSearch: searchApplications,
+          onLink: (entity: any) => handleLinkEntity("applications", entity),
+          onUnlink: (entityId: string) => handleUnlinkEntity("applications", entityId),
+          defaultOpen: true
+        },
+        {
+          id: "jobs",
+          title: "Jobs",
+          records: getAssociatedRecords(applicant.id, "jobs"),
+          searchPlaceholder: "Search jobs...",
+          onSearch: searchJobs,
+          onLink: (entity: any) => handleLinkEntity("jobs", entity),
+          onUnlink: (entityId: string) => handleUnlinkEntity("jobs", entityId),
+          defaultOpen: true
+        },
+        {
+          id: "companies",
+          title: "Companies",
+          records: getAssociatedRecords(applicant.id, "companies"),
+          searchPlaceholder: "Search companies...",
+          onSearch: searchCompanies,
+          onLink: (entity: any) => handleLinkEntity("companies", entity),
+          onUnlink: (entityId: string) => handleUnlinkEntity("companies", entityId),
+          defaultOpen: false
+        },
+        {
+          id: "contacts",
+          title: "Client Contacts",
+          records: getAssociatedRecords(applicant.id, "contacts"),
+          searchPlaceholder: "Search client contacts...",
+          onSearch: (query: string) => searchContacts(query, 'client'),
+          onLink: (entity: any) => handleLinkEntity("contacts", entity),
+          onUnlink: (entityId: string) => handleUnlinkEntity("contacts", entityId),
+          defaultOpen: false
+        }
+      ];
+      setAssociations(newAssociations);
     }
-    ];
-  });
+  }, [applicant]);
+
+  if (loading) {
+    return (
+      <PageContainer title="Loading...">
+        <div className="flex items-center justify-center h-64">
+          <p>Loading applicant details...</p>
+        </div>
+      </PageContainer>
+    );
+  }
+
+  if (!applicantId || !applicant) {
+    return (
+      <PageContainer title="Applicant Not Found">
+        <div className="text-center py-12">
+          <p className="text-muted-foreground mb-4">Applicant not found</p>
+          <Button onClick={() => navigate("/applicants")}>
+            Back to Applicants
+          </Button>
+        </div>
+      </PageContainer>
+    );
+  }
 
   const leftPanel = (
     <div className="space-y-6">
