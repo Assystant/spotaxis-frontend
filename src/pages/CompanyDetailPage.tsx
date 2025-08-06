@@ -30,6 +30,7 @@ const CompanyDetailPage = () => {
   const navigate = useNavigate();
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
+  const [associations, setAssociations] = useState<any[]>([]);
 
   useEffect(() => {
     if (companyId) {
@@ -138,52 +139,6 @@ const CompanyDetailPage = () => {
     ));
   };
 
-  const [associations, setAssociations] = useState(() => {
-    if (!company) return [];
-    
-    return [
-      {
-        id: "jobs",
-        title: "Jobs",
-        records: getAssociatedRecords(company.id, "jobs"),
-        searchPlaceholder: "Search jobs...",
-        onSearch: searchJobs,
-        onLink: (entity: any) => handleLinkEntity("jobs", entity),
-        onUnlink: (entityId: string) => handleUnlinkEntity("jobs", entityId),
-        defaultOpen: true
-      },
-      {
-        id: "contacts",
-        title: "Client Contacts",
-        records: getAssociatedRecords(company.id, "contacts"),
-        searchPlaceholder: "Search client contacts...",
-        onSearch: (query: string) => searchContacts(query, 'client'),
-        onLink: (entity: any) => handleLinkEntity("contacts", entity),
-        onUnlink: (entityId: string) => handleUnlinkEntity("contacts", entityId),
-        defaultOpen: true
-      },
-      {
-        id: "candidates",
-        title: "Candidates",
-        records: getAssociatedRecords(company.id, "candidates"),
-        searchPlaceholder: "Search candidates...",
-        onSearch: (query: string) => searchContacts(query, 'candidate'),
-        onLink: (entity: any) => handleLinkEntity("candidates", entity),
-        onUnlink: (entityId: string) => handleUnlinkEntity("candidates", entityId),
-        defaultOpen: false
-      },
-      {
-        id: "applications",
-        title: "Applications",
-        records: getAssociatedRecords(company.id, "applications"),
-        searchPlaceholder: "Search applications...",
-        onSearch: searchApplications,
-        onLink: (entity: any) => handleLinkEntity("applications", entity),
-        onUnlink: (entityId: string) => handleUnlinkEntity("applications", entityId),
-        defaultOpen: false
-      }
-    ];
-  });
 
   useEffect(() => {
     if (company) {
