@@ -1,6 +1,7 @@
 
 import { Building2, MapPin, Link, Mail, Phone, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export type Company = {
   id: string;
@@ -48,6 +49,13 @@ export const mockCompanies: Company[] = [
 ];
 
 export const CompaniesTable = () => {
+  const navigate = useNavigate();
+
+  const handleCompanyClick = (company: Company) => {
+    // Navigate with company data in state for instant loading
+    navigate(`/companies/${company.id}`, { state: { company } });
+  };
+
   return (
     <div className="bg-white rounded-xl border border-border shadow-subtle overflow-hidden">
       <div className="p-6 border-b border-border">
@@ -67,7 +75,7 @@ export const CompaniesTable = () => {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {mockCompanies.map((company) => (
-              <tr key={company.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => window.location.href = `/companies/${company.id}`}>
+              <tr key={company.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleCompanyClick(company)}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
