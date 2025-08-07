@@ -1,183 +1,157 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building, Globe, MapPin, Users, Plus, Calendar, Mail, Phone, FileText } from "lucide-react";
+import { Building, Globe, MapPin, Users, Plus, Calendar, Mail, Phone, FileText, Activity, Video, MessageSquare, Clock, Briefcase, Target, TrendingUp, Send } from "lucide-react";
 import { Company } from "@/data/mockAssociations";
+import { useActivityTypes } from "@/contexts/ActivityTypesContext";
+import { AddActivityTypeDialog } from "./AddActivityTypeDialog";
 
 interface CompanyTabsProps {
   company: Company;
 }
 
-export const CompanyTabs = ({ company }: CompanyTabsProps) => {
-  return (
-    <Tabs defaultValue="overview" className="w-full">
-      <TabsList className="grid w-full grid-cols-5">
-        <TabsTrigger value="overview">Overview</TabsTrigger>
-        <TabsTrigger value="activities">Activities</TabsTrigger>
-        <TabsTrigger value="emails">Emails</TabsTrigger>
-        <TabsTrigger value="meetings">Meetings</TabsTrigger>
-        <TabsTrigger value="notes">Notes</TabsTrigger>
-      </TabsList>
+// Icon mapping for dynamic rendering
+const iconMap = {
+  Building,
+  Mail,
+  Phone,
+  Activity,
+  FileText,
+  Video,
+  MessageSquare,
+  Calendar,
+  Clock,
+  Users,
+  Briefcase,
+  Target,
+  TrendingUp,
+};
 
-      <TabsContent value="overview" className="space-y-6">
-        {/* Company Info Card */}
-        <Card className="rounded-2xl shadow-md">
-          <CardHeader className="p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <CardTitle className="text-2xl mb-2">{company.name}</CardTitle>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Building className="h-4 w-4" />
-                    <span>{company.industry}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <span>{company.location}</span>
-                  </div>
-                  {company.website && (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Globe className="h-4 w-4" />
-                      <a 
-                        href={company.website} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline"
-                      >
-                        {company.website}
-                      </a>
-                    </div>
-                  )}
-                  {company.size && (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Users className="h-4 w-4" />
-                      <span>{company.size} employees</span>
-                    </div>
-                  )}
+export const CompanyTabs = ({ company }: CompanyTabsProps) => {
+  const { activityTypes } = useActivityTypes();
+  const renderTabContent = (activityType: any) => {
+    const IconComponent = iconMap[activityType.icon as keyof typeof iconMap] || FileText;
+    
+    if (activityType.id === 'overview') {
+      return (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Building className="h-5 w-5" />
+              {company.name}
+            </CardTitle>
+            <CardDescription>Company Overview</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <Building className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Industry:</span>
+                  <span>{company.industry}</span>
                 </div>
-                <div className="mt-3">
-                  <Badge variant="default">{company.industry}</Badge>
+                <div className="flex items-center gap-2 text-sm">
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Location:</span>
+                  <span>{company.location}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Globe className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Website:</span>
+                  <a href={company.website} className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                    {company.website}
+                  </a>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Size:</span>
+                  <Badge variant="secondary">{company.size}</Badge>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Building className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Industry:</span>
+                  <Badge variant="outline">{company.industry}</Badge>
                 </div>
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="p-6 pt-0">
-            {company.mission && (
-              <div className="mb-4">
-                <h4 className="font-medium mb-2">Mission</h4>
-                <p className="text-muted-foreground">{company.mission}</p>
-              </div>
-            )}
-            {company.vision && (
-              <div>
-                <h4 className="font-medium mb-2">Vision</h4>
-                <p className="text-muted-foreground">{company.vision}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
 
-        {/* Quick Actions Card */}
-        <Card className="rounded-2xl shadow-md">
-          <CardHeader className="p-4">
-            <CardTitle className="text-lg">Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <Button variant="outline" size="sm" className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add Note
-              </Button>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Calendar className="h-4 w-4" />
-                Schedule Meeting
-              </Button>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Mail className="h-4 w-4" />
+            {company.mission && (
+              <div className="space-y-2">
+                <h4 className="font-medium">Mission</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {company.mission}
+                </p>
+              </div>
+            )}
+
+            <div className="flex gap-2 pt-4">
+              <Button size="sm">
+                <Send className="h-4 w-4 mr-2" />
                 Send Email
               </Button>
+              <Button variant="outline" size="sm">
+                <Calendar className="h-4 w-4 mr-2" />
+                Schedule Meeting
+              </Button>
+              <Button variant="outline" size="sm">
+                <Phone className="h-4 w-4 mr-2" />
+                Log Call
+              </Button>
             </div>
           </CardContent>
         </Card>
-      </TabsContent>
+      );
+    }
 
-      <TabsContent value="activities" className="space-y-4">
-        <Card className="rounded-2xl shadow-md">
-          <CardHeader className="p-4 flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">Recent Activities</CardTitle>
-            <Button size="sm" className="gap-2">
-              <Plus className="h-4 w-4" />
-              Add Activity
-            </Button>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <div className="space-y-3">
-              <div className="text-center py-8 text-muted-foreground">
-                No activities recorded yet
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <IconComponent className="h-5 w-5" />
+            {activityType.name}
+          </CardTitle>
+          {activityType.description && (
+            <CardDescription>{activityType.description}</CardDescription>
+          )}
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-muted-foreground">
+            <IconComponent className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p>No {activityType.name.toLowerCase()} yet</p>
+            <p className="text-sm">Activities will appear here when added</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
-      <TabsContent value="emails" className="space-y-4">
-        <Card className="rounded-2xl shadow-md">
-          <CardHeader className="p-4 flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">Email Communications</CardTitle>
-            <Button size="sm" className="gap-2">
-              <Mail className="h-4 w-4" />
-              Compose Email
-            </Button>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <div className="space-y-3">
-              <div className="text-center py-8 text-muted-foreground">
-                No emails found
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
+  return (
+    <Tabs defaultValue="overview" className="w-full">
+      <div className="flex items-center justify-between mb-4">
+        <TabsList className={`grid w-full grid-cols-${Math.min(activityTypes.length, 6)}`}>
+          {activityTypes.map((activityType) => {
+            const IconComponent = iconMap[activityType.icon as keyof typeof iconMap] || FileText;
+            return (
+              <TabsTrigger key={activityType.id} value={activityType.id} className="flex items-center gap-1">
+                <IconComponent className="h-4 w-4" />
+                {activityType.name}
+              </TabsTrigger>
+            );
+          })}
+        </TabsList>
+        <AddActivityTypeDialog />
+      </div>
 
-      <TabsContent value="meetings" className="space-y-4">
-        <Card className="rounded-2xl shadow-md">
-          <CardHeader className="p-4 flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">Meetings</CardTitle>
-            <Button size="sm" className="gap-2">
-              <Calendar className="h-4 w-4" />
-              Schedule Meeting
-            </Button>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <div className="space-y-3">
-              <div className="text-center py-8 text-muted-foreground">
-                No meetings scheduled
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
-
-      <TabsContent value="notes" className="space-y-4">
-        <Card className="rounded-2xl shadow-md">
-          <CardHeader className="p-4 flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">Notes</CardTitle>
-            <Button size="sm" className="gap-2">
-              <FileText className="h-4 w-4" />
-              Add Note
-            </Button>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <div className="space-y-3">
-              <div className="text-center py-8 text-muted-foreground">
-                No notes added yet
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
+      {activityTypes.map((activityType) => (
+        <TabsContent key={activityType.id} value={activityType.id}>
+          {renderTabContent(activityType)}
+        </TabsContent>
+      ))}
     </Tabs>
   );
 };

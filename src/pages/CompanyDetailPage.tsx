@@ -5,6 +5,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { TwoPanelDetailLayout } from "@/components/common/TwoPanelDetailLayout";
 import { AssociationCards } from "@/components/common/AssociationCards";
 import { CompanyTabs } from "@/components/companies/CompanyTabs";
+import { ActivityTypesProvider } from "@/contexts/ActivityTypesContext";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { 
@@ -182,24 +183,26 @@ const CompanyDetailPage = () => {
   );
 
   return (
-    <PageContainer title={company.name}>
-      <TwoPanelDetailLayout
-        leftPanel={leftPanel}
-        rightPanel={rightPanel}
-      >
-        {/* Header with back button */}
-        <div className="flex items-center justify-between mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate("/companies")}
-            className="gap-2"
-          >
-            <ArrowLeft size={16} />
-            Back to Companies
-          </Button>
-        </div>
-      </TwoPanelDetailLayout>
-    </PageContainer>
+    <ActivityTypesProvider>
+      <PageContainer title={company.name}>
+        <TwoPanelDetailLayout
+          leftPanel={leftPanel}
+          rightPanel={rightPanel}
+        >
+          {/* Header with back button */}
+          <div className="flex items-center justify-between mb-6">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/companies")}
+              className="gap-2"
+            >
+              <ArrowLeft size={16} />
+              Back to Companies
+            </Button>
+          </div>
+        </TwoPanelDetailLayout>
+      </PageContainer>
+    </ActivityTypesProvider>
   );
 };
 
