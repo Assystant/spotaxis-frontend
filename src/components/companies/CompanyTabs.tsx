@@ -43,23 +43,33 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
 
   useEffect(() => {
     const checkOverflow = () => {
-      if (tabsContainerRef.current && !isMobile) {
+      if (isMobile) {
+        setShowHamburgerMenu(true);
+        return;
+      }
+
+      if (tabsContainerRef.current) {
         const container = tabsContainerRef.current;
         const containerWidth = container.offsetWidth;
-        const manageButtonWidth = 120; // Approximate width of manage button
-        const tabsWidth = Array.from(container.querySelectorAll('[role="tab"]')).reduce((total, tab) => {
-          return total + ((tab as HTMLElement).offsetWidth || 0);
-        }, 0);
+        const manageButtonWidth = 150; // Approximate width of manage button + margins
         
-        setShowHamburgerMenu(tabsWidth + manageButtonWidth > containerWidth);
-      } else {
-        setShowHamburgerMenu(isMobile);
+        // Calculate estimated width of all tabs (approximate 120px per tab + gaps)
+        const estimatedTabsWidth = activityTypes.length * 130; // 120px + 10px gap
+        
+        setShowHamburgerMenu(estimatedTabsWidth + manageButtonWidth > containerWidth);
       }
     };
 
+    // Initial check with a slight delay to ensure DOM is ready
+    const timeoutId = setTimeout(checkOverflow, 0);
+    
     checkOverflow();
     window.addEventListener('resize', checkOverflow);
-    return () => window.removeEventListener('resize', checkOverflow);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', checkOverflow);
+    };
   }, [activityTypes.length, isMobile]);
   const renderTabContent = (activityType: any) => {
     const IconComponent = iconMap[activityType.icon as keyof typeof iconMap] || FileText;
