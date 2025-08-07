@@ -7,6 +7,8 @@ import { Building, Globe, MapPin, Users, Plus, Calendar, Mail, Phone, FileText, 
 import { Company } from "@/data/mockAssociations";
 import { useActivityTypes } from "@/contexts/ActivityTypesContext";
 import { AddActivityTypeDialog } from "./AddActivityTypeDialog";
+import { getActivitiesForType } from "@/data/mockActivities";
+import { ActivityCard } from "./ActivityCard";
 
 interface CompanyTabsProps {
   company: Company;
@@ -108,6 +110,8 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
       );
     }
 
+    const activities = getActivitiesForType(activityType.id);
+    
     return (
       <Card>
         <CardHeader>
@@ -120,11 +124,19 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
           )}
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
-            <IconComponent className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>No {activityType.name.toLowerCase()} yet</p>
-            <p className="text-sm">Activities will appear here when added</p>
-          </div>
+          {activities.length > 0 ? (
+            <div className="space-y-4">
+              {activities.map((activity) => (
+                <ActivityCard key={activity.id} activity={activity} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <IconComponent className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>No {activityType.name.toLowerCase()} yet</p>
+              <p className="text-sm">Activities will appear here when added</p>
+            </div>
+          )}
         </CardContent>
       </Card>
     );
