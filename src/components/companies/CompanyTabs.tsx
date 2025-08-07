@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,33 +42,23 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
 
   useEffect(() => {
     const checkOverflow = () => {
-      if (isMobile) {
-        setShowHamburgerMenu(true);
-        return;
-      }
-
-      if (tabsContainerRef.current) {
+      if (tabsContainerRef.current && !isMobile) {
         const container = tabsContainerRef.current;
         const containerWidth = container.offsetWidth;
-        const manageButtonWidth = 150; // Approximate width of manage button + margins
+        const manageButtonWidth = 120; // Approximate width of manage button
+        const tabsWidth = Array.from(container.querySelectorAll('[role="tab"]')).reduce((total, tab) => {
+          return total + ((tab as HTMLElement).offsetWidth || 0);
+        }, 0);
         
-        // Calculate estimated width of all tabs (approximate 120px per tab + gaps)
-        const estimatedTabsWidth = activityTypes.length * 130; // 120px + 10px gap
-        
-        setShowHamburgerMenu(estimatedTabsWidth + manageButtonWidth > containerWidth);
+        setShowHamburgerMenu(tabsWidth + manageButtonWidth > containerWidth);
+      } else {
+        setShowHamburgerMenu(isMobile);
       }
     };
 
-    // Initial check with a slight delay to ensure DOM is ready
-    const timeoutId = setTimeout(checkOverflow, 0);
-    
     checkOverflow();
     window.addEventListener('resize', checkOverflow);
-    
-    return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener('resize', checkOverflow);
-    };
+    return () => window.removeEventListener('resize', checkOverflow);
   }, [activityTypes.length, isMobile]);
   const renderTabContent = (activityType: any) => {
     const IconComponent = iconMap[activityType.icon as keyof typeof iconMap] || FileText;
