@@ -28,21 +28,15 @@ interface ThemeToggleProviderProps {
 }
 
 export const ThemeToggleProvider: React.FC<ThemeToggleProviderProps> = ({ children }) => {
-  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
-    const savedTheme = localStorage.getItem('theme-mode');
-    return (savedTheme as ThemeMode) || 'default';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('theme-mode', themeMode);
-  }, [themeMode]);
+  // Always use Notion theme
+  const themeMode: ThemeMode = 'notion';
 
   const toggleTheme = () => {
-    setThemeMode(prev => prev === 'default' ? 'notion' : 'default');
+    // No-op function for compatibility
   };
 
-  const currentTheme = themeMode === 'notion' ? notionTheme : defaultTheme;
-  const isNotionTheme = themeMode === 'notion';
+  const currentTheme = notionTheme;
+  const isNotionTheme = true;
 
   const value = {
     themeMode,
