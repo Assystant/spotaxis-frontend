@@ -35,18 +35,8 @@ const CompanyDetailPage = () => {
   const [company, setCompany] = useState<Company | null>(preloadedCompany || null);
   const [loading, setLoading] = useState(!preloadedCompany);
 
-  useEffect(() => {
-    if (companyId && !company) {
-      // Only fetch if we don't have preloaded data
-      const companyData = mockCompanies.find(c => c.id === companyId);
-      setCompany(companyData || null);
-      setLoading(false);
-    } else if (preloadedCompany) {
-      // We have preloaded data, no loading needed
-      setLoading(false);
-    }
-  }, [companyId, company, preloadedCompany]);
-
+  // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
+  
   // Memoize expensive operations
   const getAssociatedRecords = useCallback((companyId: string, entityType: string) => {
     const associatedIds = associationManager.getAssociations(companyId, entityType);
@@ -72,81 +62,6 @@ const CompanyDetailPage = () => {
         return [];
     }
   }, []);
-
-  // Memoize associations to prevent unnecessary recalculation
-  const associations = useMemo(() => {
-    if (!company) return [];
-    
-    return [
-      {
-        id: "jobs",
-        title: "Jobs",
-        records: getAssociatedRecords(company.id, "jobs"),
-        onAdd: () => console.log("Add job")
-      },
-      {
-        id: "contacts",
-        title: "Client Contacts",
-        records: getAssociatedRecords(company.id, "contacts"),
-        onAdd: () => console.log("Add contact")
-      },
-      {
-        id: "candidates",
-        title: "Candidates", 
-        records: getAssociatedRecords(company.id, "candidates"),
-        onAdd: () => console.log("Add candidate")
-      },
-      {
-        id: "applications",
-        title: "Applications",
-        records: getAssociatedRecords(company.id, "applications"),
-        onAdd: () => console.log("Add application")
-      }
-    ];
-  }, [company, getAssociatedRecords]);
-
-  if (loading) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => navigate("/companies")}
-            className="p-2"
-          >
-            <ArrowLeft size={16} />
-          </Button>
-          <div className="h-8 bg-muted animate-pulse rounded w-48"></div>
-        </div>
-        <div className="h-96 bg-muted animate-pulse rounded"></div>
-      </div>
-    );
-  }
-
-  if (!company) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => navigate("/companies")}
-            className="p-2"
-          >
-            <ArrowLeft size={16} />
-          </Button>
-          <h1 className="text-2xl font-semibold">Company Not Found</h1>
-        </div>
-        <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">Company not found</p>
-          <Button onClick={() => navigate("/companies")}>
-            Back to Companies
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   const getEntityName = useCallback((entityType: string, entityId: string): string => {
     switch (entityType) {
@@ -193,9 +108,40 @@ const CompanyDetailPage = () => {
     setCompany(prev => ({ ...prev! }));
   }, [company, getEntityName]);
 
+  // Memoize associations to prevent unnecessary recalculation
+  const associations = useMemo(() => {
+    if (!company) return [];
+    
+    return [
+      {
+        id: "jobs",
+        title: "Jobs",
+        records: getAssociatedRecords(company.id, "jobs"),
+        onAdd: () => console.log("Add job")
+      },
+      {
+        id: "contacts",
+        title: "Client Contacts",
+        records: getAssociatedRecords(company.id, "contacts"),
+        onAdd: () => console.log("Add contact")
+      },
+      {
+        id: "candidates",
+        title: "Candidates", 
+        records: getAssociatedRecords(company.id, "candidates"),
+        onAdd: () => console.log("Add candidate")
+      },
+      {
+        id: "applications",
+        title: "Applications",
+        records: getAssociatedRecords(company.id, "applications"),
+        onAdd: () => console.log("Add application")
+      }
+    ];
+  }, [company, getAssociatedRecords]);
 
   // Memoize expensive components
-  const leftPanel = useMemo(() => <CompanyTabs company={company} />, [company]);
+  const leftPanel = useMemo(() => company ? <CompanyTabs company={company} /> : null, [company]);
 
   const rightPanel = useMemo(() => (
     <AssociationCards
@@ -203,6 +149,63 @@ const CompanyDetailPage = () => {
       associations={associations}
     />
   ), [associations]);
+
+  useEffect(() => {
+    if (companyId && !company) {
+      // Only fetch if we don't have preloaded data
+      const companyData = mockCompanies.find(c => c.id === companyId);
+      setCompany(companyData || null);
+      setLoading(false);
+    } else if (preloadedCompany) {
+      // We have preloaded data, no loading needed
+      setLoading(false);
+    }
+  }, [companyId, company, preloadedCompany]);
+
+  // NOW SAFE TO HAVE EARLY RETURNS AFTER ALL HOOKS ARE CALLED
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => navigate("/companies")}
+            className="p-2"
+          >
+            <ArrowLeft size={16} />
+          </Button>
+          <div className="h-8 bg-muted animate-pulse rounded w-48"></div>
+        </div>
+        <div className="h-96 bg-muted animate-pulse rounded"></div>
+      </div>
+    );
+  }
+
+  if (!company) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => navigate("/companies")}
+            className="p-2"
+          >
+            <ArrowLeft size={16} />
+          </Button>
+          <h1 className="text-2xl font-semibold">Company Not Found</h1>
+        </div>
+        <div className="text-center py-12">
+          <p className="text-muted-foreground mb-4">Company not found</p>
+          <Button onClick={() => navigate("/companies")}>
+            Back to Companies
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <ActivityTypesProvider>
