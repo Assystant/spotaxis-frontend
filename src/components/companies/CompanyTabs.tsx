@@ -145,11 +145,11 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
   return (
     <Tabs defaultValue="overview" className="w-full">
       <div className="flex items-center justify-between mb-4">
-        <TabsList className={`grid w-full grid-cols-${Math.min(activityTypes.length, 6)}`}>
+        <TabsList className="flex w-auto gap-1">
           {activityTypes.map((activityType) => {
             const IconComponent = iconMap[activityType.icon as keyof typeof iconMap] || FileText;
             return (
-              <TabsTrigger key={activityType.id} value={activityType.id} className="flex items-center gap-1">
+              <TabsTrigger key={activityType.id} value={activityType.id} className="flex items-center gap-1 px-3 py-2">
                 <IconComponent className="h-4 w-4" />
                 {activityType.name}
               </TabsTrigger>
