@@ -145,28 +145,36 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
                   <div>
                     <div className="mb-2 font-medium">Skills</div>
                     <div className="flex flex-wrap gap-2">
-                      {applicant.skills?.map((skill: string, index: number) => (
-                        <span 
-                          key={index} 
-                          className="px-2 py-1 bg-slate-100 rounded-md text-sm"
-                        >
-                          {skill}
-                        </span>
-                      )) || "No skills listed"}
+                      {applicant.skills && applicant.skills.length > 0 ? (
+                        applicant.skills.map((skill: string, index: number) => (
+                          <span 
+                            key={index} 
+                            className="px-2 py-1 bg-slate-100 rounded-md text-sm"
+                          >
+                            {skill}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-sm text-muted-foreground">No skills listed</span>
+                      )}
                     </div>
                   </div>
                   <div>
                     <div className="mb-2 font-medium">Experience</div>
                     <div className="space-y-3">
-                      {applicant.experience?.map((exp: any, index: number) => (
-                        <div key={index} className="border-l-2 border-primary/20 pl-4">
-                          <div className="font-medium">{exp.title}</div>
-                          <div className="text-sm">{exp.company}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {exp.start} - {exp.end || "Present"}
+                      {applicant.experience && applicant.experience.length > 0 ? (
+                        applicant.experience.map((exp: any, index: number) => (
+                          <div key={index} className="border-l-2 border-primary/20 pl-4">
+                            <div className="font-medium">{exp.title}</div>
+                            <div className="text-sm">{exp.company}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {exp.start} - {exp.end || "Present"}
+                            </div>
                           </div>
-                        </div>
-                      )) || "No experience listed"}
+                        ))
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No experience listed</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -200,14 +208,18 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
                 <div className="border rounded-lg p-4 space-y-4 mt-4">
                   <h3 className="font-medium text-lg">Tags</h3>
                   <div className="flex flex-wrap gap-2">
-                    {applicant.tags?.map((tag: string, index: number) => (
-                      <span 
-                        key={index} 
-                        className="px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-sm"
-                      >
-                        {tag}
-                      </span>
-                    )) || "No tags"}
+                    {applicant.tags && applicant.tags.length > 0 ? (
+                      applicant.tags.map((tag: string, index: number) => (
+                        <span 
+                          key={index} 
+                          className="px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-sm"
+                        >
+                          {tag}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-sm text-muted-foreground">No tags</span>
+                    )}
                   </div>
                   <Button variant="outline" size="sm" className="gap-2 mt-2">
                     <Tag size={14} />
@@ -236,17 +248,19 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
             <div className="border rounded-lg p-4">
               <h3 className="font-medium text-lg mb-4">Notes</h3>
               <div className="space-y-4">
-                {applicant.notes?.map((note: any, index: number) => (
-                  <div key={index} className="border-b pb-4 last:border-b-0 last:pb-0">
-                    <div className="flex justify-between items-start">
-                      <div className="font-medium">{note.author}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {new Date(note.date).toLocaleDateString()}
+                {applicant.notes && applicant.notes.length > 0 ? (
+                  applicant.notes.map((note: any, index: number) => (
+                    <div key={index} className="border-b pb-4 last:border-b-0 last:pb-0">
+                      <div className="flex justify-between items-start">
+                        <div className="font-medium">{note.author}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {new Date(note.date).toLocaleDateString()}
+                        </div>
                       </div>
+                      <p className="mt-2">{note.content}</p>
                     </div>
-                    <p className="mt-2">{note.content}</p>
-                  </div>
-                )) || (
+                  ))
+                ) : (
                   <div className="text-center p-6 text-muted-foreground">
                     No notes have been added yet
                   </div>
@@ -263,20 +277,22 @@ export const ApplicantDetail = ({ id }: ApplicantDetailProps) => {
             <div className="border rounded-lg p-4">
               <h3 className="font-medium text-lg mb-4">Activity History</h3>
               <div className="space-y-4">
-                {applicant.activity?.map((activity: any, index: number) => (
-                  <div key={index} className="flex gap-3 border-b pb-4 last:border-b-0 last:pb-0">
-                    <div className="bg-primary/10 p-2 h-fit rounded">
-                      <Clock size={16} className="text-primary" />
-                    </div>
-                    <div className="flex-grow">
-                      <div className="font-medium">{activity.title}</div>
-                      <div className="text-sm text-muted-foreground">{activity.description}</div>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        {new Date(activity.date).toLocaleString()}
+                {applicant.activity && applicant.activity.length > 0 ? (
+                  applicant.activity.map((activity: any, index: number) => (
+                    <div key={index} className="flex gap-3 border-b pb-4 last:border-b-0 last:pb-0">
+                      <div className="bg-primary/10 p-2 h-fit rounded">
+                        <Clock size={16} className="text-primary" />
+                      </div>
+                      <div className="flex-grow">
+                        <div className="font-medium">{activity.title}</div>
+                        <div className="text-sm text-muted-foreground">{activity.description}</div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {new Date(activity.date).toLocaleString()}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )) || (
+                  ))
+                ) : (
                   <div className="text-center p-6 text-muted-foreground">
                     No activity recorded yet
                   </div>

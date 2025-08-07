@@ -263,10 +263,17 @@ const ApplicantDetailPage = () => {
               </div>
             </div>
           )}
-          {applicant.experience && (
+          {applicant.experience && applicant.experience.length > 0 && (
             <div>
               <h4 className="font-medium mb-2">Experience</h4>
-              <p className="text-muted-foreground">{applicant.experience}</p>
+              <div className="space-y-2">
+                {applicant.experience.map((exp: any, index: number) => (
+                  <div key={index} className="text-muted-foreground">
+                    <div className="font-medium">{exp.title}</div>
+                    <div className="text-sm">{exp.company} • {exp.start} - {exp.end || "Present"}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </CardContent>
