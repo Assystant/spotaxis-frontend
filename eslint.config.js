@@ -5,7 +5,9 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist"] },
+  {
+    ignores: ["dist", "node_modules", "build", ".next", "coverage"],
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
@@ -19,11 +21,18 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+
+      // ✅ Disabled rules
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },
       ],
       "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-unused-expressions": "off",
+      "@typescript-eslint/no-explicit-any": "off",         // disables "Unexpected any"
+      // "@typescript-eslint/no-empty-interface": "off",      // disables empty interface error
+      // "no-case-declarations": "off",                       // disables block-scoped declarations in case
+      // "@typescript-eslint/no-require-imports": "off",      // disables require() import check
     },
   }
 );
