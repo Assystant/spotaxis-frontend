@@ -96,25 +96,62 @@ export const mockActivities: Record<string, Activity[]> = {
       metadata: { tags: ['research', 'competitors', 'market'] }
     }
   ],
-  activities: [
+  'whatsapp-log': [
     {
       id: '9',
-      type: 'activities',
-      title: 'Contract Negotiation',
-      description: 'Ongoing discussions about terms and pricing',
-      date: '2024-01-19T14:00:00Z',
-      status: 'pending',
-      participants: ['Legal Team'],
-      metadata: { priority: 'high', category: 'legal' }
+      type: 'whatsapp-log',
+      title: 'Project Update Discussion',
+      description: 'Shared latest project screenshots and discussed feedback',
+      date: '2024-01-18T16:20:00Z',
+      status: 'completed',
+      participants: ['John Smith'],
+      metadata: { platform: 'WhatsApp', messageCount: 12 }
     },
     {
       id: '10',
-      type: 'activities',
-      title: 'Onboarding Preparation',
-      description: 'Setting up systems and processes for new client',
-      date: '2024-01-16T09:30:00Z',
+      type: 'whatsapp-log',
+      title: 'Quick Check-in',
+      description: 'Confirmed meeting time and shared agenda',
+      date: '2024-01-17T09:45:00Z',
       status: 'completed',
-      metadata: { priority: 'medium', category: 'onboarding' }
+      participants: ['Sarah Johnson'],
+      metadata: { platform: 'WhatsApp', messageCount: 5 }
+    }
+  ],
+  'linkedin-message-log': [
+    {
+      id: '11',
+      type: 'linkedin-message-log',
+      title: 'Connection Request Follow-up',
+      description: 'Thanked for connection and introduced our services',
+      date: '2024-01-16T14:30:00Z',
+      status: 'completed',
+      participants: ['Mike Wilson'],
+      metadata: { platform: 'LinkedIn', connectionStatus: 'accepted' }
+    }
+  ],
+  'sms-log': [
+    {
+      id: '12',
+      type: 'sms-log',
+      title: 'Meeting Reminder',
+      description: 'Sent reminder about tomorrow\'s meeting with location details',
+      date: '2024-01-19T17:00:00Z',
+      status: 'completed',
+      participants: ['Lisa Chen'],
+      metadata: { platform: 'SMS', messageLength: 'short' }
+    }
+  ],
+  'facebook-message-log': [
+    {
+      id: '13',
+      type: 'facebook-message-log',
+      title: 'Event Invitation Response',
+      description: 'Responded to event invitation and confirmed attendance',
+      date: '2024-01-15T20:15:00Z',
+      status: 'completed',
+      participants: ['David Park'],
+      metadata: { platform: 'Facebook', eventType: 'business' }
     }
   ]
 };

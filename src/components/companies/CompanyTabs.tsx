@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Building, Globe, MapPin, Users, Plus, Calendar, Mail, Phone, FileText, Activity, Video, MessageSquare, Clock, Briefcase, Target, TrendingUp, Send } from "lucide-react";
 import { Company } from "@/data/mockAssociations";
 import { useActivityTypes } from "@/contexts/ActivityTypesContext";
-import { AddActivityTypeDialog } from "./AddActivityTypeDialog";
+import { ActivityTypeDropdown } from "./ActivityTypeDropdown";
 import { getActivitiesForType } from "@/data/mockActivities";
 import { ActivityCard } from "./ActivityCard";
 
@@ -112,13 +112,33 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
 
     const activities = getActivitiesForType(activityType.id);
     
+    const getAddButtonText = (typeId: string) => {
+      switch (typeId) {
+        case 'notes': return 'Add Note';
+        case 'emails': return 'Compose Email';
+        case 'meetings': return 'Schedule Meeting';
+        case 'calls': return 'Log Call';
+        case 'whatsapp-log': return 'Add WhatsApp Message';
+        case 'linkedin-message-log': return 'Add LinkedIn Message';
+        case 'sms-log': return 'Add SMS';
+        case 'facebook-message-log': return 'Add Facebook Message';
+        default: return `Add ${activityType.name}`;
+      }
+    };
+    
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <IconComponent className="h-5 w-5" />
-            {activityType.name}
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <IconComponent className="h-5 w-5" />
+              <CardTitle>{activityType.name}</CardTitle>
+            </div>
+            <Button size="sm" className="gap-2">
+              <Plus className="h-4 w-4" />
+              {getAddButtonText(activityType.id)}
+            </Button>
+          </div>
           {activityType.description && (
             <CardDescription>{activityType.description}</CardDescription>
           )}
@@ -134,7 +154,11 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
             <div className="text-center py-8 text-muted-foreground">
               <IconComponent className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>No {activityType.name.toLowerCase()} yet</p>
-              <p className="text-sm">Activities will appear here when added</p>
+              <p className="text-sm mb-4">Activities will appear here when added</p>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Plus className="h-4 w-4" />
+                {getAddButtonText(activityType.id)}
+              </Button>
             </div>
           )}
         </CardContent>
@@ -156,7 +180,7 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
             );
           })}
         </TabsList>
-        <AddActivityTypeDialog />
+        <ActivityTypeDropdown />
       </div>
 
       {activityTypes.map((activityType) => (

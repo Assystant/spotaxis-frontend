@@ -9,52 +9,49 @@ export interface ActivityType {
 
 interface ActivityTypesContextType {
   activityTypes: ActivityType[];
-  addActivityType: (activityType: Omit<ActivityType, 'id'>) => void;
-  removeActivityType: (id: string) => void;
-  updateActivityType: (id: string, updates: Partial<ActivityType>) => void;
+  allActivityTypes: ActivityType[];
+  enabledTypes: string[];
+  toggleActivityType: (id: string) => void;
 }
 
 const ActivityTypesContext = createContext<ActivityTypesContextType | undefined>(undefined);
 
-const defaultActivityTypes: ActivityType[] = [
+const allActivityTypes: ActivityType[] = [
   { id: 'overview', name: 'Overview', icon: 'Building' },
-  { id: 'activities', name: 'Activities', icon: 'Activity' },
+  { id: 'notes', name: 'Notes', icon: 'FileText' },
   { id: 'emails', name: 'Emails', icon: 'Mail' },
   { id: 'meetings', name: 'Meetings', icon: 'Calendar' },
   { id: 'calls', name: 'Calls', icon: 'Phone' },
-  { id: 'notes', name: 'Notes', icon: 'FileText' },
+  { id: 'whatsapp-log', name: 'WhatsApp Log', icon: 'MessageSquare' },
+  { id: 'linkedin-message-log', name: 'LinkedIn Message Log', icon: 'MessageSquare' },
+  { id: 'sms-log', name: 'SMS Log', icon: 'MessageSquare' },
+  { id: 'facebook-message-log', name: 'Facebook Message Log', icon: 'MessageSquare' },
 ];
 
+const defaultEnabledTypes = ['overview', 'notes', 'emails', 'meetings', 'calls'];
+
 export const ActivityTypesProvider = ({ children }: { children: ReactNode }) => {
-  const [activityTypes, setActivityTypes] = useState<ActivityType[]>(defaultActivityTypes);
+  const [enabledTypes, setEnabledTypes] = useState<string[]>(defaultEnabledTypes);
 
-  const addActivityType = (newActivityType: Omit<ActivityType, 'id'>) => {
-    const id = newActivityType.name.toLowerCase().replace(/\s+/g, '-');
-    const activityType: ActivityType = {
-      ...newActivityType,
-      id,
-    };
-    setActivityTypes(prev => [...prev, activityType]);
+  const toggleActivityType = (id: string) => {
+    // Don't allow disabling overview
+    if (id === 'overview') return;
+    
+    setEnabledTypes(prev => 
+      prev.includes(id) 
+        ? prev.filter(typeId => typeId !== id)
+        : [...prev, id]
+    );
   };
 
-  const removeActivityType = (id: string) => {
-    // Don't allow removing core activity types
-    if (['overview', 'activities'].includes(id)) return;
-    setActivityTypes(prev => prev.filter(type => type.id !== id));
-  };
-
-  const updateActivityType = (id: string, updates: Partial<ActivityType>) => {
-    setActivityTypes(prev => prev.map(type => 
-      type.id === id ? { ...type, ...updates } : type
-    ));
-  };
+  const activityTypes = allActivityTypes.filter(type => enabledTypes.includes(type.id));
 
   return (
     <ActivityTypesContext.Provider value={{
       activityTypes,
-      addActivityType,
-      removeActivityType,
-      updateActivityType,
+      allActivityTypes,
+      enabledTypes,
+      toggleActivityType,
     }}>
       {children}
     </ActivityTypesContext.Provider>
