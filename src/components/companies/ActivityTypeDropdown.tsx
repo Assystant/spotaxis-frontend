@@ -19,7 +19,7 @@ export const ActivityTypeDropdown = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
           <Plus className="h-4 w-4" />
-          Manage
+          Manage Activity Types
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
@@ -34,7 +34,7 @@ export const ActivityTypeDropdown = () => {
             key={activityType.id}
             checked={enabledTypes.includes(activityType.id)}
             onCheckedChange={() => toggleActivityType(activityType.id)}
-            disabled={activityType.id === 'overview' || activityType.id === 'activities'}
+            disabled={activityType.id === 'overview'}
             className="cursor-pointer"
           >
             {activityType.name}

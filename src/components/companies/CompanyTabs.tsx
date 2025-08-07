@@ -1,16 +1,14 @@
-import React, { useRef, useEffect, useState } from "react";
+import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building, Globe, MapPin, Users, Plus, Calendar, Mail, Phone, FileText, Activity, Video, MessageSquare, Clock, Briefcase, Target, TrendingUp, Send, Menu, ChevronDown } from "lucide-react";
+import { Building, Globe, MapPin, Users, Plus, Calendar, Mail, Phone, FileText, Activity, Video, MessageSquare, Clock, Briefcase, Target, TrendingUp, Send } from "lucide-react";
 import { Company } from "@/data/mockAssociations";
 import { useActivityTypes } from "@/contexts/ActivityTypesContext";
 import { ActivityTypeDropdown } from "./ActivityTypeDropdown";
-import { getActivitiesForType, getAllActivities } from "@/data/mockActivities";
+import { getActivitiesForType } from "@/data/mockActivities";
 import { ActivityCard } from "./ActivityCard";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CompanyTabsProps {
   company: Company;
@@ -35,31 +33,6 @@ const iconMap = {
 
 export const CompanyTabs = ({ company }: CompanyTabsProps) => {
   const { activityTypes } = useActivityTypes();
-  const [showHamburgerMenu, setShowHamburgerMenu] = useState(false);
-  const [activeTab, setActiveTab] = useState(activityTypes[0]?.id || 'overview');
-  const tabsContainerRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
-
-  useEffect(() => {
-    const checkOverflow = () => {
-      if (tabsContainerRef.current && !isMobile) {
-        const container = tabsContainerRef.current;
-        const containerWidth = container.offsetWidth;
-        const manageButtonWidth = 120; // Approximate width of manage button
-        const tabsWidth = Array.from(container.querySelectorAll('[role="tab"]')).reduce((total, tab) => {
-          return total + ((tab as HTMLElement).offsetWidth || 0);
-        }, 0);
-        
-        setShowHamburgerMenu(tabsWidth + manageButtonWidth > containerWidth);
-      } else {
-        setShowHamburgerMenu(isMobile);
-      }
-    };
-
-    checkOverflow();
-    window.addEventListener('resize', checkOverflow);
-    return () => window.removeEventListener('resize', checkOverflow);
-  }, [activityTypes.length, isMobile]);
   const renderTabContent = (activityType: any) => {
     const IconComponent = iconMap[activityType.icon as keyof typeof iconMap] || FileText;
     
@@ -137,41 +110,6 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
       );
     }
 
-    if (activityType.id === 'activities') {
-      const allActivities = getAllActivities();
-      
-      return (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium">All Activities</h3>
-            <Button size="sm">Add Activity</Button>
-          </div>
-          
-          {allActivities.length > 0 ? (
-            <div className="space-y-4">
-              {allActivities.map((activity) => (
-                <div key={activity.id} className="flex items-start gap-3">
-                  <Badge variant="secondary" className="mt-1">
-                    {activity.type}
-                  </Badge>
-                  <div className="flex-1">
-                    <ActivityCard activity={activity} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <Activity className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">No activities yet</h3>
-              <p className="text-muted-foreground mb-4">Start tracking activities for this company</p>
-              <Button>Add First Activity</Button>
-            </div>
-          )}
-        </div>
-      );
-    }
-
     const activities = getActivitiesForType(activityType.id);
     
     const getAddButtonText = (typeId: string) => {
@@ -228,63 +166,28 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
     );
   };
 
-  const currentActivity = activityTypes.find(at => at.id === activeTab) || activityTypes[0];
-
   return (
-    <div className="space-y-6">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="flex items-center justify-between mb-6" ref={tabsContainerRef}>
-          {showHamburgerMenu ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Menu className="h-4 w-4" />
-                  {currentActivity?.name || 'Select Tab'}
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56 bg-background border shadow-lg z-50">
-                {activityTypes.map((activityType) => {
-                  const IconComponent = iconMap[activityType.icon as keyof typeof iconMap] || FileText;
-                  return (
-                    <DropdownMenuItem
-                      key={activityType.id}
-                      onClick={() => setActiveTab(activityType.id)}
-                      className="flex items-center gap-2 cursor-pointer"
-                    >
-                      <IconComponent className="h-4 w-4" />
-                      {activityType.name}
-                    </DropdownMenuItem>
-                  );
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <TabsList className="grid w-auto grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2">
-              {activityTypes.map((activityType) => {
-                const IconComponent = iconMap[activityType.icon as keyof typeof iconMap] || FileText;
-                return (
-                  <TabsTrigger 
-                    key={activityType.id} 
-                    value={activityType.id}
-                    className="flex items-center gap-2"
-                  >
-                    <IconComponent className="h-4 w-4" />
-                    {activityType.name}
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
-          )}
-          <ActivityTypeDropdown />
-        </div>
+    <Tabs defaultValue="overview" className="w-full">
+      <div className="flex items-center justify-between mb-4">
+        <TabsList className="flex w-auto gap-1">
+          {activityTypes.map((activityType) => {
+            const IconComponent = iconMap[activityType.icon as keyof typeof iconMap] || FileText;
+            return (
+              <TabsTrigger key={activityType.id} value={activityType.id} className="flex items-center gap-1 px-3 py-2">
+                <IconComponent className="h-4 w-4" />
+                {activityType.name}
+              </TabsTrigger>
+            );
+          })}
+        </TabsList>
+        <ActivityTypeDropdown />
+      </div>
 
-        {activityTypes.map((activityType) => (
-          <TabsContent key={activityType.id} value={activityType.id}>
-            {renderTabContent(activityType)}
-          </TabsContent>
-        ))}
-      </Tabs>
-    </div>
+      {activityTypes.map((activityType) => (
+        <TabsContent key={activityType.id} value={activityType.id}>
+          {renderTabContent(activityType)}
+        </TabsContent>
+      ))}
+    </Tabs>
   );
 };

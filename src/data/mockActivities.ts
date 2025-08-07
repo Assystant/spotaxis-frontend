@@ -159,19 +159,3 @@ export const mockActivities: Record<string, Activity[]> = {
 export const getActivitiesForType = (activityType: string): Activity[] => {
   return mockActivities[activityType] || [];
 };
-
-export const getAllActivities = (): Activity[] => {
-  const allActivities: Activity[] = [];
-  
-  Object.entries(mockActivities).forEach(([type, activities]) => {
-    activities.forEach(activity => {
-      allActivities.push({
-        ...activity,
-        type: type as any // Add type information for filtering
-      });
-    });
-  });
-  
-  // Sort by date, most recent first
-  return allActivities.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-};
