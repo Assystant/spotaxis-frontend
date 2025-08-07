@@ -184,24 +184,28 @@ const CompanyDetailPage = () => {
 
   return (
     <ActivityTypesProvider>
-      <PageContainer title={company.name}>
+      <div className="space-y-4">
+        {/* Header with back button and company name */}
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => navigate("/companies")}
+            className="gap-2 px-2"
+          >
+            <ArrowLeft size={16} />
+            Back to Companies
+          </Button>
+          <h1 className="text-2xl font-semibold">{company.name}</h1>
+        </div>
+        
         <TwoPanelDetailLayout
           leftPanel={leftPanel}
           rightPanel={rightPanel}
         >
-          {/* Header with back button */}
-          <div className="flex items-center justify-between mb-6">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate("/companies")}
-              className="gap-2"
-            >
-              <ArrowLeft size={16} />
-              Back to Companies
-            </Button>
-          </div>
+          {null}
         </TwoPanelDetailLayout>
-      </PageContainer>
+      </div>
     </ActivityTypesProvider>
   );
 };
