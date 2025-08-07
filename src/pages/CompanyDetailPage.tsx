@@ -191,10 +191,9 @@ const CompanyDetailPage = () => {
             variant="ghost" 
             size="sm"
             onClick={() => navigate("/companies")}
-            className="gap-2 px-2"
+            className="p-2"
           >
             <ArrowLeft size={16} />
-            Back to Companies
           </Button>
           <h1 className="text-2xl font-semibold">{company.name}</h1>
         </div>
