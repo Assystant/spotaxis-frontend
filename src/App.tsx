@@ -30,6 +30,8 @@ import WorkflowSettings from '@/pages/WorkflowSettings';
 import Tasks from '@/pages/Tasks';
 import Calendar from '@/pages/Calendar';
 import NotFound from '@/pages/NotFound';
+import Logs from '@/pages/Logs';
+import Meetings from '@/pages/Meetings';
 
 function App() {
   return (
@@ -62,6 +64,11 @@ function App() {
                   
                   {/* Email Module */}
                   <Route path="emails" element={<Emails />} />
+
+                  {/* Logs & Meetings */}
+                  <Route path="logs" element={<Logs />} />
+                  <Route path="meetings" element={<Meetings />} />
+                  
                   {/* Marketing Routes */}
                   <Route path="form-builders" element={<FormBuilders />} />
                   <Route path="form-builder" element={<FormBuilder />} />
