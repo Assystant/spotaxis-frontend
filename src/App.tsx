@@ -32,7 +32,7 @@ import Calendar from '@/pages/Calendar';
 import NotFound from '@/pages/NotFound';
 import Logs from '@/pages/Logs';
 import Meetings from '@/pages/Meetings';
-
+import Reports from '@/pages/Reports';
 function App() {
   return (
     <Router>
@@ -69,11 +69,13 @@ function App() {
                   <Route path="logs" element={<Logs />} />
                   <Route path="meetings" element={<Meetings />} />
                   
-                  {/* Marketing Routes */}
+                  {/* Marketing & Other Routes */}
                   <Route path="form-builders" element={<FormBuilders />} />
                   <Route path="form-builder" element={<FormBuilder />} />
                   <Route path="job-board" element={<JobBoardManager />} />
-                  
+                  <Route path="forms" element={<FormBuilders />} />
+                  <Route path="websites" element={<JobBoardManager />} />
+                  <Route path="reports" element={<Reports />} />
                   {/* Settings Routes */}
                   <Route path="settings" element={<Settings />} >
                     <Route index element={<SettingsDefault />} />

@@ -60,59 +60,6 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-const navigationGroups = [
-  {
-    id: "dashboard",
-    label: "Dashboard",
-    items: [
-      { icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
-      { icon: CheckSquare, label: "Tasks", path: "/tasks" },
-      { icon: CalendarDays, label: "Calendar", path: "/calendar" },
-    ],
-  },
-  {
-    id: "crm",
-    label: "CRM",
-    items: [
-      { icon: Contact, label: "Contacts", path: "/contacts" },
-      { icon: Building2, label: "Companies", path: "/companies" },
-      { icon: DollarSign, label: "Deals", path: "/deals" },
-    ],
-  },
-  {
-    id: "ats",
-    label: "ATS",
-    items: [
-      { icon: Briefcase, label: "Jobs", path: "/jobs" },
-      { icon: Users, label: "Applicants", path: "/applicants" },
-      { icon: Star, label: "Talent Pool", path: "/talent-pool" },
-    ],
-  },
-  {
-    id: "marketing",
-    label: "Marketing",
-    items: [
-      { icon: FileSpreadsheet, label: "Form Builders", path: "/form-builders" },
-      { icon: Globe, label: "Job Board", path: "/job-board" },
-    ],
-  },
-  {
-    id: "settings",
-    label: "Settings",
-    items: [
-      { icon: User, label: "Profile", path: "/settings/profile" },
-      { icon: Shield, label: "Security", path: "/settings/security" },
-      { icon: Mail, label: "Notifications", path: "/settings/notifications" },
-      { icon: Bell, label: "Email Templates", path: "/settings/email-templates" },
-      { icon: Globe, label: "Career Site", path: "/settings/career-site" },
-      { icon: CreditCard, label: "Billing", path: "/settings/billing" },
-      { icon: Kanban, label: "Pipeline Manager", path: "/settings/pipeline" },
-      { icon: Workflow, label: "Workflow", path: "/settings/workflow" },
-      { icon: UserCog, label: "User Roles", path: "/settings/user-roles" },
-      { icon: Sliders, label: "System Settings", path: "/settings/system" },
-    ],
-  },
-];
 
 // Helper function to get/set localStorage state
 const getStoredGroupState = (groupId: string): boolean => {
@@ -126,6 +73,62 @@ const setStoredGroupState = (groupId: string, isOpen: boolean) => {
 
 export function AppSidebar() {
   const location = useLocation();
+
+  const isSettingsPage = location.pathname.startsWith("/settings");
+
+  const mainNavigationGroups = [
+    {
+      id: "quick",
+      label: "Quick actions",
+      items: [
+        { icon: Mail, label: "Emails", path: "/emails" },
+        { icon: Receipt, label: "Logs", path: "/logs" },
+        { icon: FileSpreadsheet, label: "Reports", path: "/reports" },
+        { icon: CalendarDays, label: "Meetings", path: "/meetings" },
+        { icon: CalendarDays, label: "Calendar", path: "/calendar" },
+        { icon: CheckSquare, label: "Tasks", path: "/tasks" },
+      ],
+    },
+    {
+      id: "records",
+      label: "Records",
+      items: [
+        { icon: Building2, label: "Companies", path: "/companies" },
+        { icon: Contact, label: "People", path: "/contacts" },
+        { icon: Briefcase, label: "Jobs", path: "/jobs" },
+        { icon: Users, label: "Applicants", path: "/applicants" },
+      ],
+    },
+    {
+      id: "other",
+      label: "Other",
+      items: [
+        { icon: Globe, label: "Websites", path: "/websites" },
+        { icon: FileSpreadsheet, label: "Forms", path: "/forms" },
+      ],
+    },
+  ];
+
+  const settingsNavigationGroups = [
+    {
+      id: "settings",
+      label: "Settings",
+      items: [
+        { icon: User, label: "Profile", path: "/settings/profile" },
+        { icon: Shield, label: "Security", path: "/settings/security" },
+        { icon: Mail, label: "Notifications", path: "/settings/notifications" },
+        { icon: Bell, label: "Email Templates", path: "/settings/email-templates" },
+        { icon: Globe, label: "Career Site", path: "/settings/career-site" },
+        { icon: CreditCard, label: "Billing", path: "/settings/billing" },
+        { icon: Kanban, label: "Pipeline Manager", path: "/settings/pipeline" },
+        { icon: Workflow, label: "Workflow", path: "/settings/workflow" },
+        { icon: UserCog, label: "User Roles", path: "/settings/user-roles" },
+        { icon: Sliders, label: "System Settings", path: "/settings/system" },
+      ],
+    },
+  ];
+
+  const navigationGroups = isSettingsPage ? settingsNavigationGroups : mainNavigationGroups;
   
   // Initialize collapse states from localStorage
   const [groupStates, setGroupStates] = useState<Record<string, boolean>>(() => {
@@ -224,9 +227,17 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
+                <DropdownMenuItem asChild>
+                  <Link to="/settings/profile">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/settings">
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
