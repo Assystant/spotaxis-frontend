@@ -25,11 +25,7 @@ import Deals from '@/pages/Deals';
 import FormBuilders from '@/pages/FormBuilders';
 import FormBuilder from '@/pages/FormBuilder';
 import JobBoardManager from '@/pages/JobBoardManager';
-import Ats1Jobs from '@/pages/Ats1Jobs';
-import Ats1AddJob from '@/pages/Ats1AddJob';
-import Ats1JobDetail from '@/pages/Ats1JobDetail';
-import Ats1Applicants from '@/pages/Ats1Applicants';
-import Ats1TalentPool from '@/pages/Ats1TalentPool';
+import Emails from '@/pages/Emails';
 import WorkflowSettings from '@/pages/WorkflowSettings';
 import Tasks from '@/pages/Tasks';
 import Calendar from '@/pages/Calendar';
@@ -64,13 +60,8 @@ function App() {
                   <Route path="tasks" element={<Tasks />} />
                   <Route path="calendar" element={<Calendar />} />
                   
-                  {/* ATS1 Routes */}
-                  <Route path="ats1/jobs" element={<Ats1Jobs />} />
-                  <Route path="ats1/jobs/add" element={<Ats1AddJob />} />
-                  <Route path="ats1/jobs/:id" element={<Ats1JobDetail />} />
-                  <Route path="ats1/applicants" element={<Ats1Applicants />} />
-                  <Route path="ats1/talent-pool" element={<Ats1TalentPool />} />
-                  
+                  {/* Email Module */}
+                  <Route path="emails" element={<Emails />} />
                   {/* Marketing Routes */}
                   <Route path="form-builders" element={<FormBuilders />} />
                   <Route path="form-builder" element={<FormBuilder />} />

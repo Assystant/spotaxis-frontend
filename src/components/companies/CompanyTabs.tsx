@@ -10,6 +10,7 @@ import { useActivityTypes } from "@/contexts/ActivityTypesContext";
 import { ActivityTypeDropdown } from "./ActivityTypeDropdown";
 import { getActivitiesForType } from "@/data/mockActivities";
 import { ActivityCard } from "./ActivityCard";
+import { EmailActivityCard } from "./EmailActivityCard";
 
 interface CompanyTabsProps {
   company: Company;
@@ -193,9 +194,13 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
         <CardContent>
           {activities.length > 0 ? (
             <div className="space-y-4">
-              {activities.map((activity) => (
-                <ActivityCard key={activity.id} activity={activity} />
-              ))}
+              {activities.map((activity) =>
+                activityType.id === 'emails' ? (
+                  <EmailActivityCard key={activity.id} activity={activity} />
+                ) : (
+                  <ActivityCard key={activity.id} activity={activity} />
+                )
+              )}
             </div>
           ) : (
             <div className="text-center py-8 text-muted-foreground">

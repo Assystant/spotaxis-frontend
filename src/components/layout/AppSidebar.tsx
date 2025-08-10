@@ -89,29 +89,11 @@ const navigationGroups = [
     ],
   },
   {
-    id: "ats1",
-    label: "ATS1",
-    items: [
-      { icon: Briefcase, label: "Jobs", path: "/ats1/jobs" },
-      { icon: Users, label: "Applicants", path: "/ats1/applicants" },
-      { icon: Star, label: "Talent Pool", path: "/ats1/talent-pool" },
-    ],
-  },
-  {
     id: "marketing",
     label: "Marketing",
     items: [
       { icon: FileSpreadsheet, label: "Form Builders", path: "/form-builders" },
       { icon: Globe, label: "Job Board", path: "/job-board" },
-    ],
-  },
-  {
-    id: "finance",
-    label: "Finance",
-    items: [
-      { icon: Receipt, label: "Invoices", path: "/finance/invoices" },
-      { icon: Wallet, label: "Expenses", path: "/finance/expenses" },
-      { icon: CreditCard, label: "Transactions", path: "/finance/transactions" },
     ],
   },
   {
