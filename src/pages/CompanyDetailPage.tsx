@@ -14,6 +14,7 @@ import {
   mockApplications,
   type Company 
 } from "@/data/mockAssociations";
+import { getCompanyDeals } from "@/data/mockDeals";
 import {
   searchJobs,
   searchContacts,
@@ -112,31 +113,30 @@ const CompanyDetailPage = () => {
   const associations = useMemo(() => {
     if (!company) return [];
     
+    const clientContacts = getAssociatedRecords(company.id, "contacts");
+    const candidateContacts = getAssociatedRecords(company.id, "candidates");
+    const people = [...clientContacts, ...candidateContacts];
+
+    const deals = getCompanyDeals(company.id).map((deal) => ({
+      id: deal.id,
+      name: deal.title,
+      subtitle: `${deal.company} • ${deal.stage}`,
+      route: "/deals",
+    }));
+    
     return [
       {
-        id: "jobs",
-        title: "Jobs",
-        records: getAssociatedRecords(company.id, "jobs"),
-        onAdd: () => console.log("Add job")
+        id: "people",
+        title: "People",
+        records: people,
+        onAdd: () => console.log("Add person"),
       },
       {
-        id: "contacts",
-        title: "Client Contacts",
-        records: getAssociatedRecords(company.id, "contacts"),
-        onAdd: () => console.log("Add contact")
+        id: "deals",
+        title: "Deals",
+        records: deals,
+        onAdd: () => console.log("Add deal"),
       },
-      {
-        id: "candidates",
-        title: "Candidates", 
-        records: getAssociatedRecords(company.id, "candidates"),
-        onAdd: () => console.log("Add candidate")
-      },
-      {
-        id: "applications",
-        title: "Applications",
-        records: getAssociatedRecords(company.id, "applications"),
-        onAdd: () => console.log("Add application")
-      }
     ];
   }, [company, getAssociatedRecords]);
 

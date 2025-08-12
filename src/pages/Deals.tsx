@@ -24,83 +24,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { KanbanBoard } from "@/components/jobs/KanbanBoard";
+import { mockDeals, dealStages } from "@/data/mockDeals";
 
-const mockDeals = [
-  {
-    id: "1",
-    title: "Enterprise Software License",
-    company: "Acme Inc.",
-    contactName: "John Smith",
-    value: 75000,
-    currency: "USD",
-    stage: "Proposal",
-    progress: 40,
-    probability: 60,
-    closeDate: "2023-07-15",
-    createdDate: "2023-04-10"
-  },
-  {
-    id: "2",
-    title: "IT Staffing Project",
-    company: "TechCorp",
-    contactName: "Sarah Johnson",
-    value: 120000,
-    currency: "USD",
-    stage: "Negotiation",
-    progress: 70,
-    probability: 80,
-    closeDate: "2023-06-30",
-    createdDate: "2023-03-22"
-  },
-  {
-    id: "3",
-    title: "Recruitment Services",
-    company: "Global Solutions",
-    contactName: "Michael Chen",
-    value: 45000,
-    currency: "USD",
-    stage: "Discovery",
-    progress: 20,
-    probability: 40,
-    closeDate: "2023-08-10",
-    createdDate: "2023-05-05"
-  },
-  {
-    id: "4",
-    title: "Contract Placement",
-    company: "Startup Hub",
-    contactName: "Emily Rodriguez",
-    value: 30000,
-    currency: "USD",
-    stage: "Closed Won",
-    progress: 100,
-    probability: 100,
-    closeDate: "2023-05-01",
-    createdDate: "2023-02-15"
-  },
-  {
-    id: "5",
-    title: "Executive Search Package",
-    company: "Enterprise Ltd.",
-    contactName: "David Wilson",
-    value: 200000,
-    currency: "USD",
-    stage: "Qualification",
-    progress: 30,
-    probability: 50,
-    closeDate: "2023-09-22",
-    createdDate: "2023-05-01"
-  }
-];
-
-const dealStages = [
-  { id: "discovery", name: "Discovery", color: "bg-blue-100 text-blue-800" },
-  { id: "qualification", name: "Qualification", color: "bg-purple-100 text-purple-800" },
-  { id: "proposal", name: "Proposal", color: "bg-amber-100 text-amber-800" },
-  { id: "negotiation", name: "Negotiation", color: "bg-orange-100 text-orange-800" },
-  { id: "closed-won", name: "Closed Won", color: "bg-green-100 text-green-800" },
-  { id: "closed-lost", name: "Closed Lost", color: "bg-red-100 text-red-800" }
-];
+// moved mockDeals and dealStages to shared data file
 
 const formattedDealStages = dealStages.map((stage, idx) => ({
   id: stage.id,

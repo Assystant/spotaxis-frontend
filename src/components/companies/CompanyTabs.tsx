@@ -11,6 +11,7 @@ import { ActivityTypeDropdown } from "./ActivityTypeDropdown";
 import { getActivitiesForType } from "@/data/mockActivities";
 import { ActivityCard } from "./ActivityCard";
 import { EmailActivityCard } from "./EmailActivityCard";
+import { getCompanyJobs, getCompanyApplications } from "@/data/mockAssociations";
 
 interface CompanyTabsProps {
   company: Company;
@@ -153,6 +154,91 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
                 Log Call
               </Button>
             </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Handle Related Records tabs for Jobs and Applications
+    if (activityType.id.startsWith('related_jobs:')) {
+      const listId = activityType.id.split(':')[1];
+      const jobs = getCompanyJobs(company.id);
+      // Basic filter handling (default lists)
+      const filtered = activityType.name.includes('Open')
+        ? jobs.filter((j) => j.status === 'Active')
+        : jobs;
+
+      return (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Briefcase className="h-5 w-5" />
+                <CardTitle>{activityType.name}</CardTitle>
+              </div>
+              <Button size="sm" className="gap-2">
+                <Plus className="h-4 w-4" />
+                Add Job
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {filtered.length > 0 ? (
+              <ul className="space-y-3">
+                {filtered.map((j) => (
+                  <li key={j.id} className="flex items-center justify-between border rounded-md p-3">
+                    <div>
+                      <div className="font-medium">{j.title}</div>
+                      <div className="text-xs text-muted-foreground">{j.location} • {j.type}</div>
+                    </div>
+                    <Badge variant="outline">{j.status}</Badge>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="text-sm text-muted-foreground">No jobs match this list.</div>
+            )}
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (activityType.id.startsWith('related_applications:')) {
+      const applications = getCompanyApplications(company.id);
+      const filtered = activityType.name.includes('Active')
+        ? applications.filter((a) => a.status === 'Active')
+        : applications;
+
+      return (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                <CardTitle>{activityType.name}</CardTitle>
+              </div>
+              <Button size="sm" className="gap-2">
+                <Plus className="h-4 w-4" />
+                Add Application
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {filtered.length > 0 ? (
+              <ul className="space-y-3">
+                {filtered.map((a) => (
+                  <li key={a.id} className="flex items-center justify-between border rounded-md p-3">
+                    <div>
+                      <div className="font-medium">{a.candidateName}</div>
+                      <div className="text-xs text-muted-foreground">{a.jobTitle}</div>
+                    </div>
+                    <Badge variant="outline">{a.status}</Badge>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="text-sm text-muted-foreground">No applications match this list.</div>
+            )}
           </CardContent>
         </Card>
       );

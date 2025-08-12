@@ -95,6 +95,7 @@ export function AppSidebar() {
       items: [
         { icon: Building2, label: "Companies", path: "/companies" },
         { icon: Contact, label: "People", path: "/contacts" },
+        { icon: DollarSign, label: "Deals", path: "/deals" },
         { icon: Briefcase, label: "Jobs", path: "/jobs" },
         { icon: Users, label: "Applicants", path: "/applicants" },
       ],
