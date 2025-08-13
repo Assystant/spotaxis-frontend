@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { PageContainer } from "@/components/layout/PageContainer";
-import { ApplicantsList } from "@/components/applicants/ApplicantsList";
+import { ApplicantsTable } from "@/components/applicants/ApplicantsTable";
 import { Button } from "@/components/ui/button";
 import { Plus, Filter, Download, Upload } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -58,7 +58,7 @@ const Applicants = () => {
         
         <TabsContent value="list" className="space-y-4">
           <div className="w-full">
-            <ApplicantsList />
+            <ApplicantsTable />
           </div>
         </TabsContent>
         

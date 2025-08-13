@@ -2,12 +2,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { TwoPanelDetailLayout } from "@/components/common/TwoPanelDetailLayout";
-import { AssociationPanel } from "@/components/common/AssociationPanel";
 import { ApplicantDetail } from "@/components/applicants/ApplicantDetail";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Mail, Phone, MapPin, MoveRight, Calendar, FileText } from "lucide-react";
+import { ArrowLeft, Mail, Phone, MapPin, MoveRight, Calendar } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { mockApplicants } from "@/data/mockApplicants";
 import { 
@@ -16,6 +15,8 @@ import {
   mockJobsData, 
   mockApplications 
 } from "@/data/mockAssociations";
+import { ApplicantTabs } from "@/components/applicants/ApplicantTabs";
+import { RelatedApplicationsCard } from "@/components/applicants/RelatedApplicationsCard";
 import {
   searchJobs,
   searchCompanies,
@@ -38,7 +39,32 @@ const ApplicantDetailPage = () => {
   useEffect(() => {
     if (applicantId) {
       const applicantData = mockApplicants.find(a => a.id === applicantId);
-      setApplicant(applicantData || null);
+      if (applicantData) {
+        setApplicant(applicantData);
+      } else {
+        const currentApp = mockApplications.find(a => a.id === applicantId);
+        if (currentApp) {
+          const candidate = mockContacts.find(c => c.id === currentApp.candidateId);
+          const synthetic = {
+            id: currentApp.id,
+            name: candidate?.name || currentApp.candidateName,
+            email: candidate?.email || "",
+            phone: candidate?.phone || "",
+            location: candidate?.location,
+            stage: currentApp.stage,
+            jobTitle: currentApp.jobTitle,
+            appliedDate: currentApp.appliedDate,
+            source: candidate?.source,
+            skills: [],
+            experience: [],
+            notes: [],
+            activity: [],
+          };
+          setApplicant(synthetic);
+        } else {
+          setApplicant(null);
+        }
+      }
       setLoading(false);
     }
   }, [applicantId]);
@@ -200,7 +226,9 @@ const ApplicantDetailPage = () => {
       </PageContainer>
     );
   }
-
+  
+  const currentApplication = mockApplications.find(a => a.id === applicantId);
+  
   const leftPanel = (
     <div className="space-y-6">
       {/* Application Info Card */}
@@ -279,22 +307,20 @@ const ApplicantDetailPage = () => {
         </CardContent>
       </Card>
 
-      {/* Application Details - Use existing ApplicantDetail component */}
-      <div className="rounded-2xl shadow-md">
-        <ApplicantDetail id={applicantId} />
-      </div>
+      {/* Applicant Tabs */}
+      <ApplicantTabs applicant={applicant} resumeLink={currentApplication?.resumeLink} />
     </div>
   );
 
   const rightPanel = (
-    <AssociationPanel
-      title="Associations"
-      associations={associations}
+    <RelatedApplicationsCard
+      currentApplicationId={currentApplication?.id}
+      candidateId={currentApplication?.candidateId}
     />
   );
 
   return (
-    <PageContainer title={applicant.name}>
+    <PageContainer title={applicant.name} description={applicant.jobTitle}>
       <TwoPanelDetailLayout
         leftPanel={leftPanel}
         rightPanel={rightPanel}

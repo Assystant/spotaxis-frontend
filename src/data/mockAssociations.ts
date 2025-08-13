@@ -82,6 +82,26 @@ export const mockCompanies: Company[] = [
     vision: "Feeding the world while protecting our planet for future generations",
     size: "100-200",
     website: "https://greenfields.com"
+  },
+  {
+    id: "comp4",
+    name: "AgriTech Labs",
+    industry: "AgriTech",
+    location: "Denver, CO",
+    mission: "Advancing agriculture with data-driven insights and IoT",
+    vision: "A resilient, data-powered food system",
+    size: "50-200",
+    website: "https://agritechlabs.example.com"
+  },
+  {
+    id: "comp5",
+    name: "Nimbus Health",
+    industry: "Healthcare",
+    location: "Austin, TX",
+    mission: "Improving patient outcomes with modern technology",
+    vision: "Accessible healthcare for everyone",
+    size: "200-500",
+    website: "https://nimbushealth.example.com"
   }
 ];
 
@@ -200,6 +220,84 @@ export const mockJobsData: Job[] = [
     skills: ["Data Analysis", "Agricultural Science", "GIS", "Statistical Modeling"],
     status: "Active",
     postedDate: "2024-01-25"
+  },
+  {
+    id: "job4",
+    title: "Process Engineer",
+    companyId: "comp1",
+    company: "Acme Corp",
+    description: "Optimize and improve production lines using lean methodologies.",
+    location: "New York, NY",
+    type: "Full-time",
+    salary: "$90,000 - $120,000",
+    skills: ["Lean", "Six Sigma", "Process Engineering"],
+    status: "Active",
+    postedDate: "2024-02-01"
+  },
+  {
+    id: "job6",
+    title: "UI Engineer",
+    companyId: "comp2",
+    company: "Brightside Tech",
+    description: "Build delightful UI experiences with React and TypeScript.",
+    location: "San Francisco, CA",
+    type: "Full-time",
+    salary: "$125,000 - $165,000",
+    skills: ["React", "Design Systems", "TypeScript"],
+    status: "Active",
+    postedDate: "2024-02-05"
+  },
+  {
+    id: "job7",
+    title: "Frontend Engineer",
+    companyId: "comp5",
+    company: "Nimbus Health",
+    description: "Healthtech product UI and frontend architecture.",
+    location: "Austin, TX",
+    type: "Full-time",
+    salary: "$118,000 - $155,000",
+    skills: ["React", "TypeScript", "Accessibility"],
+    status: "Active",
+    postedDate: "2024-02-07"
+  },
+  {
+    id: "job8",
+    title: "Crop Data Analyst",
+    companyId: "comp3",
+    company: "GreenFields Inc.",
+    description: "Analyze crop yield data and build predictive models.",
+    location: "Chicago, IL",
+    type: "Full-time",
+    salary: "$75,000 - $100,000",
+    skills: ["Python", "GIS", "Statistics"],
+    status: "Active",
+    postedDate: "2024-02-09"
+  },
+  {
+    id: "job9",
+    title: "Agricultural Data Scientist",
+    companyId: "comp4",
+    company: "AgriTech Labs",
+    description: "Develop ML models on agricultural datasets.",
+    location: "Denver, CO",
+    type: "Full-time",
+    salary: "$95,000 - $130,000",
+    skills: ["ML", "Python", "Agronomy"],
+    status: "Active",
+    postedDate: "2024-02-12"
+  },
+  {
+    id: "job10",
+    title: "Operations Engineer",
+    companyId: "comp5",
+    company: "Nimbus Health",
+    description: "Ensure reliable operations for medical devices production.",
+    location: "Austin, TX",
+    type: "Full-time",
+    salary: "$100,000 - $135,000",
+    skills: ["Operations", "Lean", "Manufacturing"],
+    status: "Active",
+    postedDate: "2024-02-15"
   }
 ];
 
@@ -239,6 +337,79 @@ export const mockApplications: Application[] = [
     appliedDate: "2024-01-28",
     status: "Active",
     stage: "new",
+    resumeLink: "/resumes/frank_muller.pdf"
+  },
+  // Additional applications per candidate (same and different companies)
+  {
+    id: "app4",
+    candidateId: "contact4",
+    candidateName: "Daniel Wong",
+    jobId: "job4",
+    jobTitle: "Process Engineer",
+    companyId: "comp1",
+    appliedDate: "2024-02-03",
+    status: "Active",
+    stage: "screening",
+    resumeLink: "/resumes/daniel_wong.pdf"
+  },
+  {
+    id: "app5",
+    candidateId: "contact4",
+    candidateName: "Daniel Wong",
+    jobId: "job10",
+    jobTitle: "Operations Engineer",
+    companyId: "comp5",
+    appliedDate: "2024-02-16",
+    status: "Active",
+    stage: "new",
+    resumeLink: "/resumes/daniel_wong.pdf"
+  },
+  {
+    id: "app6",
+    candidateId: "contact5",
+    candidateName: "Eva Johnson",
+    jobId: "job6",
+    jobTitle: "UI Engineer",
+    companyId: "comp2",
+    appliedDate: "2024-02-06",
+    status: "Active",
+    stage: "interview",
+    resumeLink: "/resumes/eva_johnson.pdf"
+  },
+  {
+    id: "app7",
+    candidateId: "contact5",
+    candidateName: "Eva Johnson",
+    jobId: "job7",
+    jobTitle: "Frontend Engineer",
+    companyId: "comp5",
+    appliedDate: "2024-02-10",
+    status: "Active",
+    stage: "screening",
+    resumeLink: "/resumes/eva_johnson.pdf"
+  },
+  {
+    id: "app8",
+    candidateId: "contact6",
+    candidateName: "Frank Müller",
+    jobId: "job8",
+    jobTitle: "Crop Data Analyst",
+    companyId: "comp3",
+    appliedDate: "2024-02-11",
+    status: "Active",
+    stage: "interview",
+    resumeLink: "/resumes/frank_muller.pdf"
+  },
+  {
+    id: "app9",
+    candidateId: "contact6",
+    candidateName: "Frank Müller",
+    jobId: "job9",
+    jobTitle: "Agricultural Data Scientist",
+    companyId: "comp4",
+    appliedDate: "2024-02-14",
+    status: "Active",
+    stage: "screening",
     resumeLink: "/resumes/frank_muller.pdf"
   }
 ];
