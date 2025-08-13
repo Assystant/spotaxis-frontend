@@ -4,7 +4,7 @@ import { ArrowLeft, MapPin, Globe, Building, Users, Plus, Edit } from "lucide-re
 import { TwoPanelDetailLayout } from "@/components/common/TwoPanelDetailLayout";
 import { AssociationCards } from "@/components/common/AssociationCards";
 import { CompanyTabs } from "@/components/companies/CompanyTabs";
-import { ActivityTypesProvider } from "@/contexts/ActivityTypesContext";
+
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { 
@@ -208,7 +208,6 @@ const CompanyDetailPage = () => {
   }
 
   return (
-    <ActivityTypesProvider>
       <div className="space-y-4">
         {/* Header with back button and company name */}
         <div className="flex items-center gap-3">
@@ -230,7 +229,6 @@ const CompanyDetailPage = () => {
           {null}
         </TwoPanelDetailLayout>
       </div>
-    </ActivityTypesProvider>
   );
 };
 

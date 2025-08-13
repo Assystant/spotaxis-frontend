@@ -33,13 +33,16 @@ import NotFound from '@/pages/NotFound';
 import Logs from '@/pages/Logs';
 import Meetings from '@/pages/Meetings';
 import Reports from '@/pages/Reports';
+import Lists from '@/pages/Lists';
+import { ActivityTypesProvider } from '@/contexts/ActivityTypesContext';
 function App() {
   return (
     <Router>
       <EmailTemplatesProvider>
         <ThemeToggleProvider>
           <WorkflowProvider>
-            <div className="min-h-screen bg-background">
+            <ActivityTypesProvider>
+              <div className="min-h-screen bg-background">
               <Routes>
                 <Route path="/" element={<SiteLayout />} >
                   <Route index element={<Dashboard />} />
@@ -76,6 +79,7 @@ function App() {
                   <Route path="forms" element={<FormBuilders />} />
                   <Route path="websites" element={<JobBoardManager />} />
                   <Route path="reports" element={<Reports />} />
+                  <Route path="lists" element={<Lists />} />
                   {/* Settings Routes */}
                   <Route path="settings" element={<Settings />} >
                     <Route index element={<SettingsDefault />} />
@@ -96,6 +100,7 @@ function App() {
                 </Route>
               </Routes>
             </div>
+            </ActivityTypesProvider>
           </WorkflowProvider>
         </ThemeToggleProvider>
       </EmailTemplatesProvider>

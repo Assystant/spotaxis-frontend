@@ -104,6 +104,7 @@ export function AppSidebar() {
       id: "other",
       label: "Other",
       items: [
+        { icon: FileSpreadsheet, label: "Lists", path: "/lists" },
         { icon: Globe, label: "Websites", path: "/websites" },
         { icon: FileSpreadsheet, label: "Forms", path: "/forms" },
       ],
