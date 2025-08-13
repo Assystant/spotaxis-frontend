@@ -97,3 +97,6 @@ export const dealStages = [
 
 export const getCompanyDeals = (companyId: string): Deal[] =>
   mockDeals.filter((d) => d.companyId === companyId);
+
+export const getContactDeals = (contactName: string): Deal[] =>
+  mockDeals.filter((d) => d.contactName === contactName);

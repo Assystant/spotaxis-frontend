@@ -309,11 +309,11 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
       <div className="flex items-center justify-between mb-4 relative">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <div ref={tabsContainerRef} className="flex-1 min-w-0">
-            <TabsList className="flex w-full gap-1 overflow-hidden">
+            <TabsList className="flex w-full gap-1 overflow-hidden justify-start">
               {visibleTypes.map((activityType) => {
                 const IconComponent = iconMap[activityType.icon as keyof typeof iconMap] || FileText;
                 return (
-                  <TabsTrigger key={activityType.id} value={activityType.id} className="flex items-center gap-1 px-3 py-2">
+                  <TabsTrigger key={activityType.id} value={activityType.id} className="flex items-center gap-1 px-3 py-2 justify-start text-left">
                     <IconComponent className="h-4 w-4" />
                     {activityType.name}
                   </TabsTrigger>
