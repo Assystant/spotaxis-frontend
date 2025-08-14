@@ -149,23 +149,14 @@ export function AppSidebar() {
     setStoredGroupState(groupId, newState);
   };
 
-  const { state, setOpen } = useSidebar();
-  const wasCollapsedOnEnter = useRef(false);
-  const handleMouseEnter = () => {
-    if (state === "collapsed") {
-      wasCollapsedOnEnter.current = true;
-      setOpen(true);
-    }
-  };
-  const handleMouseLeave = () => {
-    if (wasCollapsedOnEnter.current) {
-      setOpen(false);
-      wasCollapsedOnEnter.current = false;
-    }
-  };
+  const { state } = useSidebar();
 
   return (
-    <Sidebar variant={state === "collapsed" ? "floating" : "sidebar"} collapsible="icon" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <Sidebar 
+      variant="sidebar" 
+      collapsible="offcanvas"
+      className={state === "collapsed" ? "w-0" : ""}
+    >
       <SidebarHeader>
         <div className="flex items-center gap-2 p-2">
           <div className="bg-primary rounded-md p-1 w-8 h-8 flex items-center justify-center">
