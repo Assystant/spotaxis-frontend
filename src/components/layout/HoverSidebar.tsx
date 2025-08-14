@@ -13,6 +13,12 @@ export function HoverSidebar() {
     }
 
     const handleMouseMove = (e: MouseEvent) => {
+      // Don't show hover sidebar if mouse is over the expand button area (top-left 60x60px)
+      if (e.clientX <= 60 && e.clientY <= 60) {
+        setShowHoverSidebar(false);
+        return;
+      }
+      
       // Show hover sidebar if mouse is within 10px of left edge
       if (e.clientX <= 10) {
         setShowHoverSidebar(true);

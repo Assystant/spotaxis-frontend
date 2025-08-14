@@ -19,9 +19,6 @@ export const Header = ({
   return (
     <header className="h-16 px-4 md:px-6 border-b border-border flex items-center justify-between bg-background/80 backdrop-blur-sm sticky top-0 z-30">
       <div className="flex items-center gap-4">
-        {state === "collapsed" && (
-          <SidebarTrigger className="absolute top-4 left-4 z-50" />
-        )}
         <div className="animate-slide-in-left flex flex-col justify-center">
           <h1 className="text-lg md:text-xl font-medium tracking-tight truncate max-w-[200px] sm:max-w-none">
             {title}

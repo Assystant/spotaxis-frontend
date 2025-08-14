@@ -123,7 +123,7 @@ export const AssociationCards = ({ title, associations, className }: Association
   return (
     <div className={className}>
       <div className="mb-4">
-        <h2 className="text-lg font-semibold text-center">{title}</h2>
+        <h2 className="text-lg font-semibold">{title}</h2>
       </div>
       <div className="space-y-4">
         {associations.map((association) => {

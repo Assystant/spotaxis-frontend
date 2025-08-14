@@ -232,7 +232,7 @@ const ApplicantDetailPage = () => {
   const leftPanel = (
     <div className="space-y-6">
       {/* Application Info Card */}
-      <Card className="rounded-2xl shadow-md">
+      <Card className="rounded-lg shadow-none">
         <CardHeader className="p-6">
           <div className="flex items-start justify-between">
             <div className="flex-1">
