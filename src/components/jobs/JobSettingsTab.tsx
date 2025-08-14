@@ -32,7 +32,7 @@ export const JobSettingsTab = ({ job, onJobUpdate }: JobSettingsTabProps) => {
     job.expiryDate ? new Date(job.expiryDate) : undefined
   );
   const [jobStatus, setJobStatus] = useState(job.status);
-  const [isEditing, setIsEditing] = useState(false);
+  
 
   const handleEditJob = () => {
     // Navigate to job creation form with pre-filled data
@@ -47,7 +47,6 @@ export const JobSettingsTab = ({ job, onJobUpdate }: JobSettingsTabProps) => {
     };
     
     onJobUpdate?.(updatedJob);
-    setIsEditing(false);
     
     toast({
       title: "Settings Updated",
@@ -83,24 +82,10 @@ export const JobSettingsTab = ({ job, onJobUpdate }: JobSettingsTabProps) => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold">Basic Settings</h3>
-            <div className="flex gap-2">
-              {isEditing ? (
-                <>
-                  <Button variant="outline" size="sm" onClick={() => setIsEditing(false)}>
-                    Cancel
-                  </Button>
-                  <Button size="sm" onClick={handleSaveSettings} className="gap-2">
-                    <Save className="h-4 w-4" />
-                    Save Changes
-                  </Button>
-                </>
-              ) : (
-                <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="gap-2">
-                  <Edit className="h-4 w-4" />
-                  Edit Settings
-                </Button>
-              )}
-            </div>
+            <Button size="sm" onClick={handleSaveSettings} className="gap-2">
+              <Save className="h-4 w-4" />
+              Save Changes
+            </Button>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -109,7 +94,6 @@ export const JobSettingsTab = ({ job, onJobUpdate }: JobSettingsTabProps) => {
               <Select 
                 value={jobStatus} 
                 onValueChange={setJobStatus}
-                disabled={!isEditing}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
@@ -132,7 +116,6 @@ export const JobSettingsTab = ({ job, onJobUpdate }: JobSettingsTabProps) => {
                       "w-full justify-start text-left font-normal",
                       !expiryDate && "text-muted-foreground"
                     )}
-                    disabled={!isEditing}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {expiryDate ? format(expiryDate, "PPP") : <span>Set expiry date</span>}
@@ -195,13 +178,12 @@ export const JobSettingsTab = ({ job, onJobUpdate }: JobSettingsTabProps) => {
                 id="application-limit"
                 type="number"
                 placeholder="No limit"
-                disabled={!isEditing}
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="auto-response">Auto-Response</Label>
-              <Select disabled={!isEditing}>
+              <Select>
                 <SelectTrigger>
                   <SelectValue placeholder="Select response type" />
                 </SelectTrigger>

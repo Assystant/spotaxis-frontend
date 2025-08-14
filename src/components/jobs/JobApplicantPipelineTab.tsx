@@ -100,29 +100,16 @@ export const JobApplicantPipelineTab = ({ job }: JobApplicantPipelineTabProps) =
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="p-6">
-        <div className="mb-6">
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-            {applicantStages.map(stage => {
-              const count = applicants.filter(a => a.stage === stage.id).length;
-              return (
-                <div key={stage.id} className="text-center">
-                  <div className={`w-3 h-3 rounded-full ${stage.color} mx-auto mb-2`}></div>
-                  <div className="text-2xl font-semibold">{count}</div>
-                  <div className="text-sm text-muted-foreground">{stage.name}</div>
-                </div>
-              );
-            })}
-          </div>
+      <CardContent className="p-6 overflow-hidden">
+        <div className="w-full max-w-full">
+          <KanbanBoard 
+            stages={applicantStages} 
+            items={applicants}
+            entityType="applicant"
+            onStageChange={handleStageChange}
+            jobId={job.id}
+          />
         </div>
-        
-        <KanbanBoard 
-          stages={applicantStages} 
-          items={applicants}
-          entityType="applicant"
-          onStageChange={handleStageChange}
-          jobId={job.id}
-        />
       </CardContent>
 
       <AddApplicantDialog 

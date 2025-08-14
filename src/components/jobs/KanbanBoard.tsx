@@ -95,8 +95,8 @@ export const KanbanBoard = ({
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-        <div className="flex gap-4 min-w-max pr-4">
+      <div className="overflow-x-auto overflow-y-hidden pb-6 border rounded-lg bg-background">
+        <div className="flex gap-4 min-w-max p-4">
           {stages.sort((a, b) => a.order - b.order).map((stage) => (
             <div key={stage.id} className="w-72 flex-shrink-0">
               <Card className="h-full">
@@ -141,9 +141,12 @@ export const KanbanBoard = ({
                                         {((item as ApplicantType).name || "?").charAt(0)}
                                       </div>
                                     </Avatar>
-                                    <div className="flex-1 min-w-0">
-                                      <h4 className="font-medium text-sm truncate">{(item as ApplicantType).name}</h4>
-                                      <p className="text-xs text-muted-foreground truncate">{(item as ApplicantType).email}</p>
+                                     <div className="flex-1 min-w-0">
+                                       <h4 className="font-medium text-sm truncate cursor-pointer hover:text-primary transition-colors" 
+                                           onClick={() => window.location.href = `/applicants/${item.id}`}>
+                                         {(item as ApplicantType).name}
+                                       </h4>
+                                       <p className="text-xs text-muted-foreground truncate">{(item as ApplicantType).email}</p>
                                       <div className="flex gap-2 mt-2">
                                         <Button variant="outline" size="sm" className="h-7 px-2">
                                           <FileText size={14} />
