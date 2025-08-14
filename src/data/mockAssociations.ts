@@ -36,6 +36,14 @@ export interface Job {
   skills: string[];
   status: string;
   postedDate: string;
+  department?: string;
+  startDate?: string;
+  requirements?: string;
+  responsibilities?: string;
+  benefits?: string;
+  applicants?: number;
+  expiryDate?: string;
+  pipelineId?: string;
 }
 
 export interface Application {
