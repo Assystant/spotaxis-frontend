@@ -23,7 +23,7 @@ const AssociationCard = ({ title, icon: Icon, count, records, onAdd, color = "pr
   const navigate = useNavigate();
 
   return (
-    <Card className="rounded-2xl shadow-md hover:shadow-lg transition-shadow">
+    <Card className="rounded-lg shadow-none">
       <CardHeader className="p-4 pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ const AssociationCard = ({ title, icon: Icon, count, records, onAdd, color = "pr
           )}
           {onAdd && (
             <div className="pt-2 border-t">
-              <Button variant="outline" size="sm" className="w-full gap-2" onClick={onAdd}>
+              <Button variant="outline" size="sm" className="w-full gap-2">
                 <Plus className="h-3 w-3" />
                 Add {title.slice(0, -1)}
               </Button>
@@ -123,7 +123,7 @@ export const AssociationCards = ({ title, associations, className }: Association
   return (
     <div className={className}>
       <div className="mb-4">
-        <h2 className="text-lg font-semibold">{title}</h2>
+        <h2 className="text-lg font-semibold text-center">{title}</h2>
       </div>
       <div className="space-y-4">
         {associations.map((association) => {

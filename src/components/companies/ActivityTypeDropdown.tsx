@@ -44,10 +44,8 @@ export const ActivityTypeDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="icon" aria-label="Manage activity types" className="shrink-0">
           <Plus className="h-4 w-4" />
-          Manage Activity Types
-          <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 

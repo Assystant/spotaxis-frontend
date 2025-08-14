@@ -87,7 +87,7 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
     
     if (activityType.id === 'overview') {
       return (
-        <Card>
+        <Card className="shadow-none rounded-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Building className="h-5 w-5" />
@@ -169,7 +169,7 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
         : jobs;
 
       return (
-        <Card>
+        <Card className="shadow-none rounded-lg">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -210,7 +210,7 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
         : applications;
 
       return (
-        <Card>
+        <Card className="shadow-none rounded-lg">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -261,7 +261,7 @@ export const CompanyTabs = ({ company }: CompanyTabsProps) => {
     };
     
     return (
-      <Card>
+      <Card className="shadow-none rounded-lg">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

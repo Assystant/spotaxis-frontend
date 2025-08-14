@@ -1,7 +1,7 @@
 
 import { Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 
 type HeaderProps = {
   title: string;
@@ -14,7 +14,7 @@ export const Header = ({
   description, 
   actionButton,
 }: HeaderProps) => {
-  return (
+  const { state } = useSidebar();
     <header className="h-16 px-4 md:px-6 border-b border-border flex items-center justify-between bg-background/80 backdrop-blur-sm sticky top-0 z-30">
       <div className="flex items-center gap-4">
         <SidebarTrigger />

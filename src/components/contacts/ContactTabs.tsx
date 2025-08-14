@@ -61,7 +61,7 @@ export const ContactTabs: React.FC<ContactTabsProps> = ({ contact }) => {
   const renderOverview = () => {
     const company = contact.companyId ? mockCompanies.find((c) => c.id === contact.companyId) : undefined;
     return (
-      <Card>
+      <Card className="shadow-none rounded-lg">
         <CardHeader>
           <CardTitle className="text-2xl">{contact.name}</CardTitle>
           <CardDescription>{contact.type === "client" ? "Client Contact" : "Candidate"}</CardDescription>
@@ -129,7 +129,7 @@ export const ContactTabs: React.FC<ContactTabsProps> = ({ contact }) => {
   const renderJobs = () => {
     const jobs = contact.companyId ? getCompanyJobs(contact.companyId) : [];
     return (
-      <Card>
+      <Card className="shadow-none rounded-lg">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Briefcase className="h-5 w-5" />
@@ -160,7 +160,7 @@ export const ContactTabs: React.FC<ContactTabsProps> = ({ contact }) => {
   const renderApplications = () => {
     const applications = getCandidateApplications(contact.id);
     return (
-      <Card>
+      <Card className="shadow-none rounded-lg">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5" />

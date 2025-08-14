@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -46,6 +46,8 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -147,8 +149,23 @@ export function AppSidebar() {
     setStoredGroupState(groupId, newState);
   };
 
+  const { state, setOpen } = useSidebar();
+  const wasCollapsedOnEnter = useRef(false);
+  const handleMouseEnter = () => {
+    if (state === "collapsed") {
+      wasCollapsedOnEnter.current = true;
+      setOpen(true);
+    }
+  };
+  const handleMouseLeave = () => {
+    if (wasCollapsedOnEnter.current) {
+      setOpen(false);
+      wasCollapsedOnEnter.current = false;
+    }
+  };
+
   return (
-    <Sidebar>
+    <Sidebar variant={state === "collapsed" ? "floating" : "sidebar"} collapsible="icon" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <SidebarHeader>
         <div className="flex items-center gap-2 p-2">
           <div className="bg-primary rounded-md p-1 w-8 h-8 flex items-center justify-center">
@@ -157,6 +174,9 @@ export function AppSidebar() {
             </svg>
           </div>
           <span className="font-semibold text-lg">ATS</span>
+          <div className="ml-auto">
+            <SidebarTrigger className="h-7 w-7" />
+          </div>
         </div>
         <div className="px-2">
           <SidebarInput
