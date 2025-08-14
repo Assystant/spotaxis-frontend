@@ -95,8 +95,8 @@ export const KanbanBoard = ({
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="overflow-x-auto overflow-y-hidden pb-6 border rounded-lg bg-background">
-        <div className="flex gap-4 min-w-max p-4">
+      <div className="w-full overflow-x-auto bg-background border rounded-lg">
+        <div className="flex gap-4 p-4" style={{ minWidth: `${stages.length * 288}px` }}>
           {stages.sort((a, b) => a.order - b.order).map((stage) => (
             <div key={stage.id} className="w-72 flex-shrink-0">
               <Card className="h-full">

@@ -84,33 +84,35 @@ export const JobApplicantPipelineTab = ({ job }: JobApplicantPipelineTabProps) =
   };
 
   return (
-    <Card className="shadow-none rounded-lg">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <span>Applicant Pipeline Overview</span>
-          </CardTitle>
-          <Button 
-            size="sm"
-            onClick={() => setShowAddApplicantDialog(true)}
-            className="gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Add Applicant
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6 overflow-hidden">
-        <div className="w-full max-w-full">
-          <KanbanBoard 
-            stages={applicantStages} 
-            items={applicants}
-            entityType="applicant"
-            onStageChange={handleStageChange}
-            jobId={job.id}
-          />
-        </div>
-      </CardContent>
+    <div className="w-full max-w-full overflow-hidden">
+      <Card className="shadow-none rounded-lg">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <span>Applicant Pipeline Overview</span>
+            </CardTitle>
+            <Button 
+              size="sm"
+              onClick={() => setShowAddApplicantDialog(true)}
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Add Applicant
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="w-full">
+            <KanbanBoard 
+              stages={applicantStages} 
+              items={applicants}
+              entityType="applicant"
+              onStageChange={handleStageChange}
+              jobId={job.id}
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       <AddApplicantDialog 
         open={showAddApplicantDialog}
@@ -119,6 +121,6 @@ export const JobApplicantPipelineTab = ({ job }: JobApplicantPipelineTabProps) =
         jobId={job.id}
         jobTitle={job.title}
       />
-    </Card>
+    </div>
   );
 };

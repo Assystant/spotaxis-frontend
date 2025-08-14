@@ -98,15 +98,16 @@ export const JobTabs = ({ job, onJobUpdate }: JobTabsProps) => {
   };
 
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <div className="flex items-center justify-between mb-4 relative">
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          <div ref={tabsContainerRef} className="flex-1 min-w-0">
-            <TabsList className="flex w-full gap-1 overflow-hidden justify-start">
+    <div className="w-full max-w-full overflow-hidden">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="flex items-center justify-between mb-4 relative">
+          <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
+            <div ref={tabsContainerRef} className="flex-1 min-w-0 overflow-hidden">
+              <TabsList className="flex w-full gap-1 overflow-x-auto justify-start max-w-full">
               {visibleTabs.map((tab) => {
                 const IconComponent = iconMap[tab.icon.name as keyof typeof iconMap] || FileText;
                 return (
-                  <TabsTrigger key={tab.id} value={tab.id} className="flex items-center gap-1 px-3 py-2 justify-start text-left">
+                  <TabsTrigger key={tab.id} value={tab.id} className="flex items-center gap-1 px-3 py-2 justify-start text-left whitespace-nowrap flex-shrink-0">
                     <IconComponent className="h-4 w-4" />
                     {tab.label}
                   </TabsTrigger>
@@ -159,10 +160,11 @@ export const JobTabs = ({ job, onJobUpdate }: JobTabsProps) => {
       </div>
 
       {jobTabs.map((tab) => (
-        <TabsContent key={tab.id} value={tab.id}>
+        <TabsContent key={tab.id} value={tab.id} className="w-full max-w-full overflow-hidden">
           {renderTabContent(tab.id)}
         </TabsContent>
       ))}
     </Tabs>
+    </div>
   );
 };
