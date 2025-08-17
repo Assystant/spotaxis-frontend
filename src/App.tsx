@@ -35,6 +35,12 @@ import Meetings from '@/pages/Meetings';
 import Reports from '@/pages/Reports';
 import Lists from '@/pages/Lists';
 import { ActivityTypesProvider } from '@/contexts/ActivityTypesContext';
+import SignUp from '@/pages/auth/SignUp';
+import Login from '@/pages/auth/Login';
+import CheckEmail from '@/pages/auth/CheckEmail';
+import Verify from '@/pages/auth/Verify';
+import { PrototypeToggle } from '@/components/auth/PrototypeToggle';
+import { Toaster } from '@/components/ui/toaster';
 function App() {
   return (
     <Router>
@@ -44,6 +50,12 @@ function App() {
             <ActivityTypesProvider>
               <div className="min-h-screen bg-background">
               <Routes>
+                {/* Auth Routes */}
+                <Route path="/auth/signup" element={<SignUp />} />
+                <Route path="/auth/login" element={<Login />} />
+                <Route path="/auth/check-email" element={<CheckEmail />} />
+                <Route path="/auth/verify" element={<Verify />} />
+                
                 <Route path="/" element={<SiteLayout />} >
                   <Route index element={<Dashboard />} />
                   <Route path="dashboard" element={<Dashboard />} />
@@ -99,6 +111,8 @@ function App() {
                   <Route path="*" element={<NotFound />} />
                 </Route>
               </Routes>
+              <Toaster />
+              <PrototypeToggle />
             </div>
             </ActivityTypesProvider>
           </WorkflowProvider>
