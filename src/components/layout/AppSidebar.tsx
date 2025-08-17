@@ -30,6 +30,7 @@ import {
   Workflow,
   UserCog,
   Sliders,
+  Building,
 } from "lucide-react";
 import {
   Sidebar,
@@ -118,6 +119,7 @@ export function AppSidebar() {
       id: "settings",
       label: "Settings",
       items: [
+        { icon: Building, label: "Organization", path: "/settings/organization" },
         { icon: User, label: "Profile", path: "/settings/profile" },
         { icon: Shield, label: "Security", path: "/settings/security" },
         { icon: Mail, label: "Notifications", path: "/settings/notifications" },
