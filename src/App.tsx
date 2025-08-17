@@ -11,6 +11,7 @@ import EmailTemplates from '@/pages/EmailTemplates';
 import SystemSettings from '@/pages/SystemSettings';
 import UserRoleSettings from '@/pages/UserRoleSettings';
 import PipelineSettings from '@/pages/PipelineSettings';
+import OrganizationSettings from '@/pages/OrganizationSettings';
 import Companies from '@/pages/Companies';
 import Applicants from '@/pages/Applicants';
 import ApplicantDetailPage from '@/pages/ApplicantDetailPage';
@@ -101,6 +102,7 @@ function App() {
                     <Route path="user-roles" element={<UserRoleSettings />} />
                     <Route path="pipeline" element={<PipelineSettings />} />
                     <Route path="workflow" element={<WorkflowSettings />} />
+                    <Route path="organization" element={<OrganizationSettings />} />
                     <Route path="profile" element={<SettingsDefault />} />
                     <Route path="security" element={<SettingsDefault />} />
                     <Route path="career-site" element={<SettingsDefault />} />
