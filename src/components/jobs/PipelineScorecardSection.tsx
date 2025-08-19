@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Select,
   SelectContent,
@@ -23,6 +23,7 @@ interface Stage {
   name: string;
   scorecardId?: string;
   scorecardType: "Default" | "User generated" | "Customise";
+  evaluatorId?: string;
 }
 
 interface PipelineScorecardSectionProps {
@@ -60,8 +61,40 @@ const scorecardOptions = [
   { value: "customise", label: "Customise", type: "Customise" as const },
 ];
 
+const mockEvaluators = [
+  { id: "", name: "Unassigned" },
+  { id: "u1", name: "Jane Doe" },
+  { id: "u2", name: "John Smith" },
+  { id: "u3", name: "Sarah Wilson" },
+  { id: "u4", name: "Michael Brown" },
+  { id: "u5", name: "Emily Davis" },
+  { id: "u6", name: "David Miller" },
+];
+
 export const PipelineScorecardSection = ({ pipelineId, pipelineName }: PipelineScorecardSectionProps) => {
-  const [stages, setStages] = useState<Stage[]>(mockPipelineStages[pipelineId] || []);
+  // Load stages from localStorage first, then fallback to mock data
+  const loadStages = (): Stage[] => {
+    try {
+      const saved = localStorage.getItem(`pipelineStages:${pipelineId}`);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (error) {
+      console.error("Error loading stages from localStorage:", error);
+    }
+    return mockPipelineStages[pipelineId] || [];
+  };
+
+  const [stages, setStages] = useState<Stage[]>(loadStages);
+
+  // Save stages to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(`pipelineStages:${pipelineId}`, JSON.stringify(stages));
+    } catch (error) {
+      console.error("Error saving stages to localStorage:", error);
+    }
+  }, [stages, pipelineId]);
 
   const handleScorecardChange = (stageId: string, scorecardValue: string) => {
     const selectedOption = scorecardOptions.find(opt => opt.value === scorecardValue);
@@ -81,6 +114,14 @@ export const PipelineScorecardSection = ({ pipelineId, pipelineName }: PipelineS
   const handlePreview = (scorecardId: string) => {
     console.log("Preview scorecard:", scorecardId);
     // Implement preview logic here
+  };
+
+  const handleEvaluatorChange = (stageId: string, evaluatorId: string) => {
+    setStages(prev => prev.map(stage => 
+      stage.id === stageId 
+        ? { ...stage, evaluatorId: evaluatorId || undefined }
+        : stage
+    ));
   };
 
   const handleCreateCustom = () => {
@@ -121,6 +162,7 @@ export const PipelineScorecardSection = ({ pipelineId, pipelineName }: PipelineS
                     <TableHead className="w-12"></TableHead>
                     <TableHead>Stage Name</TableHead>
                     <TableHead>Scorecard</TableHead>
+                    <TableHead>Evaluator</TableHead>
                     <TableHead className="w-24">Preview</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -181,6 +223,23 @@ export const PipelineScorecardSection = ({ pipelineId, pipelineName }: PipelineS
                         <div className="text-xs text-muted-foreground mt-1">
                           Type: {stage.scorecardType}
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          value={stage.evaluatorId || ""}
+                          onValueChange={(value) => handleEvaluatorChange(stage.id, value)}
+                        >
+                          <SelectTrigger className="w-48" aria-label={`Select evaluator for ${stage.name}`}>
+                            <SelectValue placeholder="Assign evaluator" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {mockEvaluators.map((evaluator) => (
+                              <SelectItem key={evaluator.id} value={evaluator.id}>
+                                {evaluator.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </TableCell>
                       <TableCell>
                         <Button
