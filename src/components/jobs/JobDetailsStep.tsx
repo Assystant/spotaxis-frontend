@@ -2,6 +2,7 @@
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { FormValues, jobTypes, jobStatuses } from "./types";
+import { JobTemplateSelector } from "./JobTemplateSelector";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -34,6 +35,7 @@ interface JobDetailsStepProps {
 export const JobDetailsStep = ({ form }: JobDetailsStepProps) => {
   return (
     <div className="space-y-4">
+      <JobTemplateSelector form={form} />
       <FormField
         control={form.control}
         name="title"

@@ -31,6 +31,7 @@ import {
   UserCog,
   Sliders,
   Building,
+  FileText,
 } from "lucide-react";
 import {
   Sidebar,
@@ -128,6 +129,7 @@ export function AppSidebar() {
         { icon: CreditCard, label: "Billing", path: "/settings/billing" },
         { icon: Kanban, label: "Pipeline Manager", path: "/settings/pipeline" },
         { icon: Workflow, label: "Workflow", path: "/settings/workflow" },
+        { icon: FileText, label: "Job Templates", path: "/settings/job-templates" },
         { icon: UserCog, label: "User Roles", path: "/settings/user-roles" },
         { icon: Sliders, label: "System Settings", path: "/settings/system" },
       ],

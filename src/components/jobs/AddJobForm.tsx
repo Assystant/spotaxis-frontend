@@ -11,10 +11,12 @@ import {
   CheckCircle,
   ChevronRight,
   ChevronLeft,
+  FileText,
 } from "lucide-react";
 import { toast } from "sonner";
 import { mockCompanies } from "@/components/companies/CompaniesTable";
 import { JobPromotionDialog } from "./JobPromotionDialog";
+import { SaveTemplateDialog } from "./SaveTemplateDialog";
 import { JobDetailsStep } from "./JobDetailsStep";
 import { PipelineStep } from "./PipelineStep";
 import { ApplicationFormStep } from "./ApplicationFormStep";
@@ -26,6 +28,7 @@ export const AddJobForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [showPromotionDialog, setShowPromotionDialog] = useState(false);
+  const [showSaveTemplateDialog, setShowSaveTemplateDialog] = useState(false);
   const [jobCreated, setJobCreated] = useState<FormValues | null>(null);
 
   const form = useForm<FormValues>({
@@ -99,6 +102,10 @@ export const AddJobForm = () => {
     }
   };
 
+  const handleSaveAsTemplate = () => {
+    setShowSaveTemplateDialog(true);
+  };
+
   const renderCurrentStep = () => {
     switch (currentStep) {
       case 0:
@@ -154,26 +161,41 @@ export const AddJobForm = () => {
                 )}
               </Button>
               
-              <Button 
-                type={currentStep === steps.length - 1 ? "submit" : "button"}
-                onClick={currentStep === steps.length - 1 ? undefined : nextStep}
-                disabled={isSubmitting}
-                className="gap-2"
-              >
-                {currentStep === steps.length - 1 ? (
-                  isSubmitting ? "Adding..." : (
-                    <>
-                      <CheckCircle className="w-4 h-4" />
-                      Create Job
-                    </>
-                  )
-                ) : (
-                  <>
-                    Next
-                    <ChevronRight className="w-4 h-4" />
-                  </>
+              <div className="flex gap-2">
+                {currentStep === steps.length - 1 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleSaveAsTemplate}
+                    disabled={isSubmitting}
+                    className="gap-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    Save as Template
+                  </Button>
                 )}
-              </Button>
+                
+                <Button 
+                  type={currentStep === steps.length - 1 ? "submit" : "button"}
+                  onClick={currentStep === steps.length - 1 ? undefined : nextStep}
+                  disabled={isSubmitting}
+                  className="gap-2"
+                >
+                  {currentStep === steps.length - 1 ? (
+                    isSubmitting ? "Adding..." : (
+                      <>
+                        <CheckCircle className="w-4 h-4" />
+                        Create Job
+                      </>
+                    )
+                  ) : (
+                    <>
+                      Next
+                      <ChevronRight className="w-4 h-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </form>
         </Form>
@@ -184,6 +206,12 @@ export const AddJobForm = () => {
         onOpenChange={setShowPromotionDialog}
         jobTitle={jobCreated?.title || ""}
         companyName={selectedCompany?.name || ""}
+      />
+
+      <SaveTemplateDialog
+        open={showSaveTemplateDialog}
+        onOpenChange={setShowSaveTemplateDialog}
+        formData={formValues}
       />
     </>
   );
