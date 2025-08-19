@@ -22,6 +22,7 @@ interface CreateExternalLinkDialogProps {
   editingLink?: ExternalJobLink | null;
   jobTitle?: string;
   companyName?: string;
+  jobId?: string;
 }
 
 export const CreateExternalLinkDialog = ({ 
@@ -30,21 +31,26 @@ export const CreateExternalLinkDialog = ({
   onCreateLink,
   editingLink,
   jobTitle = "",
-  companyName = ""
+  companyName = "",
+  jobId = "temp-job-id"
 }: CreateExternalLinkDialogProps) => {
   const [jobBoardName, setJobBoardName] = useState(editingLink?.name || "");
   const [isSaving, setIsSaving] = useState(false);
 
-  // Auto-generate fields based on job board name
+  // Auto-generate fields based on job board name (native Spotaxis URLs)
   const generateFields = (boardName: string) => {
     const cleanBoardName = boardName.toLowerCase().replace(/[^a-z0-9]/g, '_');
     const cleanJobTitle = jobTitle.toLowerCase().replace(/[^a-z0-9]/g, '_');
     const cleanCompanyName = companyName.toLowerCase().replace(/[^a-z0-9]/g, '_');
     
+    // Generate native Spotaxis URLs
+    const baseJobUrl = `/jobs/${jobId}`;
+    const baseApplyUrl = `/jobs/${jobId}/apply`;
+    
     return {
       name: boardName,
-      jobInfoUrl: `https://${cleanBoardName}.com/jobs/${cleanJobTitle}_${cleanCompanyName}`,
-      applyUrl: `https://${cleanBoardName}.com/apply/${cleanJobTitle}_${cleanCompanyName}`,
+      jobInfoUrl: baseJobUrl,
+      applyUrl: baseApplyUrl,
       utmSource: cleanBoardName,
       utmMedium: "job_board",
       utmCampaign: `${cleanJobTitle}_${cleanCompanyName}_hiring`,
@@ -103,7 +109,7 @@ export const CreateExternalLinkDialog = ({
             {editingLink ? 'Edit External Link' : 'Create External Link'}
           </DialogTitle>
           <DialogDescription>
-            Just enter the job board name - we'll generate the tracking links automatically.
+            Enter the job board name to create trackable Spotaxis links with UTM parameters.
           </DialogDescription>
         </DialogHeader>
         
@@ -120,7 +126,7 @@ export const CreateExternalLinkDialog = ({
                 className="text-base"
               />
               <p className="text-xs text-muted-foreground">
-                Enter the name of the job board - everything else will be generated automatically
+                Enter the job board name - we'll create Spotaxis URLs with UTM tracking
               </p>
             </div>
           </div>
@@ -173,7 +179,7 @@ export const CreateExternalLinkDialog = ({
                 </div>
 
                 <div className="text-xs text-muted-foreground bg-blue-50 p-3 rounded border border-blue-200">
-                  <strong>Note:</strong> The URLs are generated as examples. You can edit the actual URLs later if needed for the specific job board's format.
+                  <strong>Note:</strong> These are native Spotaxis URLs with UTM parameters for tracking traffic from this job board.
                 </div>
               </div>
             </>

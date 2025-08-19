@@ -192,6 +192,7 @@ export const JobPromotionsTab = ({ job }: JobPromotionsTabProps) => {
         onOpenChange={setShowPromotionDialog}
         jobTitle={job.title}
         companyName={job.company}
+        jobId={job.id}
       />
     </Card>
   );

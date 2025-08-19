@@ -287,6 +287,7 @@ export const JobPromotionDialog = ({
         editingLink={editingLink}
         jobTitle={jobTitle}
         companyName={companyName}
+        jobId={jobId}
       />
     </Dialog>
   );
