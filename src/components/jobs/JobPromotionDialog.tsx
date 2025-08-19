@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { X } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, Plus, ExternalLink } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,11 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { CreateExternalLinkDialog } from "./CreateExternalLinkDialog";
+import { ExternalLinksList } from "./ExternalLinksList";
+import { jobPromotionService, ExternalJobLink } from "@/services/jobPromotionService";
 
 interface JobBoard {
   id: string;
@@ -81,16 +85,29 @@ interface JobPromotionDialogProps {
   onOpenChange: (open: boolean) => void;
   jobTitle: string;
   companyName: string;
+  jobId?: string; // Add jobId for external links
 }
 
 export const JobPromotionDialog = ({
   open,
   onOpenChange,
   jobTitle,
-  companyName
+  companyName,
+  jobId = "temp-job-id" // Default for compatibility
 }: JobPromotionDialogProps) => {
   const [jobBoards, setJobBoards] = useState<JobBoard[]>(initialJobBoards);
+  const [externalLinks, setExternalLinks] = useState<ExternalJobLink[]>([]);
+  const [showCreateLinkDialog, setShowCreateLinkDialog] = useState(false);
+  const [editingLink, setEditingLink] = useState<ExternalJobLink | null>(null);
   const { toast } = useToast();
+
+  // Load external links when dialog opens
+  useEffect(() => {
+    if (open && jobId) {
+      const promotion = jobPromotionService.getJobPromotion(jobId);
+      setExternalLinks(promotion?.externalLinks || []);
+    }
+  }, [open, jobId]);
 
   const promotedBoards = jobBoards.filter(board => board.isPromoted);
   const availableBoards = jobBoards.filter(board => !board.isPromoted);
@@ -119,11 +136,46 @@ export const JobPromotionDialog = ({
     });
   };
 
+  const handleCreateExternalLink = (linkData: Omit<ExternalJobLink, "id" | "createdAt">) => {
+    if (editingLink) {
+      // Update existing link
+      jobPromotionService.updateExternalLink(jobId, editingLink.id, linkData);
+      setEditingLink(null);
+    } else {
+      // Create new link
+      jobPromotionService.addExternalLink(jobId, jobTitle, companyName, linkData);
+    }
+    
+    // Refresh links list
+    const promotion = jobPromotionService.getJobPromotion(jobId);
+    setExternalLinks(promotion?.externalLinks || []);
+    setShowCreateLinkDialog(false);
+  };
+
+  const handleEditLink = (link: ExternalJobLink) => {
+    setEditingLink(link);
+    setShowCreateLinkDialog(true);
+  };
+
+  const handleLinksChange = () => {
+    const promotion = jobPromotionService.getJobPromotion(jobId);
+    setExternalLinks(promotion?.externalLinks || []);
+  };
+
+  const handleCreateNewLink = () => {
+    setEditingLink(null);
+    setShowCreateLinkDialog(true);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl shadow-lg">
+      <DialogContent className="w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-2xl shadow-lg">
         <DialogHeader className="relative">
           <DialogTitle className="text-xl font-semibold text-left">Promote Your Job</DialogTitle>
+          <div className="mt-2">
+            <h2 className="text-base font-medium">{jobTitle}</h2>
+            <p className="text-sm text-muted-foreground">{companyName}</p>
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -135,58 +187,88 @@ export const JobPromotionDialog = ({
           </Button>
         </DialogHeader>
         
-        <div className="space-y-6 py-4">
-          <div>
-            <h2 className="text-base font-medium">{jobTitle}</h2>
-            <p className="text-sm text-muted-foreground">{companyName}</p>
-          </div>
-          
-          {/* Promoted On Section */}
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-base font-semibold mb-2">Promoted On</h3>
-              <Separator className="mb-4" />
-            </div>
-            
-            {promotedBoards.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Not promoted on any boards yet.</p>
-            ) : (
-              <div className="space-y-3">
-                {promotedBoards.map((board) => (
-                  <JobBoardPill
-                    key={board.id}
-                    board={board}
-                    isPromoted={true}
-                    onAction={() => handleRemovePromotion(board.id)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+        <Tabs defaultValue="integrated" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="integrated">Integrated Boards</TabsTrigger>
+            <TabsTrigger value="external" className="gap-2">
+              <ExternalLink className="w-4 h-4" />
+              External Links
+            </TabsTrigger>
+          </TabsList>
 
-          {/* Available Boards Section */}
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-base font-semibold mb-2">Available Boards</h3>
-              <Separator className="mb-4" />
-            </div>
-            
-            {availableBoards.length === 0 ? (
-              <p className="text-sm text-muted-foreground">All boards have this job.</p>
-            ) : (
-              <div className="space-y-3">
-                {availableBoards.map((board) => (
-                  <JobBoardPill
-                    key={board.id}
-                    board={board}
-                    isPromoted={false}
-                    onAction={() => handlePromote(board.id)}
-                  />
-                ))}
+          <TabsContent value="integrated" className="space-y-6">
+            {/* Promoted On Section */}
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-base font-semibold mb-2">Promoted On</h3>
+                <Separator className="mb-4" />
               </div>
-            )}
-          </div>
-        </div>
+              
+              {promotedBoards.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Not promoted on any boards yet.</p>
+              ) : (
+                <div className="space-y-3">
+                  {promotedBoards.map((board) => (
+                    <JobBoardPill
+                      key={board.id}
+                      board={board}
+                      isPromoted={true}
+                      onAction={() => handleRemovePromotion(board.id)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Available Boards Section */}
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-base font-semibold mb-2">Available Boards</h3>
+                <Separator className="mb-4" />
+              </div>
+              
+              {availableBoards.length === 0 ? (
+                <p className="text-sm text-muted-foreground">All boards have this job.</p>
+              ) : (
+                <div className="space-y-3">
+                  {availableBoards.map((board) => (
+                    <JobBoardPill
+                      key={board.id}
+                      board={board}
+                      isPromoted={false}
+                      onAction={() => handlePromote(board.id)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="external" className="space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-semibold">External Job Board Links</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Create trackable links for job boards without direct integration
+                  </p>
+                </div>
+                <Button onClick={handleCreateNewLink} className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Add Link
+                </Button>
+              </div>
+              <Separator />
+            </div>
+
+            <ExternalLinksList
+              links={externalLinks}
+              jobId={jobId}
+              onEditLink={handleEditLink}
+              onLinksChange={handleLinksChange}
+            />
+          </TabsContent>
+        </Tabs>
 
         <DialogFooter>
           <Button 
@@ -197,6 +279,13 @@ export const JobPromotionDialog = ({
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      <CreateExternalLinkDialog
+        open={showCreateLinkDialog}
+        onOpenChange={setShowCreateLinkDialog}
+        onCreateLink={handleCreateExternalLink}
+        editingLink={editingLink}
+      />
     </Dialog>
   );
 };
