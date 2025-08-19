@@ -41,7 +41,7 @@ import SignUp from '@/pages/auth/SignUp';
 import Login from '@/pages/auth/Login';
 import CheckEmail from '@/pages/auth/CheckEmail';
 import Verify from '@/pages/auth/Verify';
-import { PrototypeToggle } from '@/components/auth/PrototypeToggle';
+
 import { Toaster } from '@/components/ui/toaster';
 function App() {
   return (
@@ -116,7 +116,6 @@ function App() {
                 </Route>
               </Routes>
               <Toaster />
-              <PrototypeToggle />
             </div>
             </ActivityTypesProvider>
           </WorkflowProvider>
