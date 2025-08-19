@@ -20,45 +20,49 @@ interface CreateExternalLinkDialogProps {
   onOpenChange: (open: boolean) => void;
   onCreateLink: (linkData: Omit<ExternalJobLink, "id" | "createdAt">) => void;
   editingLink?: ExternalJobLink | null;
+  jobTitle?: string;
+  companyName?: string;
 }
 
 export const CreateExternalLinkDialog = ({ 
   open, 
   onOpenChange, 
   onCreateLink,
-  editingLink
+  editingLink,
+  jobTitle = "",
+  companyName = ""
 }: CreateExternalLinkDialogProps) => {
-  const [formData, setFormData] = useState({
-    name: editingLink?.name || "",
-    jobInfoUrl: editingLink?.jobInfoUrl || "",
-    applyUrl: editingLink?.applyUrl || "",
-    utmSource: editingLink?.utmSource || "",
-    utmMedium: editingLink?.utmMedium || "job_board",
-    utmCampaign: editingLink?.utmCampaign || "",
-    utmTerm: editingLink?.utmTerm || "",
-    utmContent: editingLink?.utmContent || "",
-  });
-
+  const [jobBoardName, setJobBoardName] = useState(editingLink?.name || "");
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  // Auto-generate fields based on job board name
+  const generateFields = (boardName: string) => {
+    const cleanBoardName = boardName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    const cleanJobTitle = jobTitle.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    const cleanCompanyName = companyName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    
+    return {
+      name: boardName,
+      jobInfoUrl: `https://${cleanBoardName}.com/jobs/${cleanJobTitle}_${cleanCompanyName}`,
+      applyUrl: `https://${cleanBoardName}.com/apply/${cleanJobTitle}_${cleanCompanyName}`,
+      utmSource: cleanBoardName,
+      utmMedium: "job_board",
+      utmCampaign: `${cleanJobTitle}_${cleanCompanyName}_hiring`,
+      utmTerm: cleanJobTitle,
+      utmContent: `${cleanBoardName}_posting`,
+    };
   };
 
   const handleSave = async () => {
-    if (!formData.name.trim() || !formData.jobInfoUrl.trim() || !formData.applyUrl.trim()) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
-    if (!formData.utmSource.trim() || !formData.utmCampaign.trim()) {
-      toast.error("UTM Source and Campaign are required");
+    if (!jobBoardName.trim()) {
+      toast.error("Please enter a job board name");
       return;
     }
 
     setIsSaving(true);
     try {
-      onCreateLink(formData);
+      const generatedData = generateFields(jobBoardName.trim());
+      onCreateLink(generatedData);
       handleCancel();
       toast.success(`External link ${editingLink ? 'updated' : 'created'} successfully`);
     } catch (error) {
@@ -70,28 +74,22 @@ export const CreateExternalLinkDialog = ({
   };
 
   const handleCancel = () => {
-    setFormData({
-      name: "",
-      jobInfoUrl: "",
-      applyUrl: "",
-      utmSource: "",
-      utmMedium: "job_board",
-      utmCampaign: "",
-      utmTerm: "",
-      utmContent: "",
-    });
+    setJobBoardName("");
     onOpenChange(false);
   };
 
-  const generatePreviewUrl = (baseUrl: string) => {
+  // Generate preview data for display
+  const previewData = jobBoardName.trim() ? generateFields(jobBoardName.trim()) : null;
+
+  const generatePreviewUrl = (baseUrl: string, utmData: any) => {
     if (!baseUrl.trim()) return "";
     
     const utmParams = new URLSearchParams({
-      utm_source: formData.utmSource || "source",
-      utm_medium: formData.utmMedium || "job_board",
-      utm_campaign: formData.utmCampaign || "campaign",
-      ...(formData.utmTerm && { utm_term: formData.utmTerm }),
-      ...(formData.utmContent && { utm_content: formData.utmContent })
+      utm_source: utmData.utmSource,
+      utm_medium: utmData.utmMedium,
+      utm_campaign: utmData.utmCampaign,
+      utm_term: utmData.utmTerm,
+      utm_content: utmData.utmContent
     });
 
     return `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}${utmParams.toString()}`;
@@ -105,141 +103,77 @@ export const CreateExternalLinkDialog = ({
             {editingLink ? 'Edit External Link' : 'Create External Link'}
           </DialogTitle>
           <DialogDescription>
-            Create trackable links for external job boards with custom UTM parameters.
+            Just enter the job board name - we'll generate the tracking links automatically.
           </DialogDescription>
         </DialogHeader>
         
-        <div className="grid gap-4 py-4">
-          {/* Basic Information */}
+        <div className="grid gap-6 py-4">
+          {/* Job Board Name Input */}
           <div className="space-y-4">
-            <h4 className="font-medium">Basic Information</h4>
             <div className="space-y-2">
-              <Label htmlFor="name">Job Board Name *</Label>
+              <Label htmlFor="boardName">Job Board Name *</Label>
               <Input
-                id="name"
-                placeholder="e.g. AngelList, Tech Jobs Board"
-                value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
+                id="boardName"
+                placeholder="e.g. AngelList, Tech Jobs Board, Stack Overflow Jobs"
+                value={jobBoardName}
+                onChange={(e) => setJobBoardName(e.target.value)}
+                className="text-base"
               />
               <p className="text-xs text-muted-foreground">
-                A name to identify this link set for tracking purposes
+                Enter the name of the job board - everything else will be generated automatically
               </p>
             </div>
           </div>
 
-          <Separator />
-
-          {/* URLs */}
-          <div className="space-y-4">
-            <h4 className="font-medium">URLs</h4>
-            <div className="space-y-2">
-              <Label htmlFor="jobInfoUrl">Job Information URL *</Label>
-              <Input
-                id="jobInfoUrl"
-                placeholder="https://jobboard.com/job/12345"
-                value={formData.jobInfoUrl}
-                onChange={(e) => handleInputChange("jobInfoUrl", e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">
-                URL where job seekers can view job details
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="applyUrl">Application URL *</Label>
-              <Input
-                id="applyUrl"
-                placeholder="https://jobboard.com/apply/12345"
-                value={formData.applyUrl}
-                onChange={(e) => handleInputChange("applyUrl", e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">
-                URL where job seekers can apply for the position
-              </p>
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* UTM Parameters */}
-          <div className="space-y-4">
-            <h4 className="font-medium">UTM Tracking Parameters</h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="utmSource">UTM Source *</Label>
-                <Input
-                  id="utmSource"
-                  placeholder="angellist"
-                  value={formData.utmSource}
-                  onChange={(e) => handleInputChange("utmSource", e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="utmMedium">UTM Medium *</Label>
-                <Input
-                  id="utmMedium"
-                  placeholder="job_board"
-                  value={formData.utmMedium}
-                  onChange={(e) => handleInputChange("utmMedium", e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="utmCampaign">UTM Campaign *</Label>
-                <Input
-                  id="utmCampaign"
-                  placeholder="software_engineer_hiring"
-                  value={formData.utmCampaign}
-                  onChange={(e) => handleInputChange("utmCampaign", e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="utmTerm">UTM Term</Label>
-                <Input
-                  id="utmTerm"
-                  placeholder="frontend_developer"
-                  value={formData.utmTerm}
-                  onChange={(e) => handleInputChange("utmTerm", e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="utmContent">UTM Content</Label>
-              <Input
-                id="utmContent"
-                placeholder="banner_ad"
-                value={formData.utmContent}
-                onChange={(e) => handleInputChange("utmContent", e.target.value)}
-              />
-            </div>
-          </div>
-
-          {/* URL Preview */}
-          {formData.jobInfoUrl && (
+          {/* Auto-generated Preview */}
+          {previewData && (
             <>
               <Separator />
               <div className="space-y-4">
-                <h4 className="font-medium">URL Preview</h4>
-                <div className="space-y-2">
-                  <Label>Job Info URL with UTM:</Label>
-                  <Textarea
-                    value={generatePreviewUrl(formData.jobInfoUrl)}
-                    readOnly
-                    className="text-xs font-mono"
-                    rows={2}
-                  />
+                <h4 className="font-medium text-sm">Auto-Generated Configuration</h4>
+                
+                {/* URLs Preview */}
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">Job Information URL:</Label>
+                    <div className="p-2 bg-muted rounded text-xs font-mono break-all">
+                      {generatePreviewUrl(previewData.jobInfoUrl, previewData)}
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">Application URL:</Label>
+                    <div className="p-2 bg-muted rounded text-xs font-mono break-all">
+                      {generatePreviewUrl(previewData.applyUrl, previewData)}
+                    </div>
+                  </div>
                 </div>
+
+                {/* UTM Parameters Preview */}
                 <div className="space-y-2">
-                  <Label>Apply URL with UTM:</Label>
-                  <Textarea
-                    value={generatePreviewUrl(formData.applyUrl)}
-                    readOnly
-                    className="text-xs font-mono"
-                    rows={2}
-                  />
+                  <Label className="text-xs text-muted-foreground">UTM Parameters:</Label>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="flex justify-between p-2 bg-muted/50 rounded">
+                      <span className="text-muted-foreground">Source:</span>
+                      <span className="font-mono">{previewData.utmSource}</span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-muted/50 rounded">
+                      <span className="text-muted-foreground">Medium:</span>
+                      <span className="font-mono">{previewData.utmMedium}</span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-muted/50 rounded">
+                      <span className="text-muted-foreground">Campaign:</span>
+                      <span className="font-mono">{previewData.utmCampaign}</span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-muted/50 rounded">
+                      <span className="text-muted-foreground">Term:</span>
+                      <span className="font-mono">{previewData.utmTerm}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-xs text-muted-foreground bg-blue-50 p-3 rounded border border-blue-200">
+                  <strong>Note:</strong> The URLs are generated as examples. You can edit the actual URLs later if needed for the specific job board's format.
                 </div>
               </div>
             </>
@@ -258,9 +192,9 @@ export const CreateExternalLinkDialog = ({
           <Button
             type="button"
             onClick={handleSave}
-            disabled={isSaving}
+            disabled={isSaving || !jobBoardName.trim()}
           >
-            {isSaving ? "Saving..." : (editingLink ? "Update Link" : "Create Link")}
+            {isSaving ? "Creating..." : (editingLink ? "Update Link" : "Create Link")}
           </Button>
         </DialogFooter>
       </DialogContent>

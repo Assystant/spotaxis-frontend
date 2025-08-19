@@ -285,6 +285,8 @@ export const JobPromotionDialog = ({
         onOpenChange={setShowCreateLinkDialog}
         onCreateLink={handleCreateExternalLink}
         editingLink={editingLink}
+        jobTitle={jobTitle}
+        companyName={companyName}
       />
     </Dialog>
   );
