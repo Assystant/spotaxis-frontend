@@ -62,7 +62,7 @@ const scorecardOptions = [
 ];
 
 const mockEvaluators = [
-  { id: "", name: "Unassigned" },
+  { id: "unassigned", name: "Unassigned" },
   { id: "u1", name: "Jane Doe" },
   { id: "u2", name: "John Smith" },
   { id: "u3", name: "Sarah Wilson" },
@@ -119,7 +119,7 @@ export const PipelineScorecardSection = ({ pipelineId, pipelineName }: PipelineS
   const handleEvaluatorChange = (stageId: string, evaluatorId: string) => {
     setStages(prev => prev.map(stage => 
       stage.id === stageId 
-        ? { ...stage, evaluatorId: evaluatorId || undefined }
+        ? { ...stage, evaluatorId: evaluatorId === "unassigned" ? undefined : evaluatorId }
         : stage
     ));
   };
@@ -226,7 +226,7 @@ export const PipelineScorecardSection = ({ pipelineId, pipelineName }: PipelineS
                       </TableCell>
                       <TableCell>
                         <Select
-                          value={stage.evaluatorId || ""}
+                          value={stage.evaluatorId || "unassigned"}
                           onValueChange={(value) => handleEvaluatorChange(stage.id, value)}
                         >
                           <SelectTrigger className="w-48" aria-label={`Select evaluator for ${stage.name}`}>
