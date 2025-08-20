@@ -143,9 +143,9 @@ export default function JobTemplates() {
                       <TableCell>
                         <Badge 
                           variant="secondary" 
-                          className={getTypeColor(template.template.type)}
+                          className={getTypeColor(template.template.employmentType)}
                         >
-                          {template.template.type}
+                          {template.template.employmentType}
                         </Badge>
                       </TableCell>
                       <TableCell>

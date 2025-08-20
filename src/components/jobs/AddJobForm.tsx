@@ -35,7 +35,7 @@ export const AddJobForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       status: "Active",
-      type: "Full-time",
+      employmentType: "Full-time",
       createNewPipeline: false,
       useDefaultForm: true,
     },
@@ -56,7 +56,7 @@ export const AddJobForm = () => {
     let fieldsToValidate: (keyof FormValues)[] = [];
     
     if (currentStep === 0) {
-      fieldsToValidate = ['title', 'companyId', 'location', 'type', 'status', 'description'];
+      fieldsToValidate = ['title', 'companyId', 'location', 'employmentType', 'status', 'description'];
     } else if (currentStep === 1) {
       if (createNewPipeline) {
         fieldsToValidate = ['newPipelineName'];

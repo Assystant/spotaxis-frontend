@@ -7,18 +7,18 @@ export const formSchema = z.object({
   title: z.string().min(3, "Job title must be at least 3 characters"),
   companyId: z.string().min(1, "Company is required"),
   location: z.string().min(1, "Location is required"),
-  type: z.enum(["Full-time", "Part-time", "Contract", "Remote"]),
+  employmentType: z.enum(["Full-time", "Part-time", "Contract", "Temporary"]),
+  jobType: z.enum(["Remote", "On-site", "Hybrid"]),
   status: z.enum(["Active", "Paused", "Closed"]).default("Active"),
   department: z.string().optional(),
   salary: z.string().optional(),
   description: z.string().min(10, "Job description is required"),
-  requirements: z.string().optional(),
-  responsibilities: z.string().optional(),
   benefits: z.string().optional(),
   startDate: z.string().optional(),
   
-  // Additional fields
-  experienceLevel: z.enum(["Entry", "Mid", "Senior", "Lead", "Executive"]).optional(),
+  // Additional fields (moved to additional preferences)
+  experienceMinYears: z.string().optional(),
+  experienceMaxYears: z.string().optional(),
   workSchedule: z.enum(["Day Shift", "Night Shift", "Rotating", "Flexible"]).optional(),
   travelRequired: z.enum(["None", "Occasional", "25%", "50%", "75%", "100%"]).optional(),
   
@@ -46,9 +46,9 @@ export const formSchema = z.object({
 
 export type FormValues = z.infer<typeof formSchema>;
 
-export const jobTypes = ["Full-time", "Part-time", "Contract", "Remote"];
+export const employmentTypes = ["Full-time", "Part-time", "Contract", "Temporary"];
+export const jobTypes = ["Remote", "On-site", "Hybrid"];
 export const jobStatuses = ["Active", "Paused", "Closed"];
-export const experienceLevels = ["Entry", "Mid", "Senior", "Lead", "Executive"];
 export const workSchedules = ["Day Shift", "Night Shift", "Rotating", "Flexible"];
 export const travelOptions = ["None", "Occasional", "25%", "50%", "75%", "100%"];
 export const educationLevels = ["High School", "Bachelor's", "Master's", "PhD", "Not Specified"];

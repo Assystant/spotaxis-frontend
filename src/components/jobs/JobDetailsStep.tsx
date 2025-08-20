@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { FormValues, jobTypes, jobStatuses, experienceLevels, workSchedules, travelOptions, educationLevels } from "./types";
+import { FormValues, employmentTypes, jobTypes, jobStatuses, workSchedules, travelOptions, educationLevels } from "./types";
 import { JobTemplateSelector } from "./JobTemplateSelector";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -125,13 +125,13 @@ export const JobDetailsStep = ({ form }: JobDetailsStepProps) => {
         )}
       />
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <FormField
           control={form.control}
-          name="type"
+          name="employmentType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base font-medium">Job Type</FormLabel>
+              <FormLabel className="text-base font-medium">Employment Type</FormLabel>
               <div className="relative mt-1.5">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <Calendar className="w-5 h-5 text-gray-400" />
@@ -142,7 +142,40 @@ export const JobDetailsStep = ({ form }: JobDetailsStepProps) => {
                     defaultValue={field.value}
                   >
                     <SelectTrigger className="pl-10 w-full">
-                      <SelectValue placeholder="Select a job type" />
+                      <SelectValue placeholder="Select employment type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {employmentTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="jobType"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-base font-medium">Job Type</FormLabel>
+              <div className="relative mt-1.5">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <MapPin className="w-5 h-5 text-gray-400" />
+                </div>
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="pl-10 w-full">
+                      <SelectValue placeholder="Select job type" />
                     </SelectTrigger>
                     <SelectContent>
                       {jobTypes.map((type) => (
@@ -245,147 +278,6 @@ export const JobDetailsStep = ({ form }: JobDetailsStepProps) => {
             </FormItem>
           )}
         />
-        </div>
-
-        {/* Additional fields */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <FormField
-            control={form.control}
-            name="experienceLevel"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-base font-medium">Experience Level</FormLabel>
-                <div className="relative mt-1.5">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <Users className="w-5 h-5 text-gray-400" />
-                  </div>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger className="pl-10 w-full">
-                        <SelectValue placeholder="Select experience level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {experienceLevels.map((level) => (
-                          <SelectItem key={level} value={level}>
-                            {level}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="workSchedule"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-base font-medium">Work Schedule</FormLabel>
-                <div className="relative mt-1.5">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <Clock className="w-5 h-5 text-gray-400" />
-                  </div>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger className="pl-10 w-full">
-                        <SelectValue placeholder="Select schedule" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {workSchedules.map((schedule) => (
-                          <SelectItem key={schedule} value={schedule}>
-                            {schedule}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="travelRequired"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-base font-medium">Travel Required</FormLabel>
-                <div className="relative mt-1.5">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <Plane className="w-5 h-5 text-gray-400" />
-                  </div>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger className="pl-10 w-full">
-                        <SelectValue placeholder="Select travel requirement" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {travelOptions.map((option) => (
-                          <SelectItem key={option} value={option}>
-                            {option}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* Additional Job Details Fields */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="requirements"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-base font-medium">Requirements</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="List job requirements..."
-                    className="min-h-[100px]"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="responsibilities"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-base font-medium">Responsibilities</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="List key responsibilities..."
-                    className="min-h-[100px]"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
 
         <FormField
@@ -492,6 +384,116 @@ export const JobDetailsStep = ({ form }: JobDetailsStepProps) => {
                         Available for eligible candidates
                       </p>
                     </div>
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Experience Level as Years Range */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="experienceMinYears"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Minimum Experience (Years)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="e.g. 2"
+                        min="0"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="experienceMaxYears"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Maximum Experience (Years)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="e.g. 5"
+                        min="0"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Work Schedule and Travel */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="workSchedule"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Work Schedule</FormLabel>
+                    <div className="relative mt-1.5">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <Clock className="w-4 h-4 text-gray-400" />
+                      </div>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger className="pl-10 w-full">
+                            <SelectValue placeholder="Select schedule" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {workSchedules.map((schedule) => (
+                              <SelectItem key={schedule} value={schedule}>
+                                {schedule}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="travelRequired"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Travel Required</FormLabel>
+                    <div className="relative mt-1.5">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <Plane className="w-4 h-4 text-gray-400" />
+                      </div>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger className="pl-10 w-full">
+                            <SelectValue placeholder="Select travel requirement" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {travelOptions.map((option) => (
+                              <SelectItem key={option} value={option}>
+                                {option}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

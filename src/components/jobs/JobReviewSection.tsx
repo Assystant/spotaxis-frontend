@@ -35,8 +35,13 @@ export const JobReviewSection = ({ formValues }: JobReviewSectionProps) => {
           </div>
           
           <div>
-            <span className="text-sm font-medium">Type:</span>
-            <p className="text-base">{formValues.type}</p>
+            <span className="text-sm font-medium">Employment Type:</span>
+            <p className="text-base">{formValues.employmentType}</p>
+          </div>
+          
+          <div>
+            <span className="text-sm font-medium">Job Type:</span>
+            <p className="text-base">{formValues.jobType}</p>
           </div>
         </div>
         
